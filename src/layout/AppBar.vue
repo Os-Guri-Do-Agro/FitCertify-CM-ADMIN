@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar color="#1e3a8a" :elevation="0" class="app-bar">
+    <v-app-bar color="" :elevation="0" class="app-bar">
         <template v-slot:prepend>
             <v-btn icon variant="text" @click="layoutStore.toggleRail()" class="ml-2">
                 <v-icon>mdi-menu</v-icon>

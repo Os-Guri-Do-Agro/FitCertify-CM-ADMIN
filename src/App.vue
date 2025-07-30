@@ -35,14 +35,7 @@ const isAuthRoute = computed(() => {
 </script>
 
 <style>
-.main-content {
-  background-color: #f8fafc;
-  min-height: 100vh;
-}
 
-.auth-layout {
-  background: url(assets/image-test.png);
-  min-height: 100vh;
-  background-repeat: no-repeat;
-}
+
+
 </style>

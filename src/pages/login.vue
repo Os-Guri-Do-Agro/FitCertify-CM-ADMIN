@@ -1,21 +1,48 @@
 <template>
-  <v-container class="fill-height">
-    <v-row justify="center" align="center">
+  <v-container fluid class="fill-height pa-0 d-flex align-center justify-center background-image">
+    <v-row class="justify-center align-center w-100 h-100 ma-0">
       <v-col cols="12" sm="8" md="4">
-        <v-card class="elevation-12 login-card">
-          <v-card-title class="text-center pa-6">
-            <div class="text-h4 font-weight-bold text-primary mb-2">Nome Empresa</div>
-            <div class="text-subtitle-1 text-grey-darken-1">Admin Login</div>
+        <v-card elevation="10" rounded="xl" class="pa-6">
+          <v-card-title class="text-center d-flex flex-column align-center">
+            <v-img
+              src="/src/assets/Camada_1.png"
+              alt="Logo"
+              width="150"
+              class="mb-3"
+              contain
+            ></v-img>
+            <div class="text-h6 font-weight-medium text-grey-darken-2">
+              Bem-vindo de volta
+            </div>
           </v-card-title>
 
-          <v-card-text class="pa-6">
+          <v-card-text class="pt-0">
             <v-form>
-              <v-text-field label="Email" prepend-inner-icon="mdi-email" variant="outlined" class="mb-3"></v-text-field>
+              <v-text-field
+                label="Email"
+                prepend-inner-icon="mdi-email"
+                variant="outlined"
+                density="comfortable"
+                class="mb-4"
+              ></v-text-field>
 
-              <v-text-field label="Senha" prepend-inner-icon="mdi-lock" type="password" variant="outlined"
-                class="mb-4"></v-text-field>
+              <v-text-field
+                label="Senha"
+                prepend-inner-icon="mdi-lock"
+                type="password"
+                variant="outlined"
+                density="comfortable"
+                class="mb-4"
+              ></v-text-field>
 
-              <v-btn color="primary" size="large" block class="mb-3" @click="$router.push('/')">
+              <v-btn
+                color="primary"
+                size="large"
+                block
+                rounded
+                class="mb-3"
+                @click="$router.push('/')"
+              >
                 Entrar
               </v-btn>
 
@@ -33,9 +60,8 @@
 </template>
 
 <style scoped>
-.login-card {
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
+.background-image {
+  background: url('/src/assets/image-teste-5.png') no-repeat center center;
+  background-size: cover;
 }
 </style>
