@@ -1,5 +1,6 @@
 import { handleError } from '@/common/error.utils'
 import apiClient from '../api-service'
+import IArtigo from '@/Interfaces/artigo-interface'
 // import { CategoryEntity, CreateCategoryDto, UpdateCategoryDto } from '@/common/types/category'
 
 class ArtigoService {
@@ -16,14 +17,14 @@ class ArtigoService {
     }
   }
 
-  getArtigo() {
+  getArtigo() :Promise<IArtigo>{
     return this.handleRequest(
       apiClient.get('/artigo'),
           'Failed to fetch all categories'
     )
   }
 
-  
+
 }
 
 export default new ArtigoService()
