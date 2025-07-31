@@ -56,7 +56,7 @@ const $route = useRoute()
 
 const menuItems = [
     { icon: 'mdi-view-dashboard', title: 'Dashboard', value: 'dashboard', to: '/' },
-    { icon: 'mdi-post-outline', title: 'Blog', value: 'blog', to: '/blog' },
+    { icon: 'mdi-post-outline', title: 'Artigos', value: 'blog', to: '/artigos/' },
     { icon: 'mdi-store', title: 'Marketplace', value: 'marketplace', to: '/marketplace' },
     { icon: 'mdi-account-group-outline', title: 'Usuários', value: 'users', to: '/users/' },
     { icon: 'mdi-triangle-outline', title: 'Teste', value: 'teste', to: '/teste' },

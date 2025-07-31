@@ -1,5 +1,1 @@
-<template>
-    <h1>olsa</h1>
-</template>
-
-<script setup lang="ts"></script>
+<template><h1>ola</h1></template>
