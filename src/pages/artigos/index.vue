@@ -1,80 +1,365 @@
 <template>
-    <v-row no-gutters>
-        <v-col class=" d-flex justify-space-between align-center">
-            <div>
-                <h1>Artigoss</h1>
-
-            </div>
-            <v-btn color="primary" variant="outlined" density="compact">Criar</v-btn>
-        </v-col>
-
+  <v-container fluid class="pa-6">
+    <!-- Header Section -->
+    <v-row class="mb-6">
+      <v-col cols="12">
+        <div
+          class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4"
+        >
+          <div class="header-content">
+            <h1 class="text-h3 font-weight-bold text-primary mb-2">
+              <v-icon
+                icon="mdi-newspaper-variant"
+                class="me-3"
+                size="large"
+              ></v-icon>
+              Artigos
+            </h1>
+            <p class="text-subtitle-1 text-medium-emphasis mb-0">
+              Gerencie todos os artigos do blog
+            </p>
+          </div>
+          <v-btn
+            color="primary"
+            size="large"
+            prepend-icon="mdi-plus"
+            class="create-btn"
+            elevation="2"
+          >
+            Criar Artigo
+          </v-btn>
+        </div>
+      </v-col>
     </v-row>
-    <v-card flat>
-        <v-card-title class="d-flex align-center pe-2">
 
-            Artigos
+    <!-- Stats Cards -->
+    <v-row class="mb-6">
+      <v-col cols="12" sm="6" md="3">
+        <v-card class="stats-card" elevation="2">
+          <v-card-text class="pa-4">
+            <div class="d-flex align-center">
+              <v-avatar color="primary" class="me-3">
+                <v-icon icon="mdi-file-document" color="white"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="text-h5 font-weight-bold">
+                  {{ artigos?.length || 0 }}
+                </div>
+                <div class="text-caption text-medium-emphasis">
+                  Total de Artigos
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="3">
+        <v-card class="stats-card" elevation="2">
+          <v-card-text class="pa-4">
+            <div class="d-flex align-center">
+              <v-avatar color="success" class="me-3">
+                <v-icon icon="mdi-check-circle" color="white"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="text-h5 font-weight-bold">{{ activeCount }}</div>
+                <div class="text-caption text-medium-emphasis">
+                  Artigos Ativos
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="3">
+        <v-card class="stats-card" elevation="2">
+          <v-card-text class="pa-4">
+            <div class="d-flex align-center">
+              <v-avatar color="info" class="me-3">
+                <v-icon icon="mdi-cellphone" color="white"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="text-h5 font-weight-bold">{{ mobileCount }}</div>
+                <div class="text-caption text-medium-emphasis">
+                  Mobile Ready
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="3">
+        <v-card class="stats-card" elevation="2">
+          <v-card-text class="pa-4">
+            <div class="d-flex align-center">
+              <v-avatar color="warning" class="me-3">
+                <v-icon icon="mdi-monitor" color="white"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="text-h5 font-weight-bold">{{ desktopCount }}</div>
+                <div class="text-caption text-medium-emphasis">
+                  Desktop Ready
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
-            <v-spacer></v-spacer>
+    <!-- Main Content Card -->
+    <v-card class="main-card" elevation="3">
+      <!-- Search Header -->
+      <v-card-title class="pa-6 pb-4">
+        <div
+          class="d-flex flex-column flex-sm-row align-start align-sm-center ga-4 w-100"
+        >
+          <div class="d-flex align-center">
+            <v-icon icon="mdi-table" class="me-2" color="primary"></v-icon>
+            <span class="text-h6 font-weight-medium">Lista de Artigos</span>
+          </div>
+          <v-spacer class="d-none d-sm-flex"></v-spacer>
+          <v-text-field
+            v-model="search"
+            density="comfortable"
+            label="Buscar artigos..."
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            hide-details
+            single-line
+            class="search-field"
+            style="max-width: 300px"
+          ></v-text-field>
+        </div>
+      </v-card-title>
 
-            <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="mdi-magnify"
-                variant="solo-filled" flat hide-details single-line></v-text-field>
-        </v-card-title>
+      <v-divider></v-divider>
 
-        <v-divider></v-divider>
-        <v-data-table v-model:search="search" :filter-keys="['titulo']" fixed-header hide-default-footer
-            hide-default-header disable-sort :headers="headers" :items="sexo123">
-            <template v-slot:item.foto="{ item }">
-                <v-avatar size="36">
-                    <img :src="item.foto" alt="foto artigo" />
-                </v-avatar>
-            </template>
+      <!-- Data Table -->
+      <v-data-table
+        v-model:search="search"
+        :filter-keys="['titulo']"
+        :headers="headers"
+        :items="artigos"
+        :loading="loading"
+        class="custom-table"
+        hover
+      >
+        <!-- Loading -->
+        <template v-slot:loading>
+          <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+        </template>
 
-            <!-- isMobile -->
-            <template v-slot:item.isMobile="{ item }">
-                <v-chip :color="item.isMobile ? 'green' : 'red'" size="small" label>
-                    {{ item.isMobile ? 'Sim' : 'Não' }}
-                </v-chip>
-            </template>
+        <!-- Foto -->
+        <template v-slot:item.foto="{ item }">
+          <v-avatar size="48" class="ma-2">
+            <v-img :src="item.foto" alt="foto artigo" cover>
+              <template v-slot:error>
+                <v-icon icon="mdi-image-broken" size="24"></v-icon>
+              </template>
+            </v-img>
+          </v-avatar>
+        </template>
 
-            <!-- isDesktop -->
-            <template v-slot:item.isDesktop="{ item }">
-                <v-chip :color="item.isDesktop ? 'green' : 'red'" size="small" label>
-                    {{ item.isDesktop ? 'Sim' : 'Não' }}
-                </v-chip>
-            </template>
+        <!-- Título -->
+        <template v-slot:item.titulo="{ item }">
+          <div class="article-title">
+            <!-- <div class="text-subtitle-1 font-weight-medium">{{ item.titulo }}</div> -->
+            <!-- <div class="text-caption text-medium-emphasis">{{ item.subTitulo }}</div> -->
+          </div>
+        </template>
 
-            <!-- Ativo -->
-            <template v-slot:item.ativo="{ item }">
-                <v-chip :color="item.ativo ? 'green' : 'red'" size="small" label>
-                    {{ item.ativo ? 'Ativo' : 'Inativo' }}
-                </v-chip>
-            </template>
-        </v-data-table>
+        <!-- Mobile -->
+        <template v-slot:item.isMobile="{ item }">
+          <v-chip
+            :color="item.isMobile ? 'success' : 'error'"
+            :prepend-icon="item.isMobile ? 'mdi-check' : 'mdi-close'"
+            size="small"
+            variant="flat"
+          >
+            {{ item.isMobile ? 'Sim' : 'Não' }}
+          </v-chip>
+        </template>
+
+        <!-- Desktop -->
+        <template v-slot:item.isDesktop="{ item }">
+          <v-chip
+            :color="item.isDesktop ? 'success' : 'error'"
+            :prepend-icon="item.isDesktop ? 'mdi-check' : 'mdi-close'"
+            size="small"
+            variant="flat"
+          >
+            {{ item.isDesktop ? 'Sim' : 'Não' }}
+          </v-chip>
+        </template>
+
+        <!-- Status -->
+        <template v-slot:item.ativo="{ item }">
+          <v-chip
+            :color="item.ativo ? 'success' : 'warning'"
+            :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-pause-circle'"
+            size="small"
+            variant="flat"
+          >
+            {{ item.ativo ? 'Ativo' : 'Inativo' }}
+          </v-chip>
+        </template>
+
+        <!-- Actions -->
+        <template v-slot:item.actions="{ item }">
+          <div class="d-flex ga-2">
+            <v-btn
+              icon="mdi-eye"
+              size="small"
+              variant="text"
+              color="primary"
+              @click="viewArticle(item)"
+            ></v-btn>
+            <v-btn
+              icon="mdi-pencil"
+              size="small"
+              variant="text"
+              color="warning"
+              @click="editArticle(item)"
+            ></v-btn>
+            <v-btn
+              icon="mdi-delete"
+              size="small"
+              variant="text"
+              color="error"
+              @click="deleteArticle(item)"
+            ></v-btn>
+          </div>
+        </template>
+
+        <!-- No data -->
+        <template v-slot:no-data>
+          <div class="text-center pa-8">
+            <v-icon
+              icon="mdi-newspaper-variant-outline"
+              size="64"
+              color="grey-lighten-1"
+              class="mb-4"
+            ></v-icon>
+            <div class="text-h6 text-medium-emphasis mb-2">
+              Nenhum artigo encontrado
+            </div>
+            <div class="text-body-2 text-medium-emphasis">
+              Comece criando seu primeiro artigo
+            </div>
+          </div>
+        </template>
+      </v-data-table>
     </v-card>
-
-    <h1>Artigos - Blog vão estar aqui</h1>
-    <!-- {{ sexo123 }} -->
+  </v-container>
 </template>
 
 <script setup lang="ts">
+import type IArtigo from '@/Interfaces/artigo-interface'
+import { computed, ref } from 'vue'
 
-import artigosService from '@/services/artigo/artigo-service';
-import { onMounted, ref } from 'vue';
 const search = ref('')
-const artigos = ref()
+const artigos = ref<IArtigo[]>([])
+const loading = ref(true)
+
 const headers = [
-    { title: 'Título', key: 'titulo' },
-    { title: 'Subtítulo', key: 'subTitulo' },
-    { title: 'Foto', key: 'foto' },
-    { title: 'Mobile', key: 'isMobile' },
-    { title: 'Desktop', key: 'isDesktop' },
-    { title: 'Ativo', key: 'ativo' },
+  { title: 'Foto', key: 'foto', sortable: false, width: '80px' },
+  { title: 'Artigo', key: 'titulo', sortable: true },
+  { title: 'Mobile', key: 'isMobile', sortable: true, width: '120px' },
+  { title: 'Desktop', key: 'isDesktop', sortable: true, width: '120px' },
+  { title: 'Status', key: 'ativo', sortable: true, width: '120px' },
+  { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]
 
-onMounted(async () => {
-    const response = await artigosService.getArtigo();
-    artigos.value = response
+// Computed stats
+const activeCount = computed(
+  () => artigos.value?.filter((artigo) => artigo.ativo).length || 0
+)
 
-})
+const mobileCount = computed(
+  () => artigos.value?.filter((artigo) => artigo.isMobile).length || 0
+)
 
+const desktopCount = computed(
+  () => artigos.value?.filter((artigo) => artigo.isDesktop).length || 0
+)
+
+// Actions
+const viewArticle = (item: IArtigo) => {
+  console.log('Visualizar:', item)
+}
+
+const editArticle = (item: IArtigo) => {
+  console.log('Editar:', item)
+}
+
+const deleteArticle = (item: IArtigo) => {
+  console.log('Deletar:', item)
+}
+
+// onMounted(async () => {
+//     try {
+//         const response = await artigosService.getArtigo()
+//         artigos.value = Array.isArray(response) ? response : [response]
+//     } catch (error) {
+//         console.error('Erro ao carregar artigos:', error)
+//     } finally {
+//         loading.value = false
+//     }
+// })
 </script>
+
+<style scoped>
+.header-content {
+  flex: 1;
+}
+
+.create-btn {
+  transition: all 0.3s ease;
+}
+
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stats-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.main-card {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.search-field {
+  transition: all 0.3s ease;
+}
+
+.custom-table {
+  border-radius: 0;
+}
+
+.custom-table :deep(.v-data-table__tr:hover) {
+  background-color: rgba(var(--v-theme-primary), 0.05);
+}
+
+.article-title {
+  max-width: 250px;
+}
+
+@media (max-width: 600px) {
+  .header-content h1 {
+    font-size: 1.75rem !important;
+  }
+
+  .stats-card {
+    margin-bottom: 1rem;
+  }
+}
+</style>
