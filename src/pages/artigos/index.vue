@@ -3,31 +3,21 @@
     <!-- Header Section -->
     <v-row class="mb-6">
       <v-col cols="12">
-        <div
-          class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4"
-        >
+        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4">
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
-              <v-icon
-                icon="mdi-newspaper-variant"
-                class="me-3"
-                size="large"
-              ></v-icon>
+              <v-icon icon="mdi-newspaper-variant" class="me-3" size="large"></v-icon>
               Artigos
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
               Gerencie todos os artigos do blog
             </p>
           </div>
-          <v-btn
-            color="primary"
-            size="large"
-            prepend-icon="mdi-plus"
-            class="create-btn"
-            elevation="2"
-          >
-            Criar Artigo
-          </v-btn>
+           <router-link :to="{ path: 'form' }">
+             <v-btn color="primary" size="large" prepend-icon="mdi-plus" class="create-btn" elevation="2">
+               Criar Artigo
+              </v-btn>
+            </router-link>
         </div>
       </v-col>
     </v-row>
@@ -110,40 +100,23 @@
     <v-card class="main-card" elevation="3">
       <!-- Search Header -->
       <v-card-title class="pa-6 pb-4">
-        <div
-          class="d-flex flex-column flex-sm-row align-start align-sm-center ga-4 w-100"
-        >
+        <div class="d-flex flex-column flex-sm-row align-start align-sm-center ga-4 w-100">
           <div class="d-flex align-center">
             <v-icon icon="mdi-table" class="me-2" color="primary"></v-icon>
             <span class="text-h6 font-weight-medium">Lista de Artigos</span>
           </div>
           <v-spacer class="d-none d-sm-flex"></v-spacer>
-          <v-text-field
-            v-model="search"
-            density="comfortable"
-            label="Buscar artigos..."
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            hide-details
-            single-line
-            class="search-field"
-            style="max-width: 300px"
-          ></v-text-field>
+          <v-text-field v-model="search" density="comfortable" label="Buscar artigos..."
+            prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line class="search-field"
+            style="max-width: 300px"></v-text-field>
         </div>
       </v-card-title>
 
       <v-divider></v-divider>
 
       <!-- Data Table -->
-      <v-data-table
-        v-model:search="search"
-        :filter-keys="['titulo']"
-        :headers="headers"
-        :items="artigos"
-        :loading="loading"
-        class="custom-table"
-        hover
-      >
+      <v-data-table v-model:search="search" :filter-keys="['titulo']" :headers="headers" :items="artigos"
+        :loading="loading" class="custom-table" hover>
         <!-- Loading -->
         <template v-slot:loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -152,7 +125,7 @@
         <!-- Foto -->
         <template v-slot:item.foto="{ item }">
           <v-avatar size="48" class="ma-2">
-            <v-img :src="item.foto" alt="foto artigo" cover>
+            <v-img :src="item.imagemUrl" alt="foto artigo" cover>
               <template v-slot:error>
                 <v-icon icon="mdi-image-broken" size="24"></v-icon>
               </template>
@@ -163,43 +136,31 @@
         <!-- Título -->
         <template v-slot:item.titulo="{ item }">
           <div class="article-title">
-            <!-- <div class="text-subtitle-1 font-weight-medium">{{ item.titulo }}</div> -->
-            <!-- <div class="text-caption text-medium-emphasis">{{ item.subTitulo }}</div> -->
+            <div class="text-subtitle-1 font-weight-medium">{{ item.titulo }}</div>
+            <div class="text-caption text-medium-emphasis">{{ item.subTitulo }}</div>
           </div>
         </template>
 
         <!-- Mobile -->
         <template v-slot:item.isMobile="{ item }">
-          <v-chip
-            :color="item.isMobile ? 'success' : 'error'"
-            :prepend-icon="item.isMobile ? 'mdi-check' : 'mdi-close'"
-            size="small"
-            variant="flat"
-          >
+          <v-chip :color="item.isMobile ? 'success' : 'error'" :prepend-icon="item.isMobile ? 'mdi-check' : 'mdi-close'"
+            size="small" variant="flat">
             {{ item.isMobile ? 'Sim' : 'Não' }}
           </v-chip>
         </template>
 
         <!-- Desktop -->
         <template v-slot:item.isDesktop="{ item }">
-          <v-chip
-            :color="item.isDesktop ? 'success' : 'error'"
-            :prepend-icon="item.isDesktop ? 'mdi-check' : 'mdi-close'"
-            size="small"
-            variant="flat"
-          >
+          <v-chip :color="item.isDesktop ? 'success' : 'error'"
+            :prepend-icon="item.isDesktop ? 'mdi-check' : 'mdi-close'" size="small" variant="flat">
             {{ item.isDesktop ? 'Sim' : 'Não' }}
           </v-chip>
         </template>
 
         <!-- Status -->
         <template v-slot:item.ativo="{ item }">
-          <v-chip
-            :color="item.ativo ? 'success' : 'warning'"
-            :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-pause-circle'"
-            size="small"
-            variant="flat"
-          >
+          <v-chip :color="item.ativo ? 'success' : 'warning'"
+            :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
             {{ item.ativo ? 'Ativo' : 'Inativo' }}
           </v-chip>
         </template>
@@ -207,39 +168,16 @@
         <!-- Actions -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex ga-2">
-            <v-btn
-              icon="mdi-eye"
-              size="small"
-              variant="text"
-              color="primary"
-              @click="viewArticle(item)"
-            ></v-btn>
-            <v-btn
-              icon="mdi-pencil"
-              size="small"
-              variant="text"
-              color="warning"
-              @click="editArticle(item)"
-            ></v-btn>
-            <v-btn
-              icon="mdi-delete"
-              size="small"
-              variant="text"
-              color="error"
-              @click="deleteArticle(item)"
-            ></v-btn>
+            <v-btn icon="mdi-eye" size="small" variant="text" color="primary" @click="viewArticle(item)"></v-btn>
+            <v-btn icon="mdi-pencil" size="small" variant="text" color="warning" @click="editArticle(item)"></v-btn>
+            <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="deleteArticle(item)"></v-btn>
           </div>
         </template>
 
         <!-- No data -->
         <template v-slot:no-data>
           <div class="text-center pa-8">
-            <v-icon
-              icon="mdi-newspaper-variant-outline"
-              size="64"
-              color="grey-lighten-1"
-              class="mb-4"
-            ></v-icon>
+            <v-icon icon="mdi-newspaper-variant-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
             <div class="text-h6 text-medium-emphasis mb-2">
               Nenhum artigo encontrado
             </div>
@@ -251,19 +189,49 @@
       </v-data-table>
     </v-card>
   </v-container>
+
+
+
+ <v-dialog
+      v-model="dialog"
+      max-width="400"
+      persistent
+    >
+
+      <v-card
+        prepend-icon="mdi-post-outline"
+        text="Deseja excluir este artigo?"
+        title="Confirmação de Exclusão"
+      >
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+
+          <v-btn @click="dialog = false">
+            recusar
+          </v-btn>
+
+          <v-btn @click="confirmDelete" color="primary">
+            confirmar
+          </v-btn>
+        </template>
+      </v-card>
+  </v-dialog>
+
 </template>
 
 <script setup lang="ts">
-import type IArtigo from '@/Interfaces/artigo-interface'
-import { computed, ref } from 'vue'
+// import type IArtigo from '@/Interfaces/artigo-interface'
+import artigoService from '@/services/artigo/artigo-service'
+import { computed, onMounted, ref } from 'vue'
 
 const search = ref('')
-const artigos = ref<IArtigo[]>([])
+const artigos = ref<any[]>([])
 const loading = ref(true)
-
+const selectedArticle = ref<any | null>(null)
+const dialog = ref(false)
 const headers = [
-  { title: 'Foto', key: 'foto', sortable: false, width: '80px' },
-  { title: 'Artigo', key: 'titulo', sortable: true },
+  { title: 'Foto', key: 'foto', sortable: true, width: '80px' },
+  { title: 'Titulo', key: 'titulo', },
   { title: 'Mobile', key: 'isMobile', sortable: true, width: '120px' },
   { title: 'Desktop', key: 'isDesktop', sortable: true, width: '120px' },
   { title: 'Status', key: 'ativo', sortable: true, width: '120px' },
@@ -284,28 +252,46 @@ const desktopCount = computed(
 )
 
 // Actions
-const viewArticle = (item: IArtigo) => {
+const viewArticle = (item: any) => {
   console.log('Visualizar:', item)
 }
 
-const editArticle = (item: IArtigo) => {
+const editArticle = (item: any) => {
   console.log('Editar:', item)
 }
 
-const deleteArticle = (item: IArtigo) => {
-  console.log('Deletar:', item)
+const deleteArticle = (item: any) => {
+  selectedArticle.value = item
+  dialog.value = true
 }
 
-// onMounted(async () => {
-//     try {
-//         const response = await artigosService.getArtigo()
-//         artigos.value = Array.isArray(response) ? response : [response]
-//     } catch (error) {
-//         console.error('Erro ao carregar artigos:', error)
-//     } finally {
-//         loading.value = false
-//     }
-// })
+
+const confirmDelete = async () => {
+  if (!selectedArticle.value) return
+
+  try {
+    await artigoService.deleteArtigo(selectedArticle.value.id)
+    artigos.value = artigos.value.filter(a => a.id !== selectedArticle.value?.id)
+    console.log('Artigo excluído com sucesso')
+  } catch (error) {
+    console.error('Erro ao excluir artigo:', error)
+  } finally {
+    dialog.value = false
+    selectedArticle.value = null
+  }
+}
+
+onMounted(async () => {
+  try {
+    const response = await artigoService.getAllArtigos()
+    artigos.value = Array.isArray(response.data) ? response.data : []
+    console.log('Artigos carregados:', artigos.value)
+  } catch (error) {
+    console.error('Erro ao carregar artigos:', error)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <style scoped>
