@@ -20,6 +20,8 @@
             <v-form>
               <v-text-field
                 label="Email"
+                v-model="data.email"
+
                 prepend-inner-icon="mdi-email"
                 variant="outlined"
                 density="comfortable"
@@ -28,6 +30,7 @@
 
               <v-text-field
                 label="Senha"
+                v-model="data.senha"
                 prepend-inner-icon="mdi-lock"
                 type="password"
                 variant="outlined"
@@ -41,7 +44,7 @@
                 block
                 rounded
                 class="mb-3"
-                @click="$router.push('/')"
+                @click="login"
               >
                 Entrar
               </v-btn>
@@ -58,6 +61,25 @@
     </v-row>
   </v-container>
 </template>
+
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import authService from '@/services/auth/auth-service'
+
+const data = ref( {
+  email: "",
+  senha: "",
+  isMobile: true
+})
+
+  const login = async () => {
+   const response =  await authService.login(data.value)
+   console.log(response)
+   sessionStorage.setItem('token', response.access_token)
+
+   }
+</script>
 
 <style scoped>
 .background-image {

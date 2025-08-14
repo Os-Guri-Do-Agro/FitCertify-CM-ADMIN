@@ -125,7 +125,7 @@
         <!-- Foto -->
         <template v-slot:item.foto="{ item }">
           <v-avatar size="48" class="ma-2">
-            <v-img :src="item.imagemUrl" alt="foto artigo" cover>
+            <v-img :src="item.fotoUrl" alt="foto artigo" cover>
               <template v-slot:error>
                 <v-icon icon="mdi-image-broken" size="24"></v-icon>
               </template>
@@ -140,7 +140,9 @@
             <div class="text-caption text-medium-emphasis">{{ item.subTitulo }}</div>
           </div>
         </template>
-
+<template v-slot:item.categoria="{ item }">
+  {{ item.categoriaArtigo?.nome || 'Sem categoria' }}
+</template>
         <!-- Mobile -->
         <template v-slot:item.isMobile="{ item }">
           <v-chip :color="item.isMobile ? 'success' : 'error'" :prepend-icon="item.isMobile ? 'mdi-check' : 'mdi-close'"
@@ -230,8 +232,9 @@ const loading = ref(true)
 const selectedArticle = ref<any | null>(null)
 const dialog = ref(false)
 const headers = [
-  { title: 'Foto', key: 'foto', sortable: true, width: '80px' },
-  { title: 'Titulo', key: 'titulo', },
+  { title: 'Foto', key: 'foto', sortable: true, width: '100px' },
+  { title: 'Titulo', key: 'titulo', width: '700px' },
+  { title: 'Categoria', key: 'categoria', sortable: false },
   { title: 'Mobile', key: 'isMobile', sortable: true, width: '120px' },
   { title: 'Desktop', key: 'isDesktop', sortable: true, width: '120px' },
   { title: 'Status', key: 'ativo', sortable: true, width: '120px' },
@@ -284,8 +287,20 @@ const confirmDelete = async () => {
 onMounted(async () => {
   try {
     const response = await artigoService.getAllArtigos()
-    artigos.value = Array.isArray(response.data) ? response.data : []
-    console.log('Artigos carregados:', artigos.value)
+
+    artigos.value = Array.isArray(response.data)
+      ? response.data.map((artigo:any) => {
+          // Procura a primeira imagem onde isBanner é false
+          const imgNaoBanner = artigo.imagensArtigo?.find(
+            (img:any) => img.isBanner === false
+          )
+
+          return {
+            ...artigo,
+            fotoUrl: imgNaoBanner ? imgNaoBanner.imagemUrl : null
+          }
+        })
+      : []
   } catch (error) {
     console.error('Erro ao carregar artigos:', error)
   } finally {

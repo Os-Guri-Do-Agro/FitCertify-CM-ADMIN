@@ -1,8 +1,8 @@
 <template>
-  <v-app>
+  <v-app theme="light">
     <!-- Layout com Drawer e AppBar -->
     <v-layout v-if="!isAuthRoute">
-      <DrawerNavigation />
+      <DrawerNavigation  class="fill-height"/>
       <AppBar />
       <v-main class="main-content">
         <v-container fluid class="pa-4">
@@ -10,7 +10,6 @@
         </v-container>
       </v-main>
     </v-layout>
-
     <!-- Layout sem Drawer/AppBar (Login, etc) -->
     <v-main v-else class="auth-layout">
       <router-view />

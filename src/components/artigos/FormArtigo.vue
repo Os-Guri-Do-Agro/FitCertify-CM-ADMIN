@@ -3,28 +3,40 @@
     <v-card-title class="text-h5 mb-4">Criar Novo Artigo</v-card-title>
 
     <v-form ref="formRef" @submit.prevent="submitForm">
+
       <v-row>
-        <v-col cols="8">
+
+        <v-col cols="6">
           <v-text-field v-model="form.titulo" label="Título" :rules="[rules.required]" variant="outlined"
             class="mb-3"></v-text-field>
-
           <v-text-field v-model="form.subTitulo" label="Subtítulo" :rules="[rules.required]" variant="outlined"
             class="mb-3"></v-text-field>
+          <v-col>
+            <v-card variant="outlined" class="pa-4 ">
+              <v-card-subtitle class="pa-0 mb-3">Imagem do Artigo</v-card-subtitle>
+              <v-file-upload v-model="form.imagem" label="Selecionar imagem" clearable show-size accept="image/*"
+                variant="outlined"></v-file-upload>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card variant="outlined" class="pa-4 h-100">
+              <v-card-subtitle class="pa-0 mb-3">Imagem do Banner</v-card-subtitle>
+              <v-file-upload v-model="form.banner" label="Selecionar imagem" clearable show-size accept="image/*"
+                variant="outlined"></v-file-upload>
+            </v-card>
+          </v-col>
+        </v-col>
 
-          <v-textarea v-model="form.conteudo" label="Conteúdo" rows="8" variant="outlined" class="mb-3"></v-textarea>
+        <v-col>
+          <v-textarea v-model="form.introducao" label="Introdução" rows="4" variant="outlined"
+            class="mb-3"></v-textarea>
+          <v-textarea v-model="form.conteudo" label="Conteúdo" rows="4" variant="outlined" class="mb-3"></v-textarea>
+          <v-textarea v-model="form.citacao" label="Citação" rows="4" variant="outlined" class="mb-3"></v-textarea>
+          <v-textarea v-model="form.conclusao" label="Conclusão" rows="4" variant="outlined" class="mb-3"></v-textarea>
 
-          <!-- <v-text-field
-            v-model="form.categoriaArtigoId"
-            label="Categoria ID"
-            :rules="[rules.required]"
-            variant="outlined"
-            class="mb-4"
-          ></v-text-field>
-           -->
-          {{ categoriasArtigoSelected.id }}
-          <v-combobox v-model="categoriasArtigoSelected" variant="outlined" label="Categoria"
-            :items="categoriasArtigo" item-title="nome" item-value="id"></v-combobox>
-                      <!-- <v-combobox v-model="selectedBase" :items="bases" item-title="name" label="Selecione uma base" item-value="id"
+          <v-combobox v-model="categoriasArtigoSelected" variant="outlined" label="Categoria" :items="categoriasArtigo"
+            item-title="nome" item-value="id"></v-combobox>
+          <!-- <v-combobox v-model="selectedBase" :items="bases" item-title="name" label="Selecione uma base" item-value="id"
             clearable class="mb-3"></v-combobox> -->
           <v-card variant="outlined" class="pa-4">
             <v-card-subtitle class="pa-0 mb-3">Configurações</v-card-subtitle>
@@ -42,13 +54,7 @@
           </v-card>
         </v-col>
 
-        <v-col cols="4">
-          <v-card variant="outlined" class="pa-4 h-100">
-            <v-card-subtitle class="pa-0 mb-3">Imagem do Artigo</v-card-subtitle>
-            <v-file-upload v-model="form.file" label="Selecionar imagem" clearable show-size accept="image/*"
-              variant="outlined"></v-file-upload>
-          </v-card>
-        </v-col>
+
       </v-row>
 
       <v-divider class="my-6"></v-divider>
@@ -86,8 +92,12 @@ const categoriasArtigoSelected = ref("")
 const form = ref({
   titulo: '',
   subTitulo: '',
+  introducao: '',
   conteudo: '',
-  file: null,
+  citacao: '',
+  conclusao: '',
+  imagem: null,
+  banner: null,
   ativo: true,
   isMobile: false,
   isDesktop: true,
@@ -102,7 +112,8 @@ const isFormValid = computed(() => {
   return form.value.titulo &&
     form.value.subTitulo &&
     categoriasArtigoSelected.value.id &&
-    form.value.file
+    form.value.imagem &&
+    form.value.banner
 })
 
 const submitForm = async () => {
@@ -120,15 +131,18 @@ const submitForm = async () => {
     formData.append('isDesktop', form.value.isDesktop.toString())
     formData.append('categoriaArtigoId', categoriasArtigoSelected.value.id)
 
-    if (form.value.file) {
-      formData.append('file', form.value.file)
+    if (form.value.imagem) {
+      formData.append('imagem', form.value.imagem)
+    }
+    if (form.value.banner) {
+      formData.append('banner', form.value.banner)
     }
 
     await artigoService.createArtigo(formData)
 
     toast.success('Artigo criado com sucesso!')
     setTimeout(() => {
-          router.push('/artigos/')
+      router.push('/artigos/')
 
     }, 2500)
 
@@ -141,9 +155,8 @@ const submitForm = async () => {
 }
 
 
-onMounted(async() => {
-  // Initialize any necessary data or state here
-  categoriasArtigo.value = await categoriaArtigoService.getAllCategoriasArtigo()
-  console.log('Categorias Artigo:', categoriasArtigo.value)
+onMounted(async () => {
+  const response = await categoriaArtigoService.getAllCategoriasArtigo()
+  categoriasArtigo.value = response.data || []
 })
 </script>

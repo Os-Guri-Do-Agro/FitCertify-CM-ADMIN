@@ -1,10 +1,10 @@
 <template>
-    <v-navigation-drawer v-model="layoutStore.drawer" :rail="layoutStore.rail" permanent
-        @click="layoutStore.rail && layoutStore.toggleRail()" class="clean-drawer" color="" rail-width="65">
+    <v-navigation-drawer  v-model="layoutStore.drawer" :rail="layoutStore.rail" permanent
+        @click="layoutStore.rail && layoutStore.toggleRail()" class="clean-drawer" color="" rail-width="65" style="position: fixed !important; height: 100vh !important; top: 0; left: 0;">
         <!-- Header -->
         <div class="pa-4 text-center header-section">
-            <v-avatar v-if="layoutStore.rail" size="36" color="blue-lighten-1">
-                <span class="text-white font-weight-bold text-body-1">FC</span>
+            <v-avatar v-if="layoutStore.rail" size="36" >
+                <v-img src="/favicon.png"/>
             </v-avatar>
 
             <div v-else>
@@ -40,7 +40,7 @@
                     <v-list-item v-for="item in footerMenuItem" :key="item.value" :prepend-icon="item.icon" :title="item.title"
                 :to="item.to" rounded="lg" class="mb-1 menu-item" :class="{ 'active-menu': $route.path === item.to }">
             </v-list-item>
-                   
+
                 </v-list>
             </div>
         </template>
@@ -58,8 +58,6 @@ const menuItems = [
     { icon: 'mdi-view-dashboard', title: 'Dashboard', value: 'dashboard', to: '/' },
     { icon: 'mdi-post-outline', title: 'Artigos', value: 'blog', to: '/artigos/' },
     { icon: 'mdi-store', title: 'Marketplace', value: 'marketplace', to: '/marketplace' },
-    { icon: 'mdi-account-group-outline', title: 'Usuários', value: 'users', to: '/users/' },
-    { icon: 'mdi-triangle-outline', title: 'Teste', value: 'teste', to: '/teste' },
 ]
 const footerMenuItem = [
     { icon: 'mdi-cog', title: 'Configurações', value: 'settings', to: '/settings' },
