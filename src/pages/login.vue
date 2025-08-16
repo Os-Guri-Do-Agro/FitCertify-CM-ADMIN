@@ -53,7 +53,6 @@
                 <a href="#" class="text-primary text-decoration-none">
                   Esqueceu a senha?
                 </a>
-                <v-btn @click="removeToken"></v-btn>
               </div>
             </v-form>
           </v-card-text>
