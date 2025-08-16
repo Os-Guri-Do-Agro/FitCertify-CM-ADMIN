@@ -170,8 +170,7 @@
         <!-- Actions -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex ga-2">
-            <v-btn icon="mdi-eye" size="small" variant="text" color="primary" @click="viewArticle(item)"></v-btn>
-            <v-btn icon="mdi-pencil" size="small" variant="text" color="warning" @click="editArticle(item)"></v-btn>
+            <v-btn icon="mdi-pencil" size="small" variant="text" color="warning" @click="editArticle(item.id)"></v-btn>
             <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="deleteArticle(item)"></v-btn>
           </div>
         </template>
@@ -225,7 +224,8 @@
 // import type IArtigo from '@/Interfaces/artigo-interface'
 import artigoService from '@/services/artigo/artigo-service'
 import { computed, onMounted, ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const search = ref('')
 const artigos = ref<any[]>([])
 const loading = ref(true)
@@ -255,12 +255,10 @@ const desktopCount = computed(
 )
 
 // Actions
-const viewArticle = (item: any) => {
-  console.log('Visualizar:', item)
-}
 
-const editArticle = (item: any) => {
-  console.log('Editar:', item)
+const editArticle = (id: any) => {
+  (window as any).editingArticleId = id
+  router.push('/artigos/editForm')
 }
 
 const deleteArticle = (item: any) => {

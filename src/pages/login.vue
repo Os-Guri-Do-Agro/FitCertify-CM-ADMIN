@@ -53,6 +53,7 @@
                 <a href="#" class="text-primary text-decoration-none">
                   Esqueceu a senha?
                 </a>
+                <v-btn @click="removeToken"></v-btn>
               </div>
             </v-form>
           </v-card-text>
@@ -64,21 +65,44 @@
 
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref } from 'vue'
 import authService from '@/services/auth/auth-service'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const data = ref( {
-  email: "",
-  senha: "",
-  isMobile: true
+  email: "nicolascastela4@gmail.com",
+  senha: "5Cervejas.",
+  isMobile: false
 })
 
   const login = async () => {
    const response =  await authService.login(data.value)
-   console.log(response)
-   sessionStorage.setItem('token', response.access_token)
+   if(response && response.access_token){
+    console.log('Login realizado com sucesso')
+    sessionStorage.setItem('token', response.access_token)
+
+    // Configurar logout automático quando token expirar
+    const payload = JSON.parse(atob(response.access_token.split('.')[1]))
+    const expirationTime = payload.exp * 1000 // Converter para milliseconds
+    const currentTime = Date.now()
+    const timeUntilExpiration = expirationTime - currentTime
+
+    if (timeUntilExpiration > 0) {
+      setTimeout(() => {
+        sessionStorage.removeItem('token')
+        router.push('/login')
+      }, timeUntilExpiration)
+    }
+
+    router.push('/')
+  }
 
    }
+
+   const removeToken = () => {
+     sessionStorage.removeItem('token')
+    }
+
 </script>
 
 <style scoped>

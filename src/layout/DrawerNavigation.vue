@@ -38,9 +38,10 @@
 
                 <v-list nav>
                     <v-list-item v-for="item in footerMenuItem" :key="item.value" :prepend-icon="item.icon" :title="item.title"
-                :to="item.to" rounded="lg" class="mb-1 menu-item" :class="{ 'active-menu': $route.path === item.to }">
-            </v-list-item>
-
+                        :to="item.click ? undefined : item.to" 
+                        @click="item.click ? item.click() : undefined"
+                        rounded="lg" class="mb-1 menu-item" :class="{ 'active-menu': $route.path === item.to }">
+                    </v-list-item>
                 </v-list>
             </div>
         </template>
@@ -61,6 +62,14 @@ const menuItems = [
 ]
 const footerMenuItem = [
     { icon: 'mdi-cog', title: 'Configurações', value: 'settings', to: '/settings' },
-    { icon: 'mdi-logout', title: 'Sair', value: 'exit', to: '/login' },
+    {
+        icon: 'mdi-logout',
+        title: 'Sair',
+        value: 'exit',
+        click: () => {
+            sessionStorage.removeItem('token')
+            window.location.href = '/login'
+        }
+    }
 ]
 </script>
