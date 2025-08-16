@@ -70,8 +70,8 @@ import authService from '@/services/auth/auth-service'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const data = ref( {
-  email: "nicolascastela4@gmail.com",
-  senha: "5Cervejas.",
+  email: "",
+  senha: "",
   isMobile: false
 })
 
@@ -81,9 +81,8 @@ const data = ref( {
     console.log('Login realizado com sucesso')
     sessionStorage.setItem('token', response.access_token)
 
-    // Configurar logout automático quando token expirar
     const payload = JSON.parse(atob(response.access_token.split('.')[1]))
-    const expirationTime = payload.exp * 1000 // Converter para milliseconds
+    const expirationTime = payload.exp * 1000
     const currentTime = Date.now()
     const timeUntilExpiration = expirationTime - currentTime
 
