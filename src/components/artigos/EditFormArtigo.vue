@@ -76,13 +76,13 @@
       <v-divider class="my-6"></v-divider>
 
       <v-row>
-        <v-col class="d-flex gap-3">
-          <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
-            {{ props.id ? 'Atualizar Artigo' : 'Criar Artigo' }}
-          </v-btn>
+        <v-col class="d-flex justify-space-between">
 
           <v-btn variant="outlined" @click="router.push('/artigos/')" size="large">
             Cancelar
+          </v-btn>
+          <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
+            {{ props.id ? 'Atualizar Artigo' : 'Criar Artigo' }}
           </v-btn>
         </v-col>
       </v-row>

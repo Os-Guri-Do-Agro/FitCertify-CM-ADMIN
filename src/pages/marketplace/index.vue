@@ -6,7 +6,7 @@
         <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4">
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
-              <v-icon icon="mdi-newspaper-variant" class="me-3" size="large"></v-icon>
+              <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
               Marketplaces
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
@@ -15,7 +15,7 @@
           </div>
           <router-link :to="{ path: '/marketplace/form' }">
             <v-btn color="primary" size="large" prepend-icon="mdi-plus" class="create-btn" elevation="2">
-              Criar Marketplace
+              Criar Produto
             </v-btn>
           </router-link>
         </div>
@@ -68,9 +68,9 @@
                 <v-icon icon="mdi-cellphone" color="white"></v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold">{{ mobileCount }}</div>
+                <div class="text-h5 font-weight-bold">{{ EspecialCondition }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Mobile Ready
+                  Condições Especiais Ativas
                 </div>
               </div>
             </div>
@@ -85,9 +85,9 @@
                 <v-icon icon="mdi-monitor" color="white"></v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold">{{ desktopCount }}</div>
+                <div class="text-h5 font-weight-bold">{{ CertificadoCount }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Desktop Ready
+                   Exclusivo Certificado Ativas
                 </div>
               </div>
             </div>
@@ -103,10 +103,10 @@
         <div class="d-flex flex-column flex-sm-row align-start align-sm-center ga-4 w-100">
           <div class="d-flex align-center">
             <v-icon icon="mdi-table" class="me-2" color="primary"></v-icon>
-            <span class="text-h6 font-weight-medium">Lista de Artigos</span>
+            <span class="text-h6 font-weight-medium">Lista de Produtos</span>
           </div>
           <v-spacer class="d-none d-sm-flex"></v-spacer>
-          <v-text-field v-model="search" density="comfortable" label="Buscar artigos..."
+          <v-text-field v-model="search" density="comfortable" label="Buscar Produtos..."
             prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line class="search-field"
             style="max-width: 300px"></v-text-field>
         </div>
@@ -125,7 +125,7 @@
         <!-- Foto -->
         <template v-slot:item.foto="{ item }">
           <v-avatar size="48" class="ma-2">
-            <v-img :src="item.fotoUrl" alt="foto artigo" cover>
+            <v-img :src="item.imagemUrl" alt="foto artigo" cover>
               <template v-slot:error>
                 <v-icon icon="mdi-image-broken" size="24"></v-icon>
               </template>
@@ -134,7 +134,7 @@
         </template>
 
         <template v-slot:item.categoria="{ item }">
-          {{ item.categoriaArtigo?.nome || 'Sem categoria' }}
+          {{ item.categoriaProduto?.nome || 'Sem categoria' }}
         </template>
         <!-- Mobile -->
 
@@ -219,13 +219,13 @@ const selectedArticle = ref<any | null>(null)
 const dialog = ref(false)
 const headers = [
   { title: 'Foto', key: 'foto', sortable: true, width: '100px' },
-  { title: 'Titulo', key: 'titulo',  },
-  { title: 'Categoria', key: 'descricao', sortable: false,  },
-  { title: 'Preco', key: 'preco', sortable: false, align: 'center' },
-  { title: 'Desconto', key: 'desconto', sortable: false, align: 'center' },
-  { title: 'Especial', key: 'condicaoEspecial', sortable: true, align: 'end' },
-  { title: 'Certificado', key: 'exclusivoParaCertificado', sortable: true, align: 'end'},
-  { title: 'Status', key: 'ativo', sortable: true,align: 'center' },
+  { title: 'Titulo', key: 'titulo' },
+  { title: 'Categoria', key: 'categoria', sortable: false },
+  { title: 'Preco', key: 'preco', sortable: false, align: "center" as const },
+  { title: 'Desconto', key: 'desconto', sortable: false, align: "center" as const },
+  { title: 'Especial', key: 'condicaoEspecial', sortable: true, align: "end" as const },
+  { title: 'Certificado', key: 'exclusivoParaCertificado', sortable: true, align: "end" as const },
+  { title: 'Status', key: 'ativo', sortable: true, align: "center" as const },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]
 
@@ -234,19 +234,19 @@ const activeCount = computed(
   () => produtos.value?.filter((produtos) => produtos.ativo).length || 0
 )
 
-const mobileCount = computed(
-  () => produtos.value?.filter((produtos) => produtos.isMobile).length || 0
+const EspecialCondition = computed(
+  () => produtos.value?.filter((produtos) => produtos.condicaoEspecial).length || 0
 )
 
-const desktopCount = computed(
-  () => produtos.value?.filter((produtos) => produtos.isDesktop).length || 0
+const CertificadoCount = computed(
+  () => produtos.value?.filter((produtos) => produtos.exclusivoParaCertificado).length || 0
 )
 
 // Actions
 
 const editArticle = (id: any) => {
   (window as any).editingArticleId = id
-  router.push('/artigos/editForm')
+  router.push('/marketplace/editForm')
 }
 
 const deleteArticle = (item: any) => {

@@ -5,11 +5,9 @@
  <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-newspaper-variant" class="me-3" size="large"></v-icon>
-              Criar Marketplace
+              Criar Produto
             </h1>
- <p class="text-subtitle-1 text-medium-emphasis mb-0">
-            Crie seus Marketplaces aqui
-            </p>
+
           </div>
           </v-col>
           <v-col cols="6" class="text-end">

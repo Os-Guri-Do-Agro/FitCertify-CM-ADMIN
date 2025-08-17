@@ -13,61 +13,68 @@
             class="mb-3"></v-text-field>
           <v-col>
             <v-card variant="outlined" class="pa-4 ">
-              <v-card-subtitle class="pa-0 mb-3">Imagem do Artigo</v-card-subtitle>
-              <v-file-upload v-model="form.imagem" label="Selecionar imagem" clearable show-size accept="image/*"
+              <v-card-subtitle class="pa-0 mb-3">Imagem do Produto</v-card-subtitle>
+              <v-file-upload v-model="form.file" label="Selecionar imagem" clearable show-size accept="image/*"
                 variant="outlined"></v-file-upload>
             </v-card>
           </v-col>
-          <v-col>
-            <v-card variant="outlined" class="pa-4 h-100">
-              <v-card-subtitle class="pa-0 mb-3">Imagem do Banner</v-card-subtitle>
-              <v-file-upload v-model="form.banner" label="Selecionar imagem" clearable show-size accept="image/*"
-                variant="outlined"></v-file-upload>
-            </v-card>
-          </v-col>
+
         </v-col>
 
         <v-col>
-          <v-textarea v-model="form.introducao" label="Introdução" rows="4" variant="outlined"
-            class="mb-3"></v-textarea>
-          <v-textarea v-model="form.conteudo" label="Conteúdo" rows="4" variant="outlined" class="mb-3"></v-textarea>
-          <v-textarea v-model="form.citacao" label="Citação" rows="4" variant="outlined" class="mb-3"></v-textarea>
-          <v-textarea v-model="form.conclusao" label="Conclusão" rows="4" variant="outlined" class="mb-3"></v-textarea>
-
-          <v-combobox v-model="categoriasArtigoSelected" variant="outlined" label="Categoria" :items="categoriasArtigo"
+          <v-textarea v-model="form.descricao" label="Descrição" rows="4" variant="outlined" class="mb-3"></v-textarea>
+          <v-textarea v-model="form.orientacao" label="Orientação " rows="4" variant="outlined" class="mb-3"></v-textarea>
+          <v-combobox v-model="categoriasProdutoSelected" variant="outlined" label="Categoria" :items="categoriasProduto"
+            item-title="nome" item-value="id"></v-combobox>
+            {{ categoriasEmpresaSelected.id }}
+          <v-combobox v-model="categoriasEmpresaSelected" variant="outlined" label="Empresa" :items="categoriasEmpresa"
             item-title="nome" item-value="id"></v-combobox>
           <!-- <v-combobox v-model="selectedBase" :items="bases" item-title="name" label="Selecione uma base" item-value="id"
             clearable class="mb-3"></v-combobox> -->
-          <v-card variant="outlined" class="pa-4">
+          <v-card variant="outlined" class="pa-2  ">
             <v-card-subtitle class="pa-0 mb-3">Configurações</v-card-subtitle>
             <v-row>
-              <v-col cols="4">
+              <v-col cols="2">
+
                 <v-switch color="primary" v-model="form.ativo" label="Ativo"></v-switch>
               </v-col>
               <v-col cols="4">
-                <v-switch color="primary" v-model="form.isMobile" label="Mobile"></v-switch>
+                <v-switch color="primary" v-model="form.condicaoEspecial" label="Condição Especial"></v-switch>
               </v-col>
-              <v-col cols="4">
-                <v-switch color="primary" v-model="form.isDesktop" label="Desktop"></v-switch>
+              <v-col cols="6">
+                <v-switch color="primary" v-model="form.exclusivoParaCertificado" label="Exclusivo para Certificado"></v-switch>
               </v-col>
+           <v-col cols="6">
+              <v-text-field v-model="form.preco" label="Preço" :rules="[rules.required]" variant="outlined"
+                class="mb-3"></v-text-field>
+
+           </v-col>
+             <v-col cols="6">
+              <v-text-field v-model="form.desconto" label="Desconto" :rules="[rules.required]" variant="outlined"
+                class="mb-3"></v-text-field>
+           </v-col>
+
             </v-row>
           </v-card>
         </v-col>
+        <v-col cols="12">
 
+        </v-col>
 
       </v-row>
 
       <v-divider class="my-6"></v-divider>
 
       <v-row>
-        <v-col class="d-flex gap-3">
-          <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
-            Criar Artigo
-          </v-btn>
-
-          <v-btn variant="outlined" @click="router.push('/artigos/')" size="large">
+        <v-col class="d-flex  justify-space-between ">
+          <v-btn variant="outlined" @click="router.push('/marketplace/')" size="large">
             Cancelar
           </v-btn>
+
+          <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
+            Criar Produto
+          </v-btn>
+
         </v-col>
       </v-row>
     </v-form>
@@ -78,30 +85,33 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
-import artigoService from '@/services/artigo/artigo-service'
-import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
+import produtoService from '@/services/marketplace/marketplace-service'
+// import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
+import empresaService from '@/services/empresa/empresa-service'
 import 'vue3-toastify/dist/index.css';
 
 
 const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
-const categoriasArtigo = ref([])
-const categoriasArtigoSelected = ref("")
+const categoriasProduto = ref([])
+const categoriasEmpresa = ref([])
+const categoriasProdutoSelected = ref("sadasdasdas1235wdsgsf")
+const categoriasEmpresaSelected = ref("")
 
 const form = ref({
   titulo: '',
   subTitulo: '',
-  introducao: '',
-  conteudo: '',
-  citacao: '',
-  conclusao: '',
-  imagem: null,
-  banner: null,
+  descricao : '',
+  orientacao : '',
+  preco : null,
+  desconto : null,
+  file: null,
   ativo: true,
-  isMobile: false,
-  isDesktop: true,
-  categoriaArtigoId: '',
+  condicaoEspecial : false,
+  exclusivoParaCertificado: false,
+  categoriaProdutoId: '',
+  empresaId: ''
 })
 
 const rules = {
@@ -110,10 +120,12 @@ const rules = {
 
 const isFormValid = computed(() => {
   return form.value.titulo &&
-    form.value.subTitulo &&
-    categoriasArtigoSelected.value.id &&
-    form.value.imagem &&
-    form.value.banner
+  form.value.descricao &&
+  form.value.subTitulo &&
+  form.value.orientacao &&
+    form.value.preco &&
+    form.value.desconto
+
 })
 
 const submitForm = async () => {
@@ -125,33 +137,33 @@ const submitForm = async () => {
     const formData = new FormData()
     formData.append('titulo', form.value.titulo)
     formData.append('subTitulo', form.value.subTitulo)
-    formData.append('introducao', form.value.introducao || '')
-    formData.append('conteudo', form.value.conteudo || '')
-    formData.append('citacao', form.value.citacao || '')
-    formData.append('conclusao', form.value.conclusao || '')
+    formData.append('descricao', form.value.descricao || '')
+    formData.append('orientacao', form.value.orientacao || '')
+    formData.append('preco', form.value.preco || 0)
+    formData.append('desconto', form.value.desconto || 0)
     formData.append('ativo', form.value.ativo.toString())
-    formData.append('isMobile', form.value.isMobile.toString())
-    formData.append('isDesktop', form.value.isDesktop.toString())
-    formData.append('categoriaArtigoId', categoriasArtigoSelected.value.id)
+    formData.append('condicaoEspecial', form.value.condicaoEspecial.toString())
+    formData.append('exclusivoParaCertificado', form.value.exclusivoParaCertificado.toString())
+    formData.append('categoriaProdutoId', "sadasdasdas1235wdsgsf")
+    formData.append('empresaId', categoriasEmpresaSelected.value.id)
 
-    if (form.value.imagem) {
-      formData.append('imagem', form.value.imagem)
-    }
-    if (form.value.banner) {
-      formData.append('banner', form.value.banner)
+    if (form.value.file) {
+      formData.append('file', form.value.file)
     }
 
-    await artigoService.createArtigo(formData)
+    console.log(formData)
 
-    toast.success('Artigo criado com sucesso!')
+    await produtoService.createProduto(formData)
+
+    toast.success('Produto criado com sucesso!')
     setTimeout(() => {
-      router.push('/artigos/')
+      router.push('/marketplace/')
 
     }, 2500)
 
   } catch (error) {
-    toast.error('Erro ao criar artigo')
-    console.error('Error creating artigo:', error)
+    toast.error('Erro ao criar Produto')
+    console.error('Error creating produto:', error)
   } finally {
     loading.value = false
   }
@@ -159,7 +171,8 @@ const submitForm = async () => {
 
 
 onMounted(async () => {
-  const response = await categoriaArtigoService.getAllCategoriasArtigo()
-  categoriasArtigo.value = response.data || []
+  const response = await empresaService.getAllEmpresas()
+  categoriasEmpresa.value = response.data || []
+  console.log(response)
 })
 </script>
