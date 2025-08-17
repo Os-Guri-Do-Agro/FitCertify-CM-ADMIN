@@ -23,6 +23,8 @@ declare module 'vue-router/auto-routes' {
     '/artigos/editForm': RouteRecordInfo<'/artigos/editForm', '/artigos/editForm', Record<never, never>, Record<never, never>>,
     '/artigos/form': RouteRecordInfo<'/artigos/form', '/artigos/form', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
-    '/users/': RouteRecordInfo<'/users/', '/users', Record<never, never>, Record<never, never>>,
+    '/marketplace/': RouteRecordInfo<'/marketplace/', '/marketplace', Record<never, never>, Record<never, never>>,
+    '/marketplace/editForm': RouteRecordInfo<'/marketplace/editForm', '/marketplace/editForm', Record<never, never>, Record<never, never>>,
+    '/marketplace/form': RouteRecordInfo<'/marketplace/form', '/marketplace/form', Record<never, never>, Record<never, never>>,
   }
 }
