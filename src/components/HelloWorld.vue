@@ -58,11 +58,11 @@
           <div class="chart-container" style="height: 300px; display: flex; align-items: center; justify-content: center;">
             <svg width="200" height="200" viewBox="0 0 200 200">
               <circle cx="100" cy="100" r="80" fill="none" stroke="#E3F2FD" stroke-width="20"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#2196F3" stroke-width="20" 
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#2196F3" stroke-width="20"
                       stroke-dasharray="251" stroke-dashoffset="75" transform="rotate(-90 100 100)"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#4CAF50" stroke-width="20" 
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#4CAF50" stroke-width="20"
                       stroke-dasharray="125" stroke-dashoffset="0" transform="rotate(90 100 100)"/>
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#FF9800" stroke-width="20" 
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#FF9800" stroke-width="20"
                       stroke-dasharray="63" stroke-dashoffset="0" transform="rotate(180 100 100)"/>
             </svg>
           </div>
@@ -85,24 +85,7 @@
     </v-row>
 
     <!-- Atividade Recente -->
-    <v-row class="mt-6">
-      <v-col cols="12">
-        <v-card class="pa-4" elevation="2">
-          <v-card-title class="text-h6 font-weight-bold mb-4">Atividade Recente</v-card-title>
-          <v-list>
-            <v-list-item v-for="activity in activities" :key="activity.id" class="px-0">
-              <template v-slot:prepend>
-                <v-avatar :color="activity.color" size="40">
-                  <v-icon :icon="activity.icon" color="white"></v-icon>
-                </v-avatar>
-              </template>
-              <v-list-item-title>{{ activity.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ activity.time }}</v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-    </v-row>
+
   </v-container>
 </template>
 

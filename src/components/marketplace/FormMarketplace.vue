@@ -26,7 +26,6 @@
           <v-textarea v-model="form.orientacao" label="Orientação " rows="4" variant="outlined" class="mb-3"></v-textarea>
           <v-combobox v-model="categoriasProdutoSelected" variant="outlined" label="Categoria" :items="categoriasProduto"
             item-title="nome" item-value="id"></v-combobox>
-            {{ categoriasEmpresaSelected.id }}
           <v-combobox v-model="categoriasEmpresaSelected" variant="outlined" label="Empresa" :items="categoriasEmpresa"
             item-title="nome" item-value="id"></v-combobox>
           <!-- <v-combobox v-model="selectedBase" :items="bases" item-title="name" label="Selecione uma base" item-value="id"
@@ -88,6 +87,7 @@ import { toast } from 'vue3-toastify'
 import produtoService from '@/services/marketplace/marketplace-service'
 // import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
 import empresaService from '@/services/empresa/empresa-service'
+import categoriaProdutoService from '@/services/categoria-produto/categoria-produto-service'
 import 'vue3-toastify/dist/index.css';
 
 
@@ -96,7 +96,7 @@ const loading = ref(false)
 const formRef = ref(null)
 const categoriasProduto = ref([])
 const categoriasEmpresa = ref([])
-const categoriasProdutoSelected = ref("sadasdasdas1235wdsgsf")
+const categoriasProdutoSelected = ref("")
 const categoriasEmpresaSelected = ref("")
 
 const form = ref({
@@ -144,7 +144,7 @@ const submitForm = async () => {
     formData.append('ativo', form.value.ativo.toString())
     formData.append('condicaoEspecial', form.value.condicaoEspecial.toString())
     formData.append('exclusivoParaCertificado', form.value.exclusivoParaCertificado.toString())
-    formData.append('categoriaProdutoId', "sadasdasdas1235wdsgsf")
+    formData.append('categoriaProdutoId', categoriasProdutoSelected.value.id)
     formData.append('empresaId', categoriasEmpresaSelected.value.id)
 
     if (form.value.file) {
@@ -171,8 +171,10 @@ const submitForm = async () => {
 
 
 onMounted(async () => {
-  const response = await empresaService.getAllEmpresas()
-  categoriasEmpresa.value = response.data || []
-  console.log(response)
+  const responseEmpresas = await empresaService.getAllEmpresas()
+  categoriasEmpresa.value = responseEmpresas.data || []
+  const responseCategoriaProduto = await categoriaProdutoService.getAllCategoriasProduto()
+  categoriasProduto.value = responseCategoriaProduto.data || []
+  console.log(categoriasProduto.value)
 })
 </script>

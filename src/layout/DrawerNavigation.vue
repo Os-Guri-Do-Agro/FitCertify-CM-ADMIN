@@ -38,7 +38,7 @@
 
                 <v-list nav>
                     <v-list-item v-for="item in footerMenuItem" :key="item.value" :prepend-icon="item.icon" :title="item.title"
-                        :to="item.click ? undefined : item.to" 
+                        :to="item.click ? undefined : item.to"
                         @click="item.click ? item.click() : undefined"
                         rounded="lg" class="mb-1 menu-item" :class="{ 'active-menu': $route.path === item.to }">
                     </v-list-item>
@@ -59,6 +59,7 @@ const menuItems = [
     { icon: 'mdi-view-dashboard', title: 'Dashboard', value: 'dashboard', to: '/' },
     { icon: 'mdi-post-outline', title: 'Artigos', value: 'blog', to: '/artigos/' },
     { icon: 'mdi-store', title: 'Marketplace', value: 'marketplace', to: '/marketplace' },
+    { icon: 'mdi-domain', title: 'Empresa', value: 'empresa', to: '/empresa' },
 ]
 const footerMenuItem = [
     { icon: 'mdi-cog', title: 'Configurações', value: 'settings', to: '/settings' },

@@ -7,15 +7,15 @@
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Marketplaces
+              Empresas
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos os Marketplaces
+              Gerencie todas as Empresas
             </p>
           </div>
-          <router-link :to="{ path: '/marketplace/form' }">
+          <router-link :to="{ path: '/empresa/form' }">
             <v-btn color="primary" size="large" prepend-icon="mdi-plus" class="create-btn" elevation="2">
-              Criar Produto
+              Criar Empresa
             </v-btn>
           </router-link>
         </div>
@@ -33,10 +33,10 @@
               </v-avatar>
               <div>
                 <div class="text-h5 font-weight-bold">
-                  {{ produtos?.length || 0 }}
+                  {{ empresa?.length || 0 }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Produtos
+                  Total de Empresas
                 </div>
               </div>
             </div>
@@ -53,47 +53,15 @@
               <div>
                 <div class="text-h5 font-weight-bold">{{ activeCount }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Produtos Ativos
+                  Empresas Ativos
                 </div>
               </div>
             </div>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" sm="6" md="3">
-        <v-card class="stats-card" elevation="2">
-          <v-card-text class="pa-4">
-            <div class="d-flex align-center">
-              <v-avatar color="info" class="me-3">
-                <v-icon icon="mdi-cellphone" color="white"></v-icon>
-              </v-avatar>
-              <div>
-                <div class="text-h5 font-weight-bold">{{ EspecialCondition }}</div>
-                <div class="text-caption text-medium-emphasis">
-                  Condições Especiais Ativas
-                </div>
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="6" md="3">
-        <v-card class="stats-card" elevation="2">
-          <v-card-text class="pa-4">
-            <div class="d-flex align-center">
-              <v-avatar color="warning" class="me-3">
-                <v-icon icon="mdi-monitor" color="white"></v-icon>
-              </v-avatar>
-              <div>
-                <div class="text-h5 font-weight-bold">{{ CertificadoCount }}</div>
-                <div class="text-caption text-medium-emphasis">
-                   Exclusivo Certificado Ativas
-                </div>
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
+
+
     </v-row>
 
     <!-- Main Content Card -->
@@ -115,7 +83,7 @@
       <v-divider></v-divider>
 
       <!-- Data Table -->
-      <v-data-table v-model:search="search" :filter-keys="['titulo']" :headers="headers" :items="produtos"
+      <v-data-table v-model:search="search" :filter-keys="['titulo']" :headers="headers" :items="empresa"
         :loading="loading" class="custom-table" hover>
         <!-- Loading -->
         <template v-slot:loading>
@@ -125,7 +93,7 @@
         <!-- Foto -->
         <template v-slot:item.foto="{ item }">
           <v-avatar size="48" class="ma-2">
-            <v-img :src="item.imagemUrl" alt="foto produto" cover>
+            <v-img :src="item.imagemUrl" alt="foto empresa" cover>
               <template v-slot:error>
                 <v-icon icon="mdi-image-broken" size="24"></v-icon>
               </template>
@@ -164,8 +132,8 @@
         <!-- Actions -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex ga-2">
-            <v-btn icon="mdi-pencil" size="small" variant="text" color="warning" @click="editMarketplace(item.id)"></v-btn>
-            <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="deleteMarketplace(item)"></v-btn>
+            <v-btn icon="mdi-pencil" size="small" variant="text" color="warning" @click="editCompanay(item.id)"></v-btn>
+            <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="deleteCompany(item)"></v-btn>
           </div>
         </template>
 
@@ -174,10 +142,10 @@
           <div class="text-center pa-8">
             <v-icon icon="mdi-newspaper-variant-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
             <div class="text-h6 text-medium-emphasis mb-2">
-              Nenhum Produto encontrado
+              Nenhuma empresa encontrado
             </div>
             <div class="text-body-2 text-medium-emphasis">
-              Comece criando seu primeiro Produto
+              Comece criando sua primeira Empresa
             </div>
           </div>
         </template>
@@ -189,7 +157,7 @@
 
   <v-dialog v-model="dialog" max-width="400" persistent>
 
-    <v-card prepend-icon="mdi-post-outline" text="Deseja excluir este Produto?" title="Confirmação de Exclusão">
+    <v-card prepend-icon="mdi-post-outline" text="Deseja excluir este empresa?" title="Confirmação de Exclusão">
       <template v-slot:actions>
         <v-spacer></v-spacer>
 
@@ -207,87 +175,66 @@
 </template>
 
 <script setup lang="ts">
-import produtoService from '@/services/marketplace/marketplace-service'
+import empresaService from '@/services/empresa/empresa-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const search = ref('')
-const produtos = ref<any[]>([])
+const empresa = ref<any[]>([])
 const loading = ref(true)
-const selectedMarketplace = ref<any | null>(null)
+const selectedCompany = ref<any | null>(null)
 const dialog = ref(false)
 const headers = [
-  { title: 'Foto', key: 'foto', sortable: true, width: '100px' },
-  { title: 'Titulo', key: 'titulo' },
-  { title: 'Categoria', key: 'categoria', sortable: false },
-  { title: 'Preco', key: 'preco', sortable: false, align: "center" as const },
-  { title: 'Desconto', key: 'desconto', sortable: false, align: "center" as const },
-  { title: 'Especial', key: 'condicaoEspecial', sortable: true, align: "end" as const },
-  { title: 'Certificado', key: 'exclusivoParaCertificado', sortable: true, align: "end" as const },
+  { title: 'Foto', key: 'logoUrl', sortable: true, width: '100px' },
+  { title: 'Titulo', key: 'nome' },
+  { title: 'Titulo', key: 'sobre', width: '500px  ' },
   { title: 'Status', key: 'ativo', sortable: true, align: "center" as const },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]
 
 // Computed stats
 const activeCount = computed(
-  () => produtos.value?.filter((produtos) => produtos.ativo).length || 0
-)
-
-const EspecialCondition = computed(
-  () => produtos.value?.filter((produtos) => produtos.condicaoEspecial).length || 0
-)
-
-const CertificadoCount = computed(
-  () => produtos.value?.filter((produtos) => produtos.exclusivoParaCertificado).length || 0
+  () => empresa.value?.filter((empresa) => empresa.ativo).length || 0
 )
 
 // Actions
 
-const editMarketplace = (id: any) => {
-  (window as any).editingProdutoId = id
-  router.push('/marketplace/editForm')
+const editCompanay = (id: any) => {
+  (window as any).editingEmpresaId = id
+  router.push('/empresa/editForm')
 }
 
-const deleteMarketplace = (item: any) => {
-  selectedMarketplace.value = item
+const deleteCompany = (item: any) => {
+  selectedCompany.value = item
   dialog.value = true
 }
 
 
 const confirmDelete = async () => {
-  if (!selectedMarketplace.value) return
+  if (!selectedCompany.value) return
 
   try {
-    await produtoService.deleteProduto(selectedMarketplace.value.id)
-    produtos.value = produtos.value.filter(a => a.id !== selectedMarketplace.value?.id)
-    console.log('Produto excluído com sucesso')
+    await empresaService.deleteEmpresa(selectedCompany.value.id)
+    empresa.value = empresa.value.filter(a => a.id !== selectedCompany.value?.id)
+    console.log('Empresa excluído com sucesso')
   } catch (error) {
-    console.error('Erro ao excluir Produto:', error)
+    console.error('Erro ao excluir Empresa:', error)
   } finally {
     dialog.value = false
-    selectedMarketplace.value = null
+    selectedCompany.value = null
   }
 }
 
 onMounted(async () => {
   try {
-    const response = await produtoService.getAllProdutos()
+    const response = await empresaService.getAllEmpresas()
     console.log(response)
-    produtos.value = Array.isArray(response.data)
-      ? response.data.map((produto: any) => {
-        // Procura a primeira imagem onde isBanner é false
-        const imgNaoBanner = produto.imagensArtigo?.find(
-          (img: any) => img.isBanner === false
-        )
+    empresa.value = Array.isArray(response.data) ? response.data : []
+    console.log(empresa.value)
 
-        return {
-          ...produto,
-          fotoUrl: imgNaoBanner ? imgNaoBanner.imagemUrl : null
-        }
-      })
-      : []
+
   } catch (error) {
-    console.error('Erro ao carregar Produtos:', error)
+    console.error('Erro ao carregar empresas:', error)
   } finally {
     loading.value = false
   }

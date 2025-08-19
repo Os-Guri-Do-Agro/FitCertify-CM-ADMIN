@@ -184,7 +184,7 @@ const submitForm = async () => {
       toast.success('Artigo atualizado com sucesso!')
     } else {
       await artigoService.createArtigo(formData)
-      toast.success('Artigo criado com sucesso!')
+      toast.success('Artigo atualizado com sucesso!')
     }
 
     setTimeout(() => {
@@ -222,7 +222,6 @@ const loadArtigo = async () => {
       isDesktop: artigo.isDesktop,
       categoriaArtigoId: artigo.categoriaArtigoId || ''
     }
-    console.log(form.value)
 
     categoriasArtigoSelected.value = artigo.categoriaArtigo || ''
 

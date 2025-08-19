@@ -1,6 +1,6 @@
 <template>
   <v-card class="pa-6">
-    <v-card-title class="text-h5 mb-4">{{ props.id ? 'Editar Artigo' : 'Criar Novo Artigo' }}</v-card-title>
+    <v-card-title class="text-h5 mb-4">Criar Novo Marketplace</v-card-title>
 
     <v-form ref="formRef" @submit.prevent="submitForm">
 
@@ -13,77 +13,75 @@
             class="mb-3"></v-text-field>
           <v-col>
             <v-card variant="outlined" class="pa-4">
-              <v-card-subtitle class="pa-0 mb-3">Imagem do Artigo</v-card-subtitle>
+              <v-card-subtitle class="pa-0 mb-3">Imagem do Produto</v-card-subtitle>
 
-              <div v-if="imagePreview.imagem && !editingImage.imagem" class="text-center">
-                <v-img :src="imagePreview.imagem" max-height="200" class="mb-3"></v-img>
-                <v-btn @click="editingImage.imagem = true" color="primary" variant="outlined" size="small">
+              <div v-if="imagePreview && !editingImage" class="text-center">
+                <v-img :src="imagePreview" max-height="200" class="mb-3"></v-img>
+                <v-btn @click="editingImage = true" color="primary" variant="outlined" size="small">
                   Alterar Imagem
                 </v-btn>
               </div>
 
-              <v-file-upload v-else v-model="form.imagem" label="Selecionar imagem" clearable show-size accept="image/*"
+              <v-file-upload v-else v-model="form.file" label="Selecionar imagem" clearable show-size accept="image/*"
                 variant="outlined"></v-file-upload>
             </v-card>
           </v-col>
-          <v-col>
-            <v-card variant="outlined" class="pa-4 h-100">
-              <v-card-subtitle class="pa-0 mb-3">Imagem do Banner</v-card-subtitle>
 
-              <div v-if="imagePreview.banner && !editingImage.banner" class="text-center">
-                <v-img :src="imagePreview.banner" max-height="200" class="mb-3"></v-img>
-                <v-btn @click="editingImage.banner = true" color="primary" variant="outlined" size="small">
-                  Alterar Banner
-                </v-btn>
-              </div>
-
-              <v-file-upload v-else v-model="form.banner" label="Selecionar imagem" clearable show-size accept="image/*"
-                variant="outlined"></v-file-upload>
-            </v-card>
-          </v-col>
         </v-col>
 
         <v-col>
-          <v-textarea v-model="form.introducao" label="Introdução" rows="4" variant="outlined"
-            class="mb-3"></v-textarea>
-          <v-textarea v-model="form.conteudo" label="Conteúdo" rows="4" variant="outlined" class="mb-3"></v-textarea>
-          <v-textarea v-model="form.citacao" label="Citação" rows="4" variant="outlined" class="mb-3"></v-textarea>
-          <v-textarea v-model="form.conclusao" label="Conclusão" rows="4" variant="outlined" class="mb-3"></v-textarea>
-
-          <v-combobox v-model="categoriasArtigoSelected" variant="outlined" label="Categoria" :items="categoriasArtigo"
+          <v-textarea v-model="form.descricao" label="Descrição" rows="4" variant="outlined" class="mb-3"></v-textarea>
+          <v-textarea v-model="form.orientacao" label="Orientação " rows="4" variant="outlined" class="mb-3"></v-textarea>
+          <v-combobox v-model="categoriasProdutoSelected" variant="outlined" label="Categoria" :items="categoriasProduto"
+            item-title="nome" item-value="id"></v-combobox>
+          <v-combobox v-model="categoriasEmpresaSelected" variant="outlined" label="Empresa" :items="categoriasEmpresa"
             item-title="nome" item-value="id"></v-combobox>
           <!-- <v-combobox v-model="selectedBase" :items="bases" item-title="name" label="Selecione uma base" item-value="id"
             clearable class="mb-3"></v-combobox> -->
-          <v-card variant="outlined" class="pa-4">
+          <v-card variant="outlined" class="pa-2  ">
             <v-card-subtitle class="pa-0 mb-3">Configurações</v-card-subtitle>
             <v-row>
-              <v-col cols="4">
+              <v-col cols="2">
+
                 <v-switch color="primary" v-model="form.ativo" label="Ativo"></v-switch>
               </v-col>
               <v-col cols="4">
-                <v-switch color="primary" v-model="form.isMobile" label="Mobile"></v-switch>
+                <v-switch color="primary" v-model="form.condicaoEspecial" label="Condição Especial"></v-switch>
               </v-col>
-              <v-col cols="4">
-                <v-switch color="primary" v-model="form.isDesktop" label="Desktop"></v-switch>
+              <v-col cols="6">
+                <v-switch color="primary" v-model="form.exclusivoParaCertificado" label="Exclusivo para Certificado"></v-switch>
               </v-col>
+           <v-col cols="6">
+              <v-text-field v-model="form.preco" label="Preço" :rules="[rules.required]" variant="outlined"
+                class="mb-3"></v-text-field>
+
+           </v-col>
+             <v-col cols="6">
+              <v-text-field v-model="form.desconto" label="Desconto" :rules="[rules.required]" variant="outlined"
+                class="mb-3"></v-text-field>
+           </v-col>
+
             </v-row>
           </v-card>
         </v-col>
+        <v-col cols="12">
 
+        </v-col>
 
       </v-row>
 
       <v-divider class="my-6"></v-divider>
 
       <v-row>
-        <v-col class="d-flex gap-3">
-          <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
-            {{ props.id ? 'Atualizar Artigo' : 'Criar Artigo' }}
-          </v-btn>
-
-          <v-btn variant="outlined" @click="router.push('/artigos/')" size="large">
+        <v-col class="d-flex  justify-space-between ">
+          <v-btn variant="outlined" @click="router.push('/marketplace/')" size="large">
             Cancelar
           </v-btn>
+
+          <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
+            Editar Produto
+          </v-btn>
+
         </v-col>
       </v-row>
     </v-form>
@@ -94,44 +92,44 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
-import artigoService from '@/services/artigo/artigo-service'
-import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
+import produtoService from '@/services/marketplace/marketplace-service'
+// import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
+import empresaService from '@/services/empresa/empresa-service'
 import 'vue3-toastify/dist/index.css';
-
-const props = defineProps({
-  id: String
-})
+import marketplaceService from '@/services/marketplace/marketplace-service'
+import categoriaProdutoService from '@/services/categoria-produto/categoria-produto-service'
 
 
 const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
-const categoriasArtigo = ref([])
-const categoriasArtigoSelected = ref("")
+const categoriasProduto = ref([])
+const categoriasEmpresa = ref([])
+const categoriasProdutoSelected = ref("")
+const categoriasEmpresaSelected = ref("")
+
+const imagePreview = ref(null)
+const editingImage = ref(false)
+
+const props = defineProps({
+  id: String
+
+})
+
 
 const form = ref({
   titulo: '',
   subTitulo: '',
-  introducao: '',
-  conteudo: '',
-  citacao: '',
-  conclusao: '',
-  imagem: null,
-  banner: null,
+  descricao : '',
+  orientacao : '',
+  preco : null,
+  desconto : null,
+  file: null,
   ativo: true,
-  isMobile: false,
-  isDesktop: true,
-  categoriaArtigoId: '',
-})
-
-const imagePreview = ref({
-  imagem: null,
-  banner: null
-})
-
-const editingImage = ref({
-  imagem: false,
-  banner: false
+  condicaoEspecial : false,
+  exclusivoParaCertificado: false,
+  categoriaProdutoId: '',
+  empresaId: ''
 })
 
 const rules = {
@@ -139,14 +137,17 @@ const rules = {
 }
 
 const isFormValid = computed(() => {
-  const hasImages = props.id ?
-    (imagePreview.value.imagem || form.value.imagem) && (imagePreview.value.banner || form.value.banner) :
-    form.value.imagem && form.value.banner
+  const hasImage = props.id ?
+    (imagePreview.value || form.value.file) :
+    form.value.file
 
   return form.value.titulo &&
+    form.value.descricao &&
     form.value.subTitulo &&
-    categoriasArtigoSelected.value.id &&
-    hasImages
+    form.value.orientacao &&
+    form.value.preco &&
+    form.value.desconto &&
+    hasImage
 })
 
 const submitForm = async () => {
@@ -155,101 +156,88 @@ const submitForm = async () => {
 
   loading.value = true
   try {
-
-    // introducao: '',
-  // conteudo: '',
-  // citacao: '',
-  // conclusao: '',
     const formData = new FormData()
     formData.append('titulo', form.value.titulo)
     formData.append('subTitulo', form.value.subTitulo)
-    formData.append('introducao', form.value.introducao || '')
-    formData.append('conteudo', form.value.conteudo || '')
-    formData.append('citacao', form.value.citacao || '')
-    formData.append('conclusao', form.value.conclusao || '')
+    formData.append('descricao', form.value.descricao || '')
+    formData.append('orientacao', form.value.orientacao || '')
+    formData.append('preco', form.value.preco || 0)
+    formData.append('desconto', form.value.desconto || 0)
     formData.append('ativo', form.value.ativo.toString())
-    formData.append('isMobile', form.value.isMobile.toString())
-    formData.append('isDesktop', form.value.isDesktop.toString())
-    formData.append('categoriaArtigoId', categoriasArtigoSelected.value.id)
+    formData.append('condicaoEspecial', form.value.condicaoEspecial.toString())
+    formData.append('exclusivoParaCertificado', form.value.exclusivoParaCertificado.toString())
+    formData.append('categoriaProdutoId', categoriasProdutoSelected.value.id)
+    formData.append('empresaId', categoriasEmpresaSelected.value.id)
 
-    if (form.value.imagem) {
-      formData.append('imagem', form.value.imagem)
-    }
-    if (form.value.banner) {
-      formData.append('banner', form.value.banner)
+    if (form.value.file) {
+      formData.append('file', form.value.file)
     }
 
-    if (props.id) {
-      await artigoService.updateArtigo(props.id, formData)
-      toast.success('Artigo atualizado com sucesso!')
-    } else {
-      await artigoService.createArtigo(formData)
-      toast.success('Artigo criado com sucesso!')
-    }
+    console.log(formData)
 
+    await produtoService.updateProduto(props.id, formData)
+
+    toast.success('Produto criado com sucesso!')
     setTimeout(() => {
-      router.push('/artigos/')
+      router.push('/marketplace/')
+
     }, 2500)
 
   } catch (error) {
-    toast.error(props.id ? 'Erro ao atualizar artigo' : 'Erro ao criar artigo')
-    console.error('Error submitting artigo:', error)
+    toast.error('Erro ao criar Produto')
+    console.error('Error creating produto:', error)
   } finally {
     loading.value = false
   }
 }
 
-
-const loadArtigo = async () => {
-  if (!props.id) return
+const loadProdutos = async () => {
+if (!props.id) return
 
   try {
-    const response = await artigoService.getArtigosById(props.id)
-    const artigo = response.data
-    console.log(artigo)
+    const response = await marketplaceService.getProdutosById(props.id)
+    const produto = response.data
+    console.log(produto)
 
-    form.value = {
-      titulo: artigo.titulo || '',
-      subTitulo: artigo.subTitulo || '',
-      introducao: artigo.introducao || '',
-      conteudo: artigo.conteudo || '',
-      citacao: artigo.citacao || '',
-      conclusao: artigo.conclusao || '',
-      imagem: null,
-      banner: null,
-      ativo: artigo.ativo,
-      isMobile: artigo.isMobile,
-      isDesktop: artigo.isDesktop,
-      categoriaArtigoId: artigo.categoriaArtigoId || ''
-    }
-    console.log(form.value)
+form.value = {
+   titulo:produto.titulo || '',
+  subTitulo: produto.subTitulo || '',
+  descricao : produto.descricao || '',
+  orientacao : produto.orientacao || '',
+  preco : produto.preco || null,
+  desconto : produto.desconto || null,
+  file: null,
+  ativo: produto.ativo,
+  condicaoEspecial : produto.condicaoEspecial || false,
+  exclusivoParaCertificado: produto.exclusivoParaCertificado || false,
+  categoriaProdutoId: produto.categoriaProdutoId || '',
+  empresaId: produto.empresaId || ''
+}
 
-    categoriasArtigoSelected.value = artigo.categoriaArtigo || ''
+// Definir preview da imagem
+imagePreview.value = produto.imagemUrl || null
+categoriasProdutoSelected.value = produto.categoriaProduto || ''
+categoriasEmpresaSelected.value = produto.empresa || ''
 
-    // Definir previews das imagens
-    imagePreview.value.imagem = artigo.imagensArtigo.find(img => img.isBanner === false)?.imagemUrl || null
-    imagePreview.value.banner = artigo.imagensArtigo.find(img => img.isBanner === true)?.imagemUrl || null
-  } catch (error) {
-    toast.error('Erro ao carregar artigo')
+}catch (error) {
+    toast.error('Erro ao carregar Produto')
   }
 }
 
+
 watch(() => props.id, (newId) => {
   if (newId) {
-    loadArtigo()
+    loadProdutos()
   }
 })
-
 onMounted(async () => {
-  try {
-    const response = await categoriaArtigoService.getAllCategoriasArtigo()
-    categoriasArtigo.value = response.data || []
-  } catch (error) {
-    console.error('Erro ao carregar categorias:', error)
-  }
-
+  const responseEmpresas = await empresaService.getAllEmpresas()
+  categoriasEmpresa.value = responseEmpresas.data || []
+ const responseCategoriaProduto = await categoriaProdutoService.getAllCategoriasProduto()
+  categoriasProduto.value = responseCategoriaProduto.data || []
+    console.log(props.id)
   if (props.id) {
-    await loadArtigo()
+    await loadProdutos()
   }
 })
 </script>

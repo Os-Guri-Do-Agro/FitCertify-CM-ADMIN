@@ -9,10 +9,12 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     EditFormArtigo: typeof import('./components/artigos/EditFormArtigo.vue')['default']
+    EditFormEmpresa: typeof import('./components/empresa/EditFormEmpresa.vue')['default']
     EditFormMarketplace: typeof import('./components/marketplace/EditFormMarketplace.vue')['default']
     EditFormMarketPlace: typeof import('./components/marketplace/EditFormMarketPlace.vue')['default']
     Form: typeof import('./components/artigos/FormArtigo.vue')['default']
     FormArtigo: typeof import('./components/artigos/FormArtigo.vue')['default']
+    FormEmpresa: typeof import('./components/empresa/FormEmpresa.vue')['default']
     FormMarketplace: typeof import('./components/marketplace/FormMarketplace.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
