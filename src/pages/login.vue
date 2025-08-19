@@ -1,16 +1,19 @@
 <template>
-  <v-container fluid class="fill-height pa-0 d-flex align-center justify-center background-image">
+  <v-container
+    fluid
+    class="fill-height pa-0 d-flex align-center justify-center background-image"
+  >
     <v-row class="justify-center align-center w-100 h-100 ma-0">
       <v-col cols="12" sm="8" md="4">
         <v-card elevation="10" rounded="xl" class="pa-6">
           <v-card-title class="text-center d-flex flex-column align-center">
-            <v-img
+            <!-- <v-img
               src="/src/assets/Camada_1.png"
               alt="Logo"
               width="150"
               class="mb-3"
               contain
-            ></v-img>
+            ></v-img> -->
             <div class="text-h6 font-weight-medium text-grey-darken-2">
               Bem-vindo de volta
             </div>
@@ -21,7 +24,6 @@
               <v-text-field
                 label="Email"
                 v-model="data.email"
-
                 prepend-inner-icon="mdi-email"
                 variant="outlined"
                 density="comfortable"
@@ -62,21 +64,20 @@
   </v-container>
 </template>
 
-
 <script setup lang="ts">
-import { ref } from 'vue'
 import authService from '@/services/auth/auth-service'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-const data = ref( {
-  email: "",
-  senha: "",
-  isMobile: false
+const data = ref({
+  email: '',
+  senha: '',
+  isMobile: false,
 })
 
-  const login = async () => {
-   const response =  await authService.login(data.value)
-   if(response && response.access_token){
+const login = async () => {
+  const response = await authService.login(data.value)
+  if (response && response.access_token) {
     console.log('Login realizado com sucesso')
     sessionStorage.setItem('token', response.access_token)
 
@@ -94,13 +95,11 @@ const data = ref( {
 
     router.push('/')
   }
+}
 
-   }
-
-   const removeToken = () => {
-     sessionStorage.removeItem('token')
-    }
-
+const removeToken = () => {
+  sessionStorage.removeItem('token')
+}
 </script>
 
 <style scoped>

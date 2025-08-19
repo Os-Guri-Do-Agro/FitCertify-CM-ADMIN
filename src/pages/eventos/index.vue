@@ -12,10 +12,10 @@
               Empresas
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todas as Empresas
+              Gerencie todas os Eventos
             </p>
           </div>
-          <router-link :to="{ path: '/empresa/form' }">
+          <router-link :to="{ path: '/evento/form' }">
             <v-btn
               color="primary"
               size="large"
@@ -23,7 +23,7 @@
               class="create-btn"
               elevation="2"
             >
-              Criar Empresa
+              Criar Evento
             </v-btn>
           </router-link>
         </div>
@@ -41,10 +41,10 @@
               </v-avatar>
               <div>
                 <div class="text-h5 font-weight-bold">
-                  {{ empresa?.length || 0 }}
+                  {{ evento?.length || 0 }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Empresas
+                  Total de Eventos
                 </div>
               </div>
             </div>
@@ -61,7 +61,7 @@
               <div>
                 <div class="text-h5 font-weight-bold">{{ activeCount }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Empresas Ativos
+                  Eventos Ativos
                 </div>
               </div>
             </div>
@@ -79,13 +79,13 @@
         >
           <div class="d-flex align-center">
             <v-icon icon="mdi-table" class="me-2" color="primary"></v-icon>
-            <span class="text-h6 font-weight-medium">Lista de Produtos</span>
+            <span class="text-h6 font-weight-medium">Lista de Eventos</span>
           </div>
           <v-spacer class="d-none d-sm-flex"></v-spacer>
           <v-text-field
             v-model="search"
             density="comfortable"
-            label="Buscar Produtos..."
+            label="Buscar Eventos..."
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
             hide-details
@@ -103,7 +103,7 @@
         v-model:search="search"
         :filter-keys="['titulo']"
         :headers="headers"
-        :items="empresa"
+        :items="evento"
         :loading="loading"
         class="custom-table"
         hover
@@ -114,9 +114,9 @@
         </template>
 
         <!-- Foto -->
-        <template v-slot:item.logoUrl="{ item }">
+        <template v-slot:item.imagemUrl="{ item }">
           <v-avatar size="48" class="ma-2">
-            <v-img :src="item.logoUrl" alt="foto empresa" cover>
+            <v-img :src="item.imagemUrl" alt="foto evento" cover>
               <template v-slot:error>
                 <v-icon icon="mdi-image-broken" size="24"></v-icon>
               </template>
@@ -124,24 +124,9 @@
           </v-avatar>
         </template>
 
-        <template v-slot:item.categoria="{ item }">
-          {{ item.categoriaProduto?.nome || 'Sem categoria' }}
+        <template v-slot:item.data="{ item }">
+          <p>{{ new Date(item.data).toLocaleDateString('pt-BR') }}</p>
         </template>
-        <!-- Mobile -->
-
-        <!-- <template v-slot:item.condicaoEspecial="{ item }">
-          <v-chip :color="item.condicaoEspecial ? 'success' : 'warning'"
-            :prepend-icon="item.condicaoEspecial ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
-            {{ item.condicaoEspecial ? 'Ativo' : 'Inativo' }}
-          </v-chip>
-        </template> -->
-        <!-- <template v-slot:item.exclusivoParaCertificado="{ item }">
-          <v-chip :color="item.exclusivoParaCertificado ? 'success' : 'warning'"
-            :prepend-icon="item.exclusivoParaCertificado ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small"
-            variant="flat">
-            {{ item.exclusivoParaCertificado ? 'Ativo' : 'Inativo' }}
-          </v-chip>
-        </template> -->
 
         <template v-slot:item.ativo="{ item }">
           <v-chip
@@ -162,7 +147,7 @@
               size="small"
               variant="text"
               color="warning"
-              @click="editCompanay(item.id)"
+              @click="editEvento(item.id)"
             ></v-btn>
             <v-btn
               icon="mdi-delete"
@@ -184,10 +169,10 @@
               class="mb-4"
             ></v-icon>
             <div class="text-h6 text-medium-emphasis mb-2">
-              Nenhuma empresa encontrado
+              Nenhum evento encontrado
             </div>
             <div class="text-body-2 text-medium-emphasis">
-              Comece criando sua primeira Empresa
+              Comece criando seu primeiro Evento
             </div>
           </div>
         </template>
@@ -198,7 +183,7 @@
   <v-dialog v-model="dialog" max-width="400" persistent>
     <v-card
       prepend-icon="mdi-post-outline"
-      text="Deseja excluir este empresa?"
+      text="Deseja excluir este evento?"
       title="Confirmação de Exclusão"
     >
       <template v-slot:actions>
@@ -213,63 +198,62 @@
 </template>
 
 <script setup lang="ts">
-import empresaService from '@/services/empresa/empresa-service'
+import eventoService from '@/services/evento/evento-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const search = ref('')
-const empresa = ref<any[]>([])
+const evento = ref<any[]>([])
 const loading = ref(true)
-const selectedCompany = ref<any | null>(null)
+const selectedEvento = ref<any | null>(null)
 const dialog = ref(false)
 const headers = [
-  { title: 'Logo', key: 'logoUrl', sortable: false, width: '100px' },
-  { title: 'Nome', key: 'nome' },
-  { title: 'Sobre', key: 'sobre', width: '500px' },
-  { title: 'Status', key: 'ativo', sortable: true, align: 'center' as const },
+  { title: 'Imagem', key: 'imagemUrl', sortable: false, width: '100px' },
+  { title: 'Titulo', key: 'titulo', align: 'center' as const },
+  { title: 'Local', key: 'local', align: 'center' as const },
+  { title: 'Data', key: 'data', align: 'center' as const },
+  { title: 'Status', key: 'ativo', sortable: true },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]
 
 // Computed stats
 const activeCount = computed(
-  () => empresa.value?.filter((empresa) => empresa.ativo).length || 0
+  () => evento.value?.filter((evento) => evento.ativo).length || 0
 )
 
 // Actions
 
-const editCompanay = (id: any) => {
-  ;(window as any).editingEmpresaId = id
-  router.push('/empresa/editForm')
+const editEvento = (id: any) => {
+  ;(window as any).editingEventoId = id
+  router.push('/evento/editForm')
 }
 
 const deleteCompany = (item: any) => {
-  selectedCompany.value = item
+  selectedEvento.value = item
   dialog.value = true
 }
 
 const confirmDelete = async () => {
-  if (!selectedCompany.value) return
+  if (!selectedEvento.value) return
 
   try {
-    await empresaService.deleteEmpresa(selectedCompany.value.id)
-    empresa.value = empresa.value.filter(
-      (a) => a.id !== selectedCompany.value?.id
-    )
-    console.log('Empresa excluído com sucesso')
+    await eventoService.deleteEvento(selectedEvento.value.id)
+    evento.value = evento.value.filter((a) => a.id !== selectedEvento.value?.id)
+    console.log('Evento excluído com sucesso')
   } catch (error) {
     console.error('Erro ao excluir Empresa:', error)
   } finally {
     dialog.value = false
-    selectedCompany.value = null
+    selectedEvento.value = null
   }
 }
 
 onMounted(async () => {
   try {
-    const response = await empresaService.getAllEmpresas()
+    const response = await eventoService.getAllEventos()
     console.log(response)
-    empresa.value = Array.isArray(response.data) ? response.data : []
-    console.log(empresa.value)
+    evento.value = Array.isArray(response.data) ? response.data : []
+    console.log(evento.value)
   } catch (error) {
     console.error('Erro ao carregar empresas:', error)
   } finally {
