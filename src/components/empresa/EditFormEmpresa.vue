@@ -28,9 +28,17 @@
         </v-col>
 
         <v-col>
-          <v-card variant="outlined" class="pa-4 ">
+          <v-card variant="outlined" class="pa-4">
             <v-card-subtitle class="pa-0 mb-3">Imagem da Empresa</v-card-subtitle>
-            <v-file-upload v-model="form.logoUrl" label="Selecionar imagem" clearable show-size accept="image/*"
+
+            <div v-if="imagePreview && !editingImage" class="text-center">
+              <v-img :src="imagePreview" max-height="200" class="mb-3"></v-img>
+              <v-btn @click="editingImage = true" color="primary" variant="outlined" size="small">
+                Alterar Imagem
+              </v-btn>
+            </div>
+
+            <v-file-upload v-else v-model="form.logoUrl" label="Selecionar imagem" clearable show-size accept="image/*"
               variant="outlined"></v-file-upload>
           </v-card>
         </v-col>
@@ -73,6 +81,9 @@ const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
 
+const imagePreview = ref(null)
+const editingImage = ref(false)
+
 const form = ref({
   nome: '',
   sobre: '',
@@ -85,10 +96,13 @@ const rules = {
 }
 
 const isFormValid = computed(() => {
-  return form.value.sobre &&
-    form.value.nome &&
+  const hasImage = props.id ?
+    (imagePreview.value || form.value.logoUrl) :
     form.value.logoUrl
 
+  return form.value.sobre &&
+    form.value.nome &&
+    hasImage
 })
 
 const submitForm = async () => {
@@ -138,6 +152,7 @@ const loadEmpresa = async () => {
       logoUrl: null,
       ativo: empresa.ativo,
     }
+
     // Definir preview da imagem
     imagePreview.value = empresa.logoUrl || null
 
