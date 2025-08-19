@@ -91,9 +91,9 @@
         </template>
 
         <!-- Foto -->
-        <template v-slot:item.foto="{ item }">
+        <template v-slot:item.logoUrl="{ item }">
           <v-avatar size="48" class="ma-2">
-            <v-img :src="item.imagemUrl" alt="foto empresa" cover>
+            <v-img :src="item.logoUrl" alt="foto empresa" cover>
               <template v-slot:error>
                 <v-icon icon="mdi-image-broken" size="24"></v-icon>
               </template>
@@ -185,9 +185,9 @@ const loading = ref(true)
 const selectedCompany = ref<any | null>(null)
 const dialog = ref(false)
 const headers = [
-  { title: 'Foto', key: 'logoUrl', sortable: true, width: '100px' },
-  { title: 'Titulo', key: 'nome' },
-  { title: 'Titulo', key: 'sobre', width: '500px  ' },
+  { title: 'Logo', key: 'logoUrl', sortable: false, width: '100px' },
+  { title: 'Nome', key: 'nome' },
+  { title: 'Sobre', key: 'sobre', width: '500px' },
   { title: 'Status', key: 'ativo', sortable: true, align: "center" as const },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]

@@ -54,7 +54,7 @@ const menuItems = [
   { icon: 'mdi-view-dashboard', title: 'Dashboard', value: 'dashboard', to: '/' },
   { icon: 'mdi-post-outline', title: 'Artigos', value: 'blog', to: '/artigos/' },
   { icon: 'mdi-store', title: 'Marketplace', value: 'marketplace', to: '/marketplace' },
-  { icon: 'mdi-domain', title: 'Eventos', value: 'eventos', to: '/eventos' },
+  { icon: 'mdi-calendar-multiple', title: 'Eventos', value: 'eventos', to: '/eventos' },
   { icon: 'mdi-domain', title: 'Empresa', value: 'empresa', to: '/empresa' },
 ]
 const footerMenuItem = [

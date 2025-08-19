@@ -57,7 +57,7 @@
           </v-btn>
 
           <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
-            Criar Produto
+            Editar Empresa
           </v-btn>
 
         </v-col>
@@ -117,12 +117,12 @@ const submitForm = async () => {
     formData.append('ativo', form.value.ativo.toString())
 
     if (form.value.logoUrl) {
-      formData.append('logoUrl', form.value.logoUrl)
+      formData.append('logo', form.value.logoUrl)
     }
 
     console.log(formData)
 
-    // await produtoService.createProduto(formData)
+    await empresaService.updateEmpresa(props.id, formData)
 
     toast.success('Produto criado com sucesso!')
     setTimeout(() => {

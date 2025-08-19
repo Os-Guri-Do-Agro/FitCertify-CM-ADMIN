@@ -101,7 +101,7 @@ const submitForm = async () => {
     formData.append('ativo', form.value.ativo.toString())
 
     if (form.value.logoUrl) {
-      formData.append('logoUrl', form.value.logoUrl)
+      formData.append('logo', form.value.logoUrl)
     }
 
     console.log(formData)
