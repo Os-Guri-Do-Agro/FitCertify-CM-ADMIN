@@ -154,7 +154,7 @@
               size="small"
               variant="text"
               color="error"
-              @click="deleteCompany(item)"
+              @click="deleteEvento(item)"
             ></v-btn>
           </div>
         </template>
@@ -228,7 +228,7 @@ const editEvento = (id: any) => {
   router.push('/evento/editForm')
 }
 
-const deleteCompany = (item: any) => {
+const deleteEvento = (item: any) => {
   selectedEvento.value = item
   dialog.value = true
 }
