@@ -121,7 +121,7 @@ const menuItems = [
   { icon: 'mdi-domain', title: 'Empresa', value: 'empresa', to: '/empresa' },
   {
     icon: 'mdi-calendar-multiple',
-    title: 'Organizacao',
+    title: 'Organização',
     value: 'organizacao',
     to: '/organizacao',
   },

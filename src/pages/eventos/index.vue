@@ -9,13 +9,13 @@
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Empresas
+              Eventos
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
               Gerencie todas os Eventos
             </p>
           </div>
-          <router-link :to="{ path: '/evento/form' }">
+          <router-link :to="{ path: '/eventos/form' }">
             <v-btn
               color="primary"
               size="large"

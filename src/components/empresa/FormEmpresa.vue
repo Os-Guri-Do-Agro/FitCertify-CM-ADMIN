@@ -84,8 +84,7 @@ const rules = {
 
 const isFormValid = computed(() => {
   return  form.value.sobre &&
-    form.value.nome &&
-    form.value.logoUrl
+    form.value.nome
 
 })
 

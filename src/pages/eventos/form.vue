@@ -27,7 +27,7 @@
         </router-link>
       </v-col>
     </v-row>
-    <FormEvento />
+    <FormEventos />
   </v-container>
 </template>
 

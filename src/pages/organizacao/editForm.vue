@@ -30,7 +30,7 @@
         </router-link>
       </v-col>
     </v-row>
-    <EditFormEmpresa :id="id" />
+    <EditFormOrganizacao :id="id" />
   </v-container>
 </template>
 
@@ -40,7 +40,7 @@ import { ref, onMounted } from 'vue'
 const id = ref<string | undefined>()
 
 onMounted(() => {
-  id.value = (window as any).editingEmpresaId
+  id.value = (window as any).editingOrganizacaoId
   console.log('ID para edição:', id.value)
 })
 </script>

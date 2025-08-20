@@ -1,19 +1,10 @@
 <template>
-  <v-container
-    fluid
-    class="fill-height pa-0 d-flex align-center justify-center background-image"
-  >
+  <v-container fluid class="fill-height pa-0 d-flex align-center justify-center background-image">
     <v-row class="justify-center align-center w-100 h-100 ma-0">
       <v-col cols="12" sm="8" md="4">
         <v-card elevation="10" rounded="xl" class="pa-6">
           <v-card-title class="text-center d-flex flex-column align-center">
-            <!-- <v-img
-              src="/src/assets/Camada_1.png"
-              alt="Logo"
-              width="150"
-              class="mb-3"
-              contain
-            ></v-img> -->
+            <v-img src="/src/assets/Camada_1.png" alt="Logo" width="150" class="mb-3" contain></v-img>
             <div class="text-h6 font-weight-medium text-grey-darken-2">
               Bem-vindo de volta
             </div>
@@ -21,33 +12,13 @@
 
           <v-card-text class="pt-0">
             <v-form>
-              <v-text-field
-                label="Email"
-                v-model="data.email"
-                prepend-inner-icon="mdi-email"
-                variant="outlined"
-                density="comfortable"
-                class="mb-4"
-              ></v-text-field>
+              <v-text-field label="Email" v-model="data.email" prepend-inner-icon="mdi-email" variant="outlined"
+                density="comfortable" class="mb-4"></v-text-field>
 
-              <v-text-field
-                label="Senha"
-                v-model="data.senha"
-                prepend-inner-icon="mdi-lock"
-                type="password"
-                variant="outlined"
-                density="comfortable"
-                class="mb-4"
-              ></v-text-field>
+              <v-text-field label="Senha" v-model="data.senha" prepend-inner-icon="mdi-lock" type="password"
+                variant="outlined" density="comfortable" class="mb-4"></v-text-field>
 
-              <v-btn
-                color="primary"
-                size="large"
-                block
-                rounded
-                class="mb-3"
-                @click="login"
-              >
+              <v-btn color="primary" size="large" block rounded class="mb-3" @click="login">
                 Entrar
               </v-btn>
 
