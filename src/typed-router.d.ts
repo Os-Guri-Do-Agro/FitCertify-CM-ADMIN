@@ -32,5 +32,8 @@ declare module 'vue-router/auto-routes' {
     '/marketplace/': RouteRecordInfo<'/marketplace/', '/marketplace', Record<never, never>, Record<never, never>>,
     '/marketplace/editForm': RouteRecordInfo<'/marketplace/editForm', '/marketplace/editForm', Record<never, never>, Record<never, never>>,
     '/marketplace/form': RouteRecordInfo<'/marketplace/form', '/marketplace/form', Record<never, never>, Record<never, never>>,
+    '/organizacao/': RouteRecordInfo<'/organizacao/', '/organizacao', Record<never, never>, Record<never, never>>,
+    '/organizacao/editForm': RouteRecordInfo<'/organizacao/editForm', '/organizacao/editForm', Record<never, never>, Record<never, never>>,
+    '/organizacao/form': RouteRecordInfo<'/organizacao/form', '/organizacao/form', Record<never, never>, Record<never, never>>,
   }
 }
