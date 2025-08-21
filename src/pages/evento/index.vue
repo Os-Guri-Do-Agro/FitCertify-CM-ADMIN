@@ -15,7 +15,7 @@
               Gerencie todas os Eventos
             </p>
           </div>
-          <router-link :to="{ path: '/eventos/form' }">
+          <router-link :to="{ path: '/evento/form' }">
             <v-btn
               color="primary"
               size="large"

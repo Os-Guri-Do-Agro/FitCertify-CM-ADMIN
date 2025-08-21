@@ -87,7 +87,7 @@
 
 <script setup >
 import eventoService from '@/services/evento/evento-service'
-// import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
+import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'

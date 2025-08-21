@@ -38,7 +38,7 @@
               </v-btn>
             </div>
 
-            <v-file-upload v-else v-model="form.logoUrl" label="Selecionar imagem" clearable show-size accept="image/*"
+            <v-file-upload v-else v-model="form.logo" label="Selecionar imagem" clearable show-size accept="image/*"
               variant="outlined"></v-file-upload>
           </v-card>
         </v-col>
@@ -87,7 +87,7 @@ const editingImage = ref(false)
 const form = ref({
   nome: '',
   sobre: '',
-  logoUrl: null,
+  logo: null,
   ativo: true,
 })
 
@@ -97,8 +97,8 @@ const rules = {
 
 const isFormValid = computed(() => {
   const hasImage = props.id ?
-    (imagePreview.value || form.value.logoUrl) :
-    form.value.logoUrl
+    (imagePreview.value || form.value.logo) :
+    form.value.logo
 
   return form.value.sobre &&
     form.value.nome &&
@@ -116,15 +116,17 @@ const submitForm = async () => {
     formData.append('sobre', form.value.sobre)
     formData.append('ativo', form.value.ativo.toString())
 
-    if (form.value.logoUrl) {
-      formData.append('logo', form.value.logoUrl)
+    if (form.value.logo) {
+      formData.append('logo', form.value.logo)
     }
 
     console.log(formData)
 
     await empresaService.updateEmpresa(props.id, formData)
+    console.log(formData)
+    console.log(props.id)
 
-    toast.success('Produto criado com sucesso!')
+    toast.success('Produto atualizado com sucesso!')
     setTimeout(() => {
       router.push('/empresa/')
 
@@ -149,12 +151,12 @@ const loadEmpresa = async () => {
     form.value = {
       nome: empresa.nome || '',
       sobre: empresa.sobre || '',
-      logoUrl: null,
+      logo: null,
       ativo: empresa.ativo,
     }
 
     // Definir preview da imagem
-    imagePreview.value = empresa.logoUrl || null
+    imagePreview.value = empresa.logo || null
 
   } catch (error) {
     toast.error('Erro ao carregar Empresa')

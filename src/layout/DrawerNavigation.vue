@@ -115,8 +115,8 @@ const menuItems = [
   {
     icon: 'mdi-calendar-multiple',
     title: 'Eventos',
-    value: 'eventos',
-    to: '/eventos',
+    value: 'evento',
+    to: '/evento',
   },
   { icon: 'mdi-domain', title: 'Empresa', value: 'empresa', to: '/empresa' },
   {
