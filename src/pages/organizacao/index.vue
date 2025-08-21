@@ -211,8 +211,6 @@ const dialog = ref(false)
 const headers = [
   { title: 'Logo', key: 'logoUrl', sortable: false, width: '100px' },
   { title: 'Nome', key: 'nome' },
-  { title: 'Sobre', key: 'sobre', width: '500px' },
-  { title: 'Status', key: 'ativo', sortable: true, align: 'center' as const },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]
 

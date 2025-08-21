@@ -18,7 +18,10 @@
             class="mb-3"></v-text-field>
 
           <v-combobox v-model="tipoEventoSelected" variant="outlined" label="Tipo do Evento" :items="tipoEventos"
-            item-title="nome" item-value="id"></v-combobox>
+            item-title="nome" item-value="id" class="mb-3"></v-combobox>
+          <v-combobox v-model="form.organizacoesEvento" variant="outlined" label="Organizações do Evento"
+            :items="OrganizacaoEventos" item-title="nome" item-value="id" multiple chips closable-chips
+            class="mb-3"></v-combobox>
 
           <v-card variant="outlined" class="pa-4 mb-3">
             <v-card-subtitle class="pa-0 mb-3">Distâncias do Evento</v-card-subtitle>
@@ -39,6 +42,7 @@
               Nenhuma distância adicionada
             </div>
           </v-card>
+
 
           <v-col>
 
@@ -87,6 +91,7 @@
 
 <script setup >
 import eventoService from '@/services/evento/evento-service'
+import organizacaoEventos from '@/services/organizacao-evento/organizacao-evento-service'
 import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -101,8 +106,10 @@ const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
 const tipoEventos = ref([])
+const OrganizacaoEventos = ref([])
 const novaDistancia = ref('')
 const tipoEventoSelected = ref('')
+const OrganizacaoEventosSelected = ref('')
 
 const form = ref({
   imagem: null,
@@ -113,7 +120,8 @@ const form = ref({
   local: '',
   ativo: true,
   tipoEventoId: '',
-  distanciasEvento: []
+  distanciasEvento: [],
+  organizacoesEvento: []
 })
 
 const rules = {
@@ -147,9 +155,16 @@ const submitForm = async () => {
     formData.append('data', dayjs(form.value.data).utc().startOf('day').toISOString())
     formData.append('local', form.value.local)
     formData.append('tipoEventoId', tipoEventoSelected.value.id)
-    formData.append('distanciasEvento', form.value.distanciasEvento)
-    formData.append('ativo', form.value.ativo)
 
+    // Adicionar distâncias como array
+   formData.append('distanciasEvento', form.value.distanciasEvento)
+
+    // Adicionar organizações como array de IDs
+    form.value.organizacoesEvento.forEach(org => {
+      formData.append('organizacoesEvento', org.id)
+    })
+
+    formData.append('ativo', form.value.ativo)
 
     if (form.value.logo) {
       formData.append('logo', form.value.logo)
@@ -178,6 +193,9 @@ onMounted(async () => {
   const response = await tipoEventoService.getAllTipoEventos()
   tipoEventos.value = response.data || []
   console.log(tipoEventos.value)
+  const responseOrganizacao = await organizacaoEventos.getAllOrganizacoes()
+  OrganizacaoEventos.value = responseOrganizacao.data || []
+  console.log(OrganizacaoEventos.value)
 
 })
 </script>
