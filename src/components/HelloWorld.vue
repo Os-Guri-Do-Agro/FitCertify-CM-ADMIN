@@ -69,15 +69,15 @@
           <div class="mt-4">
             <div class="d-flex align-center mb-2">
               <div class="mr-2" style="width: 12px; height: 12px; background: #2196F3; border-radius: 50%;"></div>
-              <span class="text-body-2">Fitness (45%)</span>
+              <span class="text-body-2">Fitness (0%)</span>
             </div>
             <div class="d-flex align-center mb-2">
               <div class="mr-2" style="width: 12px; height: 12px; background: #4CAF50; border-radius: 50%;"></div>
-              <span class="text-body-2">Nutrição (30%)</span>
+              <span class="text-body-2">Nutrição (0%)</span>
             </div>
             <div class="d-flex align-center">
               <div class="mr-2" style="width: 12px; height: 12px; background: #FF9800; border-radius: 50%;"></div>
-              <span class="text-body-2">Outros (25%)</span>
+              <span class="text-body-2">Outros (0%)</span>
             </div>
           </div>
         </v-card>
@@ -93,25 +93,25 @@
   const stats = [
     {
       title: 'Usuários Ativos',
-      value: '1,234',
+      value: '0',
       icon: 'mdi-account-group',
       color: 'blue'
     },
     {
       title: 'Artigos Publicados',
-      value: '89',
+      value: '0',
       icon: 'mdi-post',
       color: 'green'
     },
     {
       title: 'Produtos Vendidos',
-      value: '456',
+      value: '0',
       icon: 'mdi-cart',
       color: 'orange'
     },
     {
       title: 'Receita Total',
-      value: 'R$ 12.5k',
+      value: 'R$ 0,00',
       icon: 'mdi-currency-usd',
       color: 'purple'
     }
