@@ -7,7 +7,7 @@
         </template>
 
         <v-app-bar-title class="text-h6 font-weight-medium ">
-            Empresa
+            Dashboard
         </v-app-bar-title>
 
         <template v-slot:append>

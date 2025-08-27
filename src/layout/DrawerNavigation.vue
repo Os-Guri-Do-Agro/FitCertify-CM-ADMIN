@@ -125,6 +125,12 @@ const menuItems = [
     value: 'organizacao',
     to: '/organizacao',
   },
+  {
+    icon: 'mdi-account-multiple',
+    title: 'Usuarios',
+    value: 'usuarios',
+    to: '/users',
+  },
 ]
 const footerMenuItem = [
   {

@@ -4,7 +4,6 @@
       <h1 class="text-h4 font-weight-bold mb-2">Dashboard</h1>
       <p class="text-subtitle-1 text-medium-emphasis">Visão geral do sistema</p>
     </div>
-
     <!-- Cards de Estatísticas -->
     <v-row class="mb-6">
       <v-col v-for="stat in stats" :key="stat.title" cols="12" sm="6" md="3">
@@ -89,11 +88,15 @@
   </v-container>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import usersService from '@/services/users/users-service';
+import { onMounted,ref } from 'vue';
+const CountActiveUsers = ref()
+
   const stats = [
     {
       title: 'Usuários Ativos',
-      value: '0',
+      value: CountActiveUsers,
       icon: 'mdi-account-group',
       color: 'blue'
     },
@@ -147,4 +150,8 @@
       color: 'grey'
     }
   ]
+  onMounted(async () => {
+    const response = await usersService.getAllUsers()
+    CountActiveUsers.value = response.data.filter(e => e.ativo == true).length
+  })
 </script>
