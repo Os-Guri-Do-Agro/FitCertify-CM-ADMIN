@@ -4,7 +4,7 @@
       <v-col cols="12" sm="8" md="4">
         <v-card elevation="10" rounded="xl" class="pa-6">
           <v-card-title class="text-center d-flex flex-column align-center">
-            <v-img src="/src/assets/Camada_1.png" alt="Logo" width="150" class="mb-3" contain></v-img>
+            <v-img src="/src/assets/Camada_1.png" alt="Logo" width="300" class="mb-3" contain></v-img>
             <div class="text-h6 font-weight-medium text-grey-darken-2">
               Bem-vindo de volta
             </div>
@@ -26,6 +26,9 @@
                 <a href="#" class="text-primary text-decoration-none">
                   Esqueceu a senha?
                 </a>
+                <v-img src="/src/assets/icon-instagram.png" alt="Logo" width="25" class="mb-3" contain></v-img>
+                <v-img src="/src/assets/icon-youtube.png" alt="Logo" width="25" class="mb-3" contain></v-img>
+                <v-img src="/src/assets/icon-linkedin.png" alt="Logo" width="25" class="mb-3" contain></v-img>
               </div>
             </v-form>
           </v-card-text>
