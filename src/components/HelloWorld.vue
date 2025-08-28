@@ -90,8 +90,10 @@
 
 <script setup>
 import usersService from '@/services/users/users-service';
+import artigoService from '@/services/artigo/artigo-service';
 import { onMounted,ref } from 'vue';
 const CountActiveUsers = ref()
+const CountArtigosAtivo = ref()
 
   const stats = [
     {
@@ -102,7 +104,7 @@ const CountActiveUsers = ref()
     },
     {
       title: 'Artigos Publicados',
-      value: '0',
+      value: CountArtigosAtivo,
       icon: 'mdi-post',
       color: 'green'
     },
@@ -120,38 +122,11 @@ const CountActiveUsers = ref()
     }
   ]
 
-  const activities = [
-    {
-      id: 1,
-      title: 'Novo usuário cadastrado',
-      time: 'há 2 minutos',
-      icon: 'mdi-account-plus',
-      color: 'green'
-    },
-    {
-      id: 2,
-      title: 'Artigo "Treino HIIT" publicado',
-      time: 'há 15 minutos',
-      icon: 'mdi-post',
-      color: 'blue'
-    },
-    {
-      id: 3,
-      title: 'Produto vendido no marketplace',
-      time: 'há 1 hora',
-      icon: 'mdi-cart',
-      color: 'orange'
-    },
-    {
-      id: 4,
-      title: 'Backup do sistema realizado',
-      time: 'há 2 horas',
-      icon: 'mdi-backup-restore',
-      color: 'grey'
-    }
-  ]
+
   onMounted(async () => {
     const response = await usersService.getAllUsers()
     CountActiveUsers.value = response.data.filter(e => e.ativo == true).length
+    const responseArtigos = await artigoService.getAllArtigos()
+    CountArtigosAtivo.value = responseArtigos.data.filter(e => e.ativo == true).length
   })
 </script>

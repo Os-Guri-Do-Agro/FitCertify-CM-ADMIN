@@ -56,6 +56,24 @@
         :class="{ 'active-menu': $route.path === item.to }"
       >
       </v-list-item>
+       <v-list-group value="Admin">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="mdi-shield-crown"
+              title="Admin"
+            ></v-list-item>
+          </template>
+
+          <v-list-item
+            v-for="items in adminItemsList  "
+            :key="items.value"
+            :prepend-icon="items.icon"
+            :title="items.title"
+            :value="items.value"
+            :to="items.to"
+          ></v-list-item>
+        </v-list-group>
     </v-list>
 
     <!-- Footer -->
@@ -79,7 +97,9 @@
             class="mb-1 menu-item"
             :class="{ 'active-menu': $route.path === item.to }"
           >
+
           </v-list-item>
+
         </v-list>
       </div>
     </template>
@@ -125,6 +145,10 @@ const menuItems = [
     value: 'organizacao',
     to: '/organizacao',
   },
+
+]
+
+const adminItemsList = [
   {
     icon: 'mdi-account-multiple',
     title: 'Usuarios',
@@ -132,12 +156,13 @@ const menuItems = [
     to: '/users',
   },
 ]
+
 const footerMenuItem = [
   {
     icon: 'mdi-cog',
     title: 'Configurações',
     value: 'settings',
-    to: '/settings',
+    to: '',
   },
   {
     icon: 'mdi-logout',
