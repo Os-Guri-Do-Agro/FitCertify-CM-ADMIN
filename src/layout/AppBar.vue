@@ -23,18 +23,7 @@
                         </v-avatar>
                     </v-btn>
                 </template>
-                <v-list>
-                    <v-list-item>
-                        <v-list-item-title>Perfil</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item>
-                        <v-list-item-title>Configurações</v-list-item-title>
-                    </v-list-item>
-                    <v-divider></v-divider>
-                    <v-list-item>
-                        <v-list-item-title>Sair</v-list-item-title>
-                    </v-list-item>
-                </v-list>
+
             </v-menu>
         </template>
     </v-app-bar>
