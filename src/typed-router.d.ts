@@ -36,7 +36,5 @@ declare module 'vue-router/auto-routes' {
     '/organizacao/editForm': RouteRecordInfo<'/organizacao/editForm', '/organizacao/editForm', Record<never, never>, Record<never, never>>,
     '/organizacao/form': RouteRecordInfo<'/organizacao/form', '/organizacao/form', Record<never, never>, Record<never, never>>,
     '/users/': RouteRecordInfo<'/users/', '/users', Record<never, never>, Record<never, never>>,
-    '/users/editForm': RouteRecordInfo<'/users/editForm', '/users/editForm', Record<never, never>, Record<never, never>>,
-    '/users/form': RouteRecordInfo<'/users/form', '/users/form', Record<never, never>, Record<never, never>>,
   }
 }
