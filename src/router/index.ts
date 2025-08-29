@@ -18,15 +18,15 @@ const router = createRouter({
 // Guard de autenticação
 router.beforeEach((to) => {
   console.log('Navegando para:', to.path)
-  
+
   // Rotas públicas que não precisam de autenticação
-  const publicRoutes = ['/login']
-  
+  const publicRoutes = ['/login', '/opaksdopkasopkdopaskd']
+
   if (publicRoutes.includes(to.path)) {
     console.log('Rota pública, permitindo acesso')
     return true
   }
-  
+
   // Verificar se está autenticado para outras rotas
   const result = checkAuthAndRedirect()
   console.log('Resultado da verificação:', result)
