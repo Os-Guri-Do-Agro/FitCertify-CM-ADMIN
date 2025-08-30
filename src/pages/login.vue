@@ -18,7 +18,7 @@
               <v-text-field label="Senha" v-model="data.senha" prepend-inner-icon="mdi-lock" type="password"
                 variant="outlined" density="comfortable" class="mb-4"></v-text-field>
 
-              <v-btn color="primary" size="large" block rounded class="mb-3" @click="login">
+              <v-btn color="primary" size="large" block rounded class="mb-3" @click="login" :loading="loading">
                 Entrar
               </v-btn>
 
@@ -47,25 +47,32 @@ const data = ref({
   isMobile: false,
 })
 
+const loading = ref(false)
+
 const login = async () => {
-  const response = await authService.login(data.value)
-  if (response && response.access_token) {
-    console.log('Login realizado com sucesso')
-    sessionStorage.setItem('token', response.access_token)
+  loading.value = true
+  try {
+    const response = await authService.login(data.value)
+    if (response && response.access_token) {
+      console.log('Login realizado com sucesso')
+      sessionStorage.setItem('token', response.access_token)
 
-    const payload = JSON.parse(atob(response.access_token.split('.')[1]))
-    const expirationTime = payload.exp * 1000
-    const currentTime = Date.now()
-    const timeUntilExpiration = expirationTime - currentTime
+      const payload = JSON.parse(atob(response.access_token.split('.')[1]))
+      const expirationTime = payload.exp * 1000
+      const currentTime = Date.now()
+      const timeUntilExpiration = expirationTime - currentTime
 
-    if (timeUntilExpiration > 0) {
-      setTimeout(() => {
-        sessionStorage.removeItem('token')
-        router.push('/login')
-      }, timeUntilExpiration)
+      if (timeUntilExpiration > 0) {
+        setTimeout(() => {
+          sessionStorage.removeItem('token')
+          router.push('/login')
+        }, timeUntilExpiration)
+      }
+
+      router.push('/')
     }
-
-    router.push('/')
+  } finally {
+    loading.value = false
   }
 }
 

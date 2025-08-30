@@ -211,7 +211,7 @@
             recusar
           </v-btn>
 
-          <v-btn @click="confirmDelete" color="primary">
+          <v-btn @click="confirmDelete" color="primary" :loading="deleteLoading">
             confirmar
           </v-btn>
         </template>
@@ -231,6 +231,7 @@ const artigos = ref<any[]>([])
 const loading = ref(true)
 const selectedArticle = ref<any | null>(null)
 const dialog = ref(false)
+const deleteLoading = ref(false)
 const headers = [
   { title: 'Foto', key: 'foto', sortable: true, width: '100px' },
   { title: 'Titulo', key: 'titulo', width: '700px' },
@@ -254,6 +255,7 @@ const desktopCount = computed(
   () => artigos.value?.filter((artigo) => artigo.isDesktop).length || 0
 )
 
+
 // Actions
 
 const editArticle = (id: any) => {
@@ -270,6 +272,7 @@ const deleteArticle = (item: any) => {
 const confirmDelete = async () => {
   if (!selectedArticle.value) return
 
+  deleteLoading.value = true
   try {
     await artigoService.deleteArtigo(selectedArticle.value.id)
     artigos.value = artigos.value.filter(a => a.id !== selectedArticle.value?.id)
@@ -277,6 +280,7 @@ const confirmDelete = async () => {
   } catch (error) {
     console.error('Erro ao excluir artigo:', error)
   } finally {
+    deleteLoading.value = false
     dialog.value = false
     selectedArticle.value = null
   }
