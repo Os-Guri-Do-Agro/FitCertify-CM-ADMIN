@@ -201,6 +201,8 @@
 import eventoService from '@/services/evento/evento-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 const router = useRouter()
 const search = ref('')
 const evento = ref<any[]>([])
@@ -241,8 +243,10 @@ const confirmDelete = async () => {
   try {
     await eventoService.deleteEvento(selectedEvento.value.id)
     evento.value = evento.value.filter((a) => a.id !== selectedEvento.value?.id)
+    toast.success('Evento excluído com sucesso!')
     console.log('Evento excluído com sucesso')
   } catch (error) {
+    toast.error('Erro ao excluir Evento')
     console.error('Erro ao excluir Empresa:', error)
   } finally {
     loadingDelete.value = false

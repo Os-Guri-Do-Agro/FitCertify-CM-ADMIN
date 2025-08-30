@@ -202,6 +202,8 @@
 import organizacaoService from '@/services/organizacao-evento/organizacao-evento-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 const router = useRouter()
 const search = ref('')
 const organizacao = ref<any[]>([])
@@ -242,8 +244,10 @@ const confirmDelete = async () => {
     organizacao.value = organizacao.value.filter(
       (a) => a.id !== selectedOrganizacao.value?.id
     )
+    toast.success('Organização excluído com sucesso')
     console.log('Organização excluído com sucesso')
   } catch (error) {
+    toast.error('Erro ao excluir Organização')
     console.error('Erro ao excluir Organização:', error)
   } finally {
     loadingDelete.value = false

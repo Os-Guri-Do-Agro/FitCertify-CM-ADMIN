@@ -225,6 +225,8 @@
 import artigoService from '@/services/artigo/artigo-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 const router = useRouter()
 const search = ref('')
 const artigos = ref<any[]>([])
@@ -276,9 +278,10 @@ const confirmDelete = async () => {
   try {
     await artigoService.deleteArtigo(selectedArticle.value.id)
     artigos.value = artigos.value.filter(a => a.id !== selectedArticle.value?.id)
-    console.log('Artigo excluído com sucesso')
+    toast.success('Artigo excluído com sucesso!')
   } catch (error) {
     console.error('Erro ao excluir artigo:', error)
+    toast.error('Erro ao excluir artigo')
   } finally {
     deleteLoading.value = false
     dialog.value = false

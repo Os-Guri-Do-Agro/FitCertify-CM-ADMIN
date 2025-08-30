@@ -216,6 +216,8 @@
 import empresaService from '@/services/empresa/empresa-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 const router = useRouter()
 const search = ref('')
 const empresa = ref<any[]>([])
@@ -257,8 +259,10 @@ const confirmDelete = async () => {
     empresa.value = empresa.value.filter(
       (a) => a.id !== selectedCompany.value?.id
     )
+    toast.success('Empresa excluída com sucesso!')
     console.log('Empresa excluído com sucesso')
   } catch (error) {
+    toast.error('Error ao excluir empresa')
     console.error('Erro ao excluir Empresa:', error)
   } finally {
     loadingDelete.value = false
