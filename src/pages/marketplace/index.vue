@@ -197,7 +197,7 @@
           recusar
         </v-btn>
 
-        <v-btn @click="confirmDelete" color="primary" :loading="deleteLoading">
+        <v-btn @click="confirmDelete" color="primary" :loading="loadingDelete">
           confirmar
         </v-btn>
       </template>
@@ -214,7 +214,7 @@ const router = useRouter()
 const search = ref('')
 const produtos = ref<any[]>([])
 const loading = ref(true)
-const deleteLoading = ref(false)
+const loadingDelete = ref(false)
 const selectedMarketplace = ref<any | null>(null)
 const dialog = ref(false)
 const headers = [
@@ -256,7 +256,7 @@ const deleteMarketplace = (item: any) => {
 
 
 const confirmDelete = async () => {
-  deleteLoading.value = true
+  loadingDelete.value = true
   if (!selectedMarketplace.value) return
 
   try {
@@ -266,7 +266,7 @@ const confirmDelete = async () => {
   } catch (error) {
     console.error('Erro ao excluir Produto:', error)
   } finally {
-    deleteLoading.value = false
+    loadingDelete.value = false
     dialog.value = false
     selectedMarketplace.value = null
   }

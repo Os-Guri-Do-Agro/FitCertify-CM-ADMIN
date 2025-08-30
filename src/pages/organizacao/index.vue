@@ -192,7 +192,7 @@
 
         <v-btn @click="dialog = false"> recusar </v-btn>
 
-        <v-btn @click="confirmDelete" color="primary"> confirmar </v-btn>
+        <v-btn @click="confirmDelete" color="primary" :loading="loadingDelete"> confirmar </v-btn>
       </template>
     </v-card>
   </v-dialog>
@@ -206,6 +206,7 @@ const router = useRouter()
 const search = ref('')
 const organizacao = ref<any[]>([])
 const loading = ref(true)
+const loadingDelete = ref(false)
 const selectedOrganizacao = ref<any | null>(null)
 const dialog = ref(false)
 const headers = [
@@ -233,6 +234,7 @@ const deleteOrganizacao = (item: any) => {
 }
 
 const confirmDelete = async () => {
+  loadingDelete.value = true
   if (!selectedOrganizacao.value) return
 
   try {
@@ -244,6 +246,7 @@ const confirmDelete = async () => {
   } catch (error) {
     console.error('Erro ao excluir Organização:', error)
   } finally {
+    loadingDelete.value = false
     dialog.value = false
     selectedOrganizacao.value = null
   }
