@@ -8,22 +8,13 @@
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Atletas
+              Medicos
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as atletas
+              Gerencie todos as Medicos
             </p>
           </div>
-          <!-- <router-link :to="{ path: '/organizacao/form' }">
-            <v-btn
-              color="primary"
-              size="large"
-              prepend-icon="mdi-plus"
-              class="create-btn"
-              elevation="2"
-            >
-            </v-btn>
-          </router-link> -->
+
         </div>
       </v-col>
     </v-row>
@@ -115,7 +106,7 @@
         <template v-slot:item.nome="{ item }">
           {{ item.usuario.nome }}
         </template>
-        <template v-slot:item.cpf="{ item }">
+         <template v-slot:item.usuario.cpf="{ item }">
           {{ formatCPF(item.usuario.cpf) }}
         </template>
         <template v-slot:item.email="{ item }">
@@ -189,12 +180,6 @@ const headers = [
   { title: 'Nome', key: 'usuario.nome' },
   { title: 'CPF', key: 'usuario.cpf' },
   { title: 'Email', key: 'usuario.email' },
-  { title: 'Data de Nascimento', key: 'dataNascimento', },
-  { title: 'Telefone', key: 'telefone', },
-  { title: 'Tipo sanguíneo ', key: 'tipoSanguineo', },
-  { title: 'Gênero', key: 'genero', },
-  { title: 'Altura', key: 'altura', },
-  { title: 'Peso', key: 'peso', },
   { title: 'Ativo', key: 'ativo', },
 ]
 

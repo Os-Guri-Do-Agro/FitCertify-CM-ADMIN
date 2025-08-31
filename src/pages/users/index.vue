@@ -117,6 +117,11 @@
             {{ item.ehAdmin ? 'Sim' : 'Não' }}
           </v-chip>
         </template>
+
+ <template v-slot:item.cpf="{ item }">
+          {{ formatCPF(item.cpf) }}
+        </template>
+
         <template v-slot:item.atletaId="{ item }">
           <v-chip :color="item.atletaId ? 'success' : 'warning'"
             :prepend-icon="item.atletaId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
@@ -193,6 +198,15 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+const formatCPF = (cpf: string) => {
+  if (!cpf) return ''
+  const cleaned = cpf.replace(/\D/g, '')
+  if (cleaned.length === 11) {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+  }
+  return cpf
+}
 </script>
 
 <style scoped>

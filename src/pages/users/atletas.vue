@@ -115,7 +115,7 @@
         <template v-slot:item.nome="{ item }">
           {{ item.usuario.nome }}
         </template>
-        <template v-slot:item.cpf="{ item }">
+        <template v-slot:item.usuario.cpf="{ item }">
           {{ formatCPF(item.usuario.cpf) }}
         </template>
         <template v-slot:item.email="{ item }">
