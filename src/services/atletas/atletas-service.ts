@@ -3,7 +3,7 @@ import apiClient from '../api-service'
 
 
 let tokenSession = sessionStorage.getItem('token')
-class userService {
+class atletaService {
   private async handleRequest<T>(
     request: Promise<{ data: T }>,
     errorMessage: string
@@ -18,9 +18,9 @@ class userService {
     }
   }
 
-  getAllUsers(): Promise<any> {
+  getAllAtletas(): Promise<any> {
     return this.handleRequest(
-      apiClient.get('/user', {
+      apiClient.get('/atleta', {
         headers: {
           'Authorization': `Bearer ${tokenSession}`
         },
@@ -32,4 +32,4 @@ class userService {
 }
 
 
-export default new userService()
+export default new atletaService()

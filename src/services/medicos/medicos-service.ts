@@ -3,12 +3,11 @@ import apiClient from '../api-service'
 
 
 let tokenSession = sessionStorage.getItem('token')
-class userService {
+class medicosService {
   private async handleRequest<T>(
     request: Promise<{ data: T }>,
     errorMessage: string
   ): Promise<T> {
-
     try {
       const { data } = await request
       return data
@@ -18,9 +17,9 @@ class userService {
     }
   }
 
-  getAllUsers(): Promise<any> {
+  getAllMedicos(): Promise<any> {
     return this.handleRequest(
-      apiClient.get('/user', {
+      apiClient.get('/medico', {
         headers: {
           'Authorization': `Bearer ${tokenSession}`
         },
@@ -32,4 +31,4 @@ class userService {
 }
 
 
-export default new userService()
+export default new medicosService()

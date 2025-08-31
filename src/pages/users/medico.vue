@@ -8,10 +8,10 @@
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Usuarios
+              Atletas
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as usuarios
+              Gerencie todos as atletas
             </p>
           </div>
           <!-- <router-link :to="{ path: '/organizacao/form' }">
@@ -42,7 +42,7 @@
                   {{ CountActiveUsers }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Usuarios Ativos
+                  Total de Atletas Ativos
                 </div>
               </div>
             </div>
@@ -59,7 +59,7 @@
               <div>
                 <div class="text-h5 font-weight-bold">{{ CountAllUsers }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de usuarios cadastrados
+                  Total de atletas cadastrados
                 </div>
               </div>
             </div>
@@ -75,10 +75,10 @@
         <div class="d-flex flex-column flex-sm-row align-start align-sm-center ga-4 w-100">
           <div class="d-flex align-center">
             <v-icon icon="mdi-table" class="me-2" color="primary"></v-icon>
-            <span class="text-h6 font-weight-medium">Lista de Usuarios</span>
+            <span class="text-h6 font-weight-medium">Lista de Atletas</span>
           </div>
           <v-spacer class="d-none d-sm-flex"></v-spacer>
-          <v-text-field v-model="search" density="comfortable" label="Buscar Usuarios..."
+          <v-text-field v-model="search" density="comfortable" label="Buscar Atletas..."
             prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line class="search-field"
             style="max-width: 300px"></v-text-field>
         </div>
@@ -87,7 +87,7 @@
       <v-divider></v-divider>
 
       <!-- Data Table -->
-      <v-data-table v-model:search="search" :filter-keys="['nome']" :headers="headers" :items="AllUsers"
+      <v-data-table v-model:search="search" :filter-keys="['usuario.nome']" :headers="headers" :items="AllUsers"
         :loading="loading" class="custom-table" hover>
         <!-- Loading -->
         <template v-slot:loading>
@@ -95,15 +95,7 @@
         </template>
 
         <!-- Avatar -->
-        <template v-slot:item.avatarUrl="{ item }">
-          <v-avatar size="48" class="ma-2">
-            <v-img :src="item.avatarUrl" alt="avatar usuario" cover>
-              <template v-slot:error>
-                <v-icon icon="mdi-account" size="24"></v-icon>
-              </template>
-            </v-img>
-          </v-avatar>
-        </template>
+
 
         <template v-slot:item.ativo="{ item }">
           <v-chip :color="item.ativo ? 'success' : 'warning'"
@@ -111,34 +103,35 @@
             {{ item.ativo ? 'Ativo' : 'Inativo' }}
           </v-chip>
         </template>
-        <template v-slot:item.ehAdmin="{ item }">
-          <v-chip :color="item.ehAdmin ? 'success' : 'warning'"
-            :prepend-icon="item.ehAdmin ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
-            {{ item.ehAdmin ? 'Sim' : 'Não' }}
-          </v-chip>
+
+
+        <template v-slot:item.dataNascimento="{ item }">
+          {{ dayjs(item.dataNascimento).format('DD/MM/YYYY') }}
         </template>
-        <template v-slot:item.atletaId="{ item }">
-          <v-chip :color="item.atletaId ? 'success' : 'warning'"
-            :prepend-icon="item.atletaId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
-            {{ item.atletaId ? 'Sim' : 'Não' }}
-          </v-chip>
+
+        <template v-slot:item.telefone="{ item }">
+          {{ formatTelefone(item.telefone) }}
         </template>
-        <template v-slot:item.medicoId="{ item }">
-          <v-chip :color="item.medicoId ? 'success' : 'warning'"
-            :prepend-icon="item.medicoId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
-            {{ item.medicoId ? 'Sim' : 'Não' }}
-          </v-chip>
+        <template v-slot:item.nome="{ item }">
+          {{ item.usuario.nome }}
         </template>
+        <template v-slot:item.cpf="{ item }">
+          {{ formatCPF(item.usuario.cpf) }}
+        </template>
+        <template v-slot:item.email="{ item }">
+          {{ item.usuario.email }}
+        </template>
+
 
         <!-- No data -->
         <template v-slot:no-data>
           <div class="text-center pa-8">
             <v-icon icon="mdi-newspaper-variant-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
             <div class="text-h6 text-medium-emphasis mb-2">
-              Nenhum usuário encontrado
+              Nenhum atleta encontrado
             </div>
             <div class="text-body-2 text-medium-emphasis">
-              Nenhum usuário cadastrado no sistema
+              Nenhum atleta cadastrado no sistema
             </div>
           </div>
         </template>
@@ -160,30 +153,56 @@
 </template>
 
 <script setup lang="ts">
-import usersService from '@/services/users/users-service'
+import medicosService from '@/services/medicos/medicos-service'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
+import dayjs from 'dayjs'
+
+const formatTelefone = (telefone: string) => {
+  if (!telefone) return ''
+  const cleaned = telefone.replace(/\D/g, '')
+  if (cleaned.length === 11) {
+    return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+  }
+  if (cleaned.length === 10) {
+    return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
+  }
+  return telefone
+}
+const formatCPF = (cpf: string) => {
+  if (!cpf) return ''
+  const cleaned = cpf.replace(/\D/g, '')
+  if (cleaned.length === 11) {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+  }
+  return cpf
+}
 // const router = useRouter()
 const search = ref('')
 const AllUsers = ref<any[]>([])
 const loading = ref(true)
+// const selectedUser = ref<any | null>(null)
 const dialog = ref(false)
 const CountActiveUsers = ref()
 const CountAllUsers = ref()
 const headers = [
-  { title: 'Avatar', key: 'avatarUrl' },
-  { title: 'Nome', key: 'nome' },
-  { title: 'CPF', key: 'cpf' },
-  { title: 'Email', key: 'email' },
-  { title: 'Ativo', key: 'ativo' },
-  { title: 'Admin', key: 'ehAdmin' },
-  { title: 'Atleta', key: 'atletaId' },
-  { title: 'Medico', key: 'medicoId' },
+  { title: 'Nome', key: 'usuario.nome' },
+  { title: 'CPF', key: 'usuario.cpf' },
+  { title: 'Email', key: 'usuario.email' },
+  { title: 'Data de Nascimento', key: 'dataNascimento', },
+  { title: 'Telefone', key: 'telefone', },
+  { title: 'Tipo sanguíneo ', key: 'tipoSanguineo', },
+  { title: 'Gênero', key: 'genero', },
+  { title: 'Altura', key: 'altura', },
+  { title: 'Peso', key: 'peso', },
+  { title: 'Ativo', key: 'ativo', },
 ]
+
 
 onMounted(async () => {
   try {
-    const response = await usersService.getAllUsers()
+    const response = await medicosService.getAllMedicos()
+    console.log(response)
     CountActiveUsers.value = response.data.filter((e: any) => e.ativo == true).length
     CountAllUsers.value = response.data.length
     AllUsers.value = response.data || []
