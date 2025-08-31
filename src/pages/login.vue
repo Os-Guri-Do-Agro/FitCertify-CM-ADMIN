@@ -131,7 +131,7 @@ const removeToken = () => {
 
 <style scoped>
 .background-image {
-  background: url('/src/assets/image-teste-5.png') no-repeat center center;
+  background: url('/src/assets/banner-login.png') no-repeat center center;
   background-size: cover;
 }
 
