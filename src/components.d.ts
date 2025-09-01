@@ -12,9 +12,7 @@ declare module 'vue' {
     EditFormEmpresa: typeof import('./components/empresa/EditFormEmpresa.vue')['default']
     EditFormEventos: typeof import('./components/evento/EditFormEventos.vue')['default']
     EditFormMarketplace: typeof import('./components/marketplace/EditFormMarketplace.vue')['default']
-    EditFormMarketPlace: typeof import('./components/marketplace/EditFormMarketPlace.vue')['default']
     EditFormOrganizacao: typeof import('./components/organizacao/EditFormOrganizacao.vue')['default']
-    Form: typeof import('./components/artigos/FormArtigo.vue')['default']
     FormArtigo: typeof import('./components/artigos/FormArtigo.vue')['default']
     FormEmpresa: typeof import('./components/empresa/FormEmpresa.vue')['default']
     FormEventos: typeof import('./components/evento/FormEventos.vue')['default']
@@ -23,6 +21,5 @@ declare module 'vue' {
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    ToolBars: typeof import('./components/navigation/ToolBars.vue')['default']
   }
 }

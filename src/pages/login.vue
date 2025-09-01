@@ -76,7 +76,7 @@
           </v-card-text>
         </v-card>
 
-                  <!-- Modal -->
+          <!-- Modal -->
 
           <v-dialog v-model="showModal" width="600">
             <v-card rounded="xl">
