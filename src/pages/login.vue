@@ -21,7 +21,7 @@
           </v-card-title>
 
           <v-card-text class="pt-0 mt-5">
-            <v-form>
+            <v-form @submit.prevent="login">
               <label class="text-white text-subtitle-1" for="inputEmail"
                 >E-mail</label
               >
@@ -61,6 +61,7 @@
               </div>
 
               <v-btn
+              type="submit"
                 size="large"
                 block
                 rounded="lg"
@@ -101,7 +102,6 @@
                   hide-details 
                   variant="solo" 
                   bg-color="white"
-                  @blur="() => onBlurEmailModal(emailModal)"
                   :loading="loadingEmailModal"
                 ></v-text-field>
               </v-card-text>
@@ -172,26 +172,6 @@ const removeToken = () => {
   sessionStorage.removeItem('token')
 }
 
-
-async function onBlurEmailModal(email: string) {
-  if (!email) return;
-  
-  loadingEmailModal.value = true;
-  try {
-    const response = await userService.validarExisteEmail(email);
-    const data = response?.data;
-    
-    if (!data?.existeEmail) {
-      toast.error('Email não encontrado no sistema');
-    } else {
-      toast.success('Email encontrado! Confirme para enviarmos o código de verificação.');
-    }
-  } catch (error) {
-    toast.error('Erro ao verificar email');
-  } finally {
-    loadingEmailModal.value = false;
-  }
-}
 </script>
 
 <style scoped>
