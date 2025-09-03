@@ -72,6 +72,11 @@
               >
                 Entrar
               </v-btn>
+
+              <div class="d-flex flex-column text-center mt-10 text-white ga-1">
+                <span>Ao clicar em 'Entrar', você concorda com os</span>
+                <a href="/politicaPrivacidade" target="_blank" class="text-white blink-text">Termos de Serviço | Política de Privacidade</a>
+              </div>
             </v-form>
           </v-card-text>
         </v-card>
@@ -121,7 +126,7 @@
 <script setup lang="ts">
 import authService from '@/services/auth/auth-service'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 const router = useRouter()
@@ -189,4 +194,9 @@ const removeToken = () => {
   background-color: #00C6FE;
   color: white;
 }
+
+.blink-text {
+  animation: blink 1.5s infinite;
+}
+
 </style>

@@ -20,7 +20,7 @@ router.beforeEach((to) => {
   console.log('Navegando para:', to.path)
 
   // Rotas públicas que não precisam de autenticação
-  const publicRoutes = ['/login', '/opaksdopkasopkdopaskd']
+  const publicRoutes = ['/login', '/opaksdopkasopkdopaskd', '/politicaPrivacidade']
 
   if (publicRoutes.includes(to.path)) {
     console.log('Rota pública, permitindo acesso')
