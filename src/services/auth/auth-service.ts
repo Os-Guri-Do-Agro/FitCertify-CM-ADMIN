@@ -28,6 +28,42 @@ class AuthService {
     )
 
   }
+
+
+    validarCodigoEmail(data: { token: string, codigo: string }): Promise<any> {
+    return this.handleRequest(
+      apiClient.post(`/auth/validar-codigo-email`, data, {
+      }),
+      'ERROR - 404'
+    )
+  }
+
+    enviarCodigo(email: string): Promise<any> {
+    return this.handleRequest(
+      apiClient.post(`/auth/enviar-codigo-email?email=${email}`),
+      'Erro ao enviar email de redefinição de senha'
+    )
+  }
+
+
+    forgotPassword(data: { token: string, codigo: string, senhaNova: string }): Promise<any> {
+    return this.handleRequest(
+      apiClient.post(`/auth/forgot-password`, data, {
+      }),
+      'ERROR - 404'
+    )
+  }
+
+
+    validarToken(token: string): Promise<any> {
+    return this.handleRequest(
+      apiClient.post(`/auth/validar-token?token=${token}`, {
+      }),
+      'ERROR - 404'
+    )
+  }
+
+
 }
 
 

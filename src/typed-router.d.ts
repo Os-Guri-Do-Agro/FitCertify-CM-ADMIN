@@ -25,7 +25,7 @@ declare module 'vue-router/auto-routes' {
     '/empresa/': RouteRecordInfo<'/empresa/', '/empresa', Record<never, never>, Record<never, never>>,
     '/empresa/editForm': RouteRecordInfo<'/empresa/editForm', '/empresa/editForm', Record<never, never>, Record<never, never>>,
     '/empresa/form': RouteRecordInfo<'/empresa/form', '/empresa/form', Record<never, never>, Record<never, never>>,
-    '/esqueceuSenha': RouteRecordInfo<'/esqueceuSenha', '/esqueceuSenha', Record<never, never>, Record<never, never>>,
+    '/esqueceuSenha/[token]': RouteRecordInfo<'/esqueceuSenha/[token]', '/esqueceuSenha/:token', { token: ParamValue<true> }, { token: ParamValue<false> }>,
     '/evento/': RouteRecordInfo<'/evento/', '/evento', Record<never, never>, Record<never, never>>,
     '/evento/editForm': RouteRecordInfo<'/evento/editForm', '/evento/editForm', Record<never, never>, Record<never, never>>,
     '/evento/form': RouteRecordInfo<'/evento/form', '/evento/form', Record<never, never>, Record<never, never>>,

@@ -26,10 +26,10 @@ import DrawerNavigation from './layout/DrawerNavigation.vue'
 const route = useRoute()
 
 // Rotas que não devem mostrar o layout padrão
-const authRoutes = ['/login', '/register', '/forgot-password', '/esqueceuSenha', '/politicaPrivacidade']
+const authRoutes = ['/login', '/forgot-password', '/esqueceuSenha', '/politicaPrivacidade',]
 
 const isAuthRoute = computed(() => {
-  return authRoutes.includes(route.path)
+  return authRoutes.includes(route.path) || route.path.startsWith('/esqueceuSenha')
 })
 </script>
 

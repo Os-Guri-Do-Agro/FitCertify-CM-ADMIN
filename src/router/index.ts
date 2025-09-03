@@ -7,7 +7,8 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
-import { checkAuthAndRedirect } from '@/utils/auth'
+import { checkAuthAndRedirect, isTokenValid } from '@/utils/auth'
+import { toast } from 'vue3-toastify';
 
 
 const router = createRouter({
@@ -16,22 +17,34 @@ const router = createRouter({
 })
 
 // Guard de autenticação
-router.beforeEach((to) => {
-  console.log('Navegando para:', to.path)
+router.beforeEach((to, from, next) => {
+  const publicRoutes = ['/login', '/esqueceuSenha', '/politicaPrivacidade'];
+  const isAuthenticated = isTokenValid();
 
-  // Rotas públicas que não precisam de autenticação
-  const publicRoutes = ['/login', '/opaksdopkasopkdopaskd', '/politicaPrivacidade']
-
-  if (publicRoutes.includes(to.path)) {
-    console.log('Rota pública, permitindo acesso')
-    return true
+  // Impede usuários logados de acessar login, register e registerPlanos
+  if (isAuthenticated && (to.path === '/login' )) {
+    return next('/');
   }
 
-  // Verificar se está autenticado para outras rotas
-  const result = checkAuthAndRedirect()
-  console.log('Resultado da verificação:', result)
-  return result
-})
+  if (publicRoutes.includes(to.path)) {
+    return next();
+  }
+
+  if (!isAuthenticated) {
+    sessionStorage.clear();
+    if (to.path.includes("/esqueceuSenha")) {
+      return next()
+    }
+
+    if (to.path !== '/login') {
+      router.push('/login').then(() => {
+        toast.error("Usuário não autenticado, redirecionando para login", { autoClose: 3000 });
+      })
+    }
+    return next();
+  }
+  next();
+});
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
 router.onError((err, to) => {
