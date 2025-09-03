@@ -33,7 +33,7 @@
                   {{ CountActiveUsers }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Médicos Ativos
+                  Total de Médicos Cadastrados
                 </div>
               </div>
             </div>
@@ -50,7 +50,7 @@
               <div>
                 <div class="text-h5 font-weight-bold">{{ CountAllUsers }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Médicos cadastrados
+                  Total de Médicos Ativos
                 </div>
               </div>
             </div>

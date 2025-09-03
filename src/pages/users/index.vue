@@ -8,10 +8,10 @@
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Usuarios
+              Usuários
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as usuarios
+              Gerencie todos as usuários
             </p>
           </div>
           <!-- <router-link :to="{ path: '/organizacao/form' }">
@@ -42,7 +42,7 @@
                   {{ CountActiveUsers }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Usuarios Ativos
+                  Total de Usuários Cadastrados
                 </div>
               </div>
             </div>
@@ -59,7 +59,7 @@
               <div>
                 <div class="text-h5 font-weight-bold">{{ CountAllUsers }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de usuarios cadastrados
+                  Total de Usuários Ativos
                 </div>
               </div>
             </div>

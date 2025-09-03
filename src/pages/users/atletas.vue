@@ -42,7 +42,7 @@
                   {{ CountActiveUsers }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Atletas Ativos
+                  Total de Atletas Cadastrados
                 </div>
               </div>
             </div>
@@ -59,7 +59,7 @@
               <div>
                 <div class="text-h5 font-weight-bold">{{ CountAllUsers }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de atletas cadastrados
+                  Total de Atletas Ativos
                 </div>
               </div>
             </div>
