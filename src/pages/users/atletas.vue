@@ -11,7 +11,7 @@
               Atletas
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as atletas
+              Gerencie todos as Atletas
             </p>
           </div>
           <!-- <router-link :to="{ path: '/organizacao/form' }">

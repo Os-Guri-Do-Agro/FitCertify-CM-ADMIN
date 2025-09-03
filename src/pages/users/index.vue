@@ -11,7 +11,7 @@
               Usuários
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as usuários
+              Gerencie todos as Usuários
             </p>
           </div>
           <!-- <router-link :to="{ path: '/organizacao/form' }">
