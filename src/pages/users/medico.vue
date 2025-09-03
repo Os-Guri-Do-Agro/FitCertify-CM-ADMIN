@@ -8,10 +8,10 @@
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Medicos
+              Médicos
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as Medicos
+              Gerencie todos as Médicos
             </p>
           </div>
 
@@ -33,7 +33,7 @@
                   {{ CountActiveUsers }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Atletas Ativos
+                  Total de Médicos Ativos
                 </div>
               </div>
             </div>
@@ -50,7 +50,7 @@
               <div>
                 <div class="text-h5 font-weight-bold">{{ CountAllUsers }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de atletas cadastrados
+                  Total de Médicos cadastrados
                 </div>
               </div>
             </div>
@@ -66,10 +66,10 @@
         <div class="d-flex flex-column flex-sm-row align-start align-sm-center ga-4 w-100">
           <div class="d-flex align-center">
             <v-icon icon="mdi-table" class="me-2" color="primary"></v-icon>
-            <span class="text-h6 font-weight-medium">Lista de Atletas</span>
+            <span class="text-h6 font-weight-medium">Lista de Médicos</span>
           </div>
           <v-spacer class="d-none d-sm-flex"></v-spacer>
-          <v-text-field v-model="search" density="comfortable" label="Buscar Atletas..."
+          <v-text-field v-model="search" density="comfortable" label="Buscar Médicos..."
             prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line class="search-field"
             style="max-width: 300px"></v-text-field>
         </div>
