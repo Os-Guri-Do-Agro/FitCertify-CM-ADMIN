@@ -75,7 +75,7 @@
 
               <div class="d-flex flex-column text-center mt-10 text-white ga-1">
                 <span>Ao clicar em 'Entrar', você concorda com os</span>
-                <a href="/politicaPrivacidade" target="_blank" class="text-white blink-text">Termos de Serviço | Política de Privacidade</a>
+                <a href="/politicaPrivacidade" target="_blank" class="text-white font-weight-medium">Termos de Serviço | Política de Privacidade</a>
               </div>
             </v-form>
           </v-card-text>
