@@ -16,12 +16,13 @@ class AuthService {
     } catch (error: any) {
       handleError(`${errorMessage}: ${error.message}`, error)
       throw error
+
     }
   }
 
   login(data:any): Promise<any> {
     return this.handleRequest(
-      apiClient.post('/auth/login', data
+      apiClient.post('/auth/login-admin', data
 
       ),
       'Failed to fetch all categories'
@@ -37,6 +38,8 @@ class AuthService {
       'ERROR - 404'
     )
   }
+
+
 
     enviarCodigo(email: string): Promise<any> {
     return this.handleRequest(
@@ -68,4 +71,3 @@ class AuthService {
 
 
 export default new AuthService()
- 
