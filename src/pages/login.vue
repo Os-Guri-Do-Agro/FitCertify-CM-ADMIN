@@ -105,9 +105,7 @@
                   bg-color="white" @blur="() => onBlurEmailModal(emailModal)"
                   :loading="loadingEmailModal"></v-text-field>
               </v-card-text>
-              <v-card-actions class="d-flex w-100 flex-column-reverse ga-5 px-5 px-md-10 mb-5">
-                <v-btn class="w-100" variant="tonal" height="50px" text @click="">Reenviar código</v-btn>
-                <span>Não recebeu seu código?</span>
+              <v-card-actions class="d-flex w-100 flex-column ga-5 px-5 px-md-10 mb-5">
                 <v-btn class="w-100 text-white" height="50px" style="background-color: #00c6fe;"
                   :loading="loadingEmailModal" @click="enviarCodigo" :disabled="loadingEmailModal || !validarEmail(emailModal) || !clicouEnviar">Enviar</v-btn>
               </v-card-actions>
