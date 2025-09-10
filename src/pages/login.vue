@@ -99,6 +99,7 @@ const loading = ref(false)
 const showPassword = ref(false)
 const showModal = ref(false)
 const clicouEnviar = ref(false)
+let debounceTimer: NodeJS.Timeout | null = null
 
 
 const login = async () => {
@@ -178,8 +179,14 @@ function validarEmail(email: string) {
 }
 
 watch(emailModal, (newEmail) => {
-  if (newEmail.endsWith('.com')) {
-    onBlurEmailModal(newEmail)
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+  }
+  
+  if (newEmail && validarEmail(newEmail)) {
+    debounceTimer = setTimeout(() => {
+      onBlurEmailModal(newEmail)
+    }, 800)
   }
 })
 
