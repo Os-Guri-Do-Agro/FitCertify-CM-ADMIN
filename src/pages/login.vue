@@ -126,9 +126,6 @@ const login = async () => {
         router.push('/')
       }, 2501)
     }
-    if(response.response.status! == 401 || 400){
-        toast.error('Houve um erro ao fazer login. Verifique suas credenciais.')
-    }
   } catch (error) {
     toast.error('Erro ao fazer login. Verifique suas credenciais.')
   } finally {
