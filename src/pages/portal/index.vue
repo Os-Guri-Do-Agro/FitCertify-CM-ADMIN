@@ -99,7 +99,6 @@
 </template>
 
 <script lang="ts" setup>
-import jiraImg from '/src/assets/jira.jpg'
 
 const services = [
   {
@@ -139,7 +138,7 @@ const services = [
     icon: 'mdi-clipboard-list',
     color: 'warning',
     status: 'online',
-    image: jiraImg,
+    image: '/src/assets/Jira.jpg',
     action: () => window.open('https://fitcertify365.atlassian.net/jira/software/projects/FIT/summary', '_blank')
   }
 ]
