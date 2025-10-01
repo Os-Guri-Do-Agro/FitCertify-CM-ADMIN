@@ -108,7 +108,7 @@ const services = [
     icon: 'mdi-web',
     color: 'primary',
     status: 'online',
-    image: '/src/assets/Website.jpg',
+    image: '/Website.jpg',
     action: () => window.open('https://fitcertify365.com/#/', '_blank')
   },
   {
@@ -118,7 +118,7 @@ const services = [
     icon: 'mdi-view-dashboard',
     color: 'success',
     status: 'online',
-    image: '/src/assets/FIT-CM-ADMIN.jpg',
+    image: '/FIT-CM-ADMIN.jpg',
     action: () => window.open('https://fit-certify-cm-admin.vercel.app/login', '_blank')
   },
   {
@@ -128,7 +128,7 @@ const services = [
     icon: 'mdi-medical-bag',
     color: 'info',
     status: 'online',
-    image: '@/assets/fit-ADMIN.jpg',
+    image: '/fit-ADMIN.jpg',
     action: () => window.open('https://fit-certify-admin.vercel.app/login', '_blank')
   },
   {
@@ -138,7 +138,7 @@ const services = [
     icon: 'mdi-clipboard-list',
     color: 'warning',
     status: 'online',
-    image: '/src/assets/jira.jpg',
+    image: '/jira.jpg',
     action: () => window.open('https://fitcertify365.atlassian.net/jira/software/projects/FIT/summary', '_blank')
   }
 ]

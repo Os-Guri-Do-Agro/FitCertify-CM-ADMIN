@@ -7,7 +7,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
-import { checkAuthAndRedirect, isTokenValid } from '@/utils/auth'
+import {  isTokenValid } from '@/utils/auth'
 import { toast } from 'vue3-toastify';
 
 
