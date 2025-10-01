@@ -2,7 +2,7 @@
   <v-app theme="light">
     <!-- Layout com Drawer e AppBar -->
     <v-layout v-if="!isAuthRoute">
-      <DrawerNavigation  class="fill-height"/>
+      <DrawerNavigation class="fill-height" />
       <AppBar />
       <v-main class="main-content">
         <v-container fluid class="pa-4">
@@ -26,15 +26,19 @@ import DrawerNavigation from './layout/DrawerNavigation.vue'
 const route = useRoute()
 
 // Rotas que não devem mostrar o layout padrão
-const authRoutes = ['/login', '/forgot-password', '/esqueceuSenha', '/politicaPrivacidade',]
+const authRoutes = [
+  '/login',
+  '/forgot-password',
+  '/esqueceuSenha',
+  '/politicaPrivacidade',
+  '/portal',
+]
 
 const isAuthRoute = computed(() => {
-  return authRoutes.includes(route.path) || route.path.startsWith('/esqueceuSenha')
+  return (
+    authRoutes.includes(route.path) || route.path.startsWith('/esqueceuSenha')
+  )
 })
 </script>
 
-<style>
-
-
-
-</style>
+<style></style>
