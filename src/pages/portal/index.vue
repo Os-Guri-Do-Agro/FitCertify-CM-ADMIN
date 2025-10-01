@@ -128,7 +128,7 @@ const services = [
     icon: 'mdi-medical-bag',
     color: 'info',
     status: 'online',
-    image: '/src/assets/fit-ADMIN.jpg',
+    image: '@/assets/fit-ADMIN.jpg',
     action: () => window.open('https://fit-certify-admin.vercel.app/login', '_blank')
   },
   {
