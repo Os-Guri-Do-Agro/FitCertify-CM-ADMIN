@@ -138,7 +138,7 @@ const services = [
     icon: 'mdi-clipboard-list',
     color: 'warning',
     status: 'online',
-    image: '/src/assets/Jira.jpg',
+    image: '/src/assets/jira.jpg',
     action: () => window.open('https://fitcertify365.atlassian.net/jira/software/projects/FIT/summary', '_blank')
   }
 ]
