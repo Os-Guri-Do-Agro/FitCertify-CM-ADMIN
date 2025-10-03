@@ -38,22 +38,28 @@
         </div>
 
         <v-row class="justify-center">
-          <v-col cols="12" sm="6" lg="3" v-for="service in services" :key="service.id">
-            <v-card
-              class="service-card"
-              elevation="0"
-              @click="service.action"
-            >
+          <v-col
+            cols="12"
+            sm="6"
+            lg="3"
+            v-for="service in services"
+            :key="service.id"
+          >
+            <v-card class="service-card" elevation="0" @click="service.action">
               <div class="service-image-container">
-                <v-img
-                  :src="service.image"
-                  class="service-image"
-                  cover
-                >
+                <v-img :src="service.image" class="service-image" cover>
                   <div class="image-overlay"></div>
                   <div class="service-icon-overlay">
-                    <v-avatar :color="service.color" size="60" class="service-icon">
-                      <v-icon :icon="service.icon" size="30" color="white"></v-icon>
+                    <v-avatar
+                      :color="service.color"
+                      size="60"
+                      class="service-icon"
+                    >
+                      <v-icon
+                        :icon="service.icon"
+                        size="30"
+                        color="white"
+                      ></v-icon>
                     </v-avatar>
                   </div>
                 </v-img>
@@ -74,7 +80,11 @@
                   variant="flat"
                 >
                   <v-icon start size="12">
-                    {{ service.status === 'online' ? 'mdi-circle' : 'mdi-circle-outline' }}
+                    {{
+                      service.status === 'online'
+                        ? 'mdi-circle'
+                        : 'mdi-circle-outline'
+                    }}
                   </v-icon>
                   {{ service.status === 'online' ? 'Online' : 'Manutenção' }}
                 </v-chip>
@@ -92,55 +102,63 @@
             </v-card>
           </v-col>
         </v-row>
-
       </v-container>
     </section>
   </div>
 </template>
 
 <script lang="ts" setup>
-
 const services = [
   {
     id: 1,
     title: 'Portal Institucional',
-    description: 'Plataforma oficial com informações corporativas e serviços públicos.',
+    description:
+      'Plataforma oficial com informações corporativas e serviços públicos.',
     icon: 'mdi-web',
     color: 'primary',
     status: 'online',
     image: '/Website.jpg',
-    action: () => window.open('https://fitcertify365.com/#/', '_blank')
+    action: () => window.open('https://fitcertify365.com/#/', '_blank'),
   },
   {
     id: 2,
     title: 'Painel Administrativo',
-    description: 'Centro de controle para gestão completa do sistema e usuários.',
+    description:
+      'Centro de controle para gestão completa do sistema e usuários.',
     icon: 'mdi-view-dashboard',
     color: 'success',
     status: 'online',
     image: '/FIT-CM-ADMIN.jpg',
-    action: () => window.open('https://fit-certify-cm-admin.vercel.app/login', '_blank')
+    action: () =>
+      window.open('https://fit-certify-cm-admin.vercel.app/login', '_blank'),
   },
   {
     id: 3,
     title: 'Portal do Atleta e Médico',
-    description: 'Ambiente especializado para profissionais de saúde e pacientes.',
+    description:
+      'Ambiente especializado para profissionais de saúde e pacientes.',
     icon: 'mdi-medical-bag',
     color: 'info',
     status: 'online',
     image: '/fit-ADMIN.jpg',
-    action: () => window.open('https://fit-certify-admin.vercel.app/login', '_blank')
+    action: () =>
+      window.open('https://fit-certify-admin.vercel.app/login', '_blank'),
   },
   {
     id: 4,
     title: 'Gestão de Projetos',
-    description: 'Ferramenta avançada para acompanhamento e controle de projetos.',
+    description:
+      'Ferramenta avançada para acompanhamento e controle de projetos.',
     icon: 'mdi-clipboard-list',
     color: 'warning',
     status: 'online',
     image: '/jira.jpg',
-    action: () => window.open('https://fitcertify365.atlassian.net/jira/software/projects/FIT/summary', '_blank')
-  }
+    action: () =>
+      window.open(
+        'https://fitcertify365.atlassian.net/jira/software/projects/FC/summary',
+        '_blank'
+      ),
+  },
 ]
 </script>
 
@@ -266,7 +284,11 @@ const services = [
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
   z-index: 1;
 }
 
