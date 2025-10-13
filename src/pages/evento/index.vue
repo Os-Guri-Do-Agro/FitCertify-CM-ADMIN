@@ -125,7 +125,7 @@
         </template>
 
         <template v-slot:item.data="{ item }">
-          <p>{{ new Date(item.data).toLocaleDateString('pt-BR') }}</p>
+          <p>{{ dayjs(item.data).utc().format('DD/MM/YYYY') }}</p>
         </template>
 
         <template v-slot:item.ativo="{ item }">
@@ -202,7 +202,11 @@ import eventoService from '@/services/evento/evento-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 import 'vue3-toastify/dist/index.css'
+
+dayjs.extend(utc)
 const router = useRouter()
 const search = ref('')
 const evento = ref<any[]>([])
