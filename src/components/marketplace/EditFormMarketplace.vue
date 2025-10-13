@@ -60,13 +60,20 @@
               <v-text-field v-model="form.desconto" label="Desconto" :rules="[rules.required]" variant="outlined"
                 class="mb-3"></v-text-field>
            </v-col>
+            <v-col cols="12">
+
+                <v-alert type="info" text dense class="mb-3">
+                  Se existir um local externo para onde o usuário deve ir, insira aqui o link — pode ser o site da empresa ou o link de pagamento. Caso não haja, deixe em branco.
+                </v-alert>
+
+                <v-text-field v-model="form.linkSiteEmpresa" label="Link de redirecionamento"  variant="outlined"
+                  class="mb-3"></v-text-field>
+              </v-col>
 
             </v-row>
           </v-card>
         </v-col>
-        <v-col cols="12">
 
-        </v-col>
 
       </v-row>
 
@@ -129,7 +136,8 @@ const form = ref({
   condicaoEspecial : false,
   exclusivoParaCertificado: false,
   categoriaProdutoId: '',
-  empresaId: ''
+  empresaId: '',
+  linkSiteEmpresa:''
 })
 
 const rules = {
@@ -168,6 +176,7 @@ const submitForm = async () => {
     formData.append('exclusivoParaCertificado', form.value.exclusivoParaCertificado.toString())
     formData.append('categoriaProdutoId', categoriasProdutoSelected.value.id)
     formData.append('empresaId', categoriasEmpresaSelected.value.id)
+    formData.append('linkSiteEmpresa', form.value.linkSiteEmpresa || '')
 
     if (form.value.file) {
       formData.append('file', form.value.file)
@@ -211,7 +220,8 @@ form.value = {
   condicaoEspecial : produto.condicaoEspecial || false,
   exclusivoParaCertificado: produto.exclusivoParaCertificado || false,
   categoriaProdutoId: produto.categoriaProdutoId || '',
-  empresaId: produto.empresaId || ''
+  empresaId: produto.empresaId || '',
+  linkSiteEmpresa: produto.linkSiteEmpresa || ''
 }
 
 // Definir preview da imagem

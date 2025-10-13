@@ -6,9 +6,9 @@ import axios, {
     type AxiosResponse
   } from 'axios'
 //   import { useAuthStore } from '@/stores/auth'
-  
+
   const apiClient: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL || 'http://localhost:3000',
+    baseURL: import.meta.env.VITE_BASE_URL || 'http://localhost:5555',
     headers: {
         'Content-Type': 'application/json',
         "Access-Control-Allow-Origin": "*",
@@ -16,7 +16,7 @@ import axios, {
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, PATCH, DELETE",
       }
   })
-  
+
   const getAuthHeader = (): AxiosRequestHeaders | undefined => {
     return undefined
     }
@@ -29,7 +29,7 @@ import axios, {
 //       return undefined
 //     }
 //   }
-  
+
   const handleError = (error: AxiosError) => {
     console.error('API Error:', error.message)
     if (error.response) {
@@ -43,7 +43,7 @@ import axios, {
     }
     console.error('Error config:', error.config)
   }
-  
+
   apiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
       const authHeader = getAuthHeader()
@@ -60,7 +60,7 @@ import axios, {
       return Promise.reject(error)
     }
   )
-  
+
   apiClient.interceptors.response.use(
     (response: AxiosResponse) => response,
     (error: AxiosError) => {
@@ -68,6 +68,5 @@ import axios, {
       return Promise.reject(error)
     }
   )
-  
+
   export default apiClient
-  

@@ -23,9 +23,10 @@
 
         <v-col>
           <v-textarea v-model="form.descricao" label="Descrição" rows="4" variant="outlined" class="mb-3"></v-textarea>
-          <v-textarea v-model="form.orientacao" label="Orientação " rows="4" variant="outlined" class="mb-3"></v-textarea>
-          <v-combobox v-model="categoriasProdutoSelected" variant="outlined" label="Categoria" :items="categoriasProduto"
-            item-title="nome" item-value="id"></v-combobox>
+          <v-textarea v-model="form.orientacao" label="Orientação " rows="4" variant="outlined"
+            class="mb-3"></v-textarea>
+          <v-combobox v-model="categoriasProdutoSelected" variant="outlined" label="Categoria"
+            :items="categoriasProduto" item-title="nome" item-value="id"></v-combobox>
           <v-combobox v-model="categoriasEmpresaSelected" variant="outlined" label="Empresa" :items="categoriasEmpresa"
             item-title="nome" item-value="id"></v-combobox>
           <!-- <v-combobox v-model="selectedBase" :items="bases" item-title="name" label="Selecione uma base" item-value="id"
@@ -41,17 +42,26 @@
                 <v-switch color="primary" v-model="form.condicaoEspecial" label="Condição Especial"></v-switch>
               </v-col>
               <v-col cols="6">
-                <v-switch color="primary" v-model="form.exclusivoParaCertificado" label="Exclusivo para Certificado"></v-switch>
+                <v-switch color="primary" v-model="form.exclusivoParaCertificado"
+                  label="Exclusivo para Certificado"></v-switch>
               </v-col>
-           <v-col cols="6">
-              <v-text-field v-model="form.preco" label="Preço" :rules="[rules.required]" variant="outlined"
-                class="mb-3"></v-text-field>
+              <v-col cols="6">
+                <v-text-field v-model="form.preco" label="Preço" :rules="[rules.required]" variant="outlined"
+                  class="mb-3"></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field v-model="form.desconto" label="Desconto" :rules="[rules.required]" variant="outlined"
+                  class="mb-3"></v-text-field>
+              </v-col>
+                <v-col cols="12">
 
-           </v-col>
-             <v-col cols="6">
-              <v-text-field v-model="form.desconto" label="Desconto" :rules="[rules.required]" variant="outlined"
-                class="mb-3"></v-text-field>
-           </v-col>
+                <v-alert type="info" text dense class="mb-3">
+                  Se existir um local externo para onde o usuário deve ir, insira aqui o link — pode ser o site da empresa ou o link de pagamento. Caso não haja, deixe em branco.
+                </v-alert>
+
+                <v-text-field v-model="form.linkSiteEmpresa" label="Link de redirecionamento"  variant="outlined"
+                  class="mb-3"></v-text-field>
+              </v-col>
 
             </v-row>
           </v-card>
@@ -102,16 +112,17 @@ const categoriasEmpresaSelected = ref("")
 const form = ref({
   titulo: '',
   subTitulo: '',
-  descricao : '',
-  orientacao : '',
-  preco : null,
-  desconto : null,
+  descricao: '',
+  orientacao: '',
+  preco: null,
+  desconto: null,
   file: null,
   ativo: true,
-  condicaoEspecial : false,
+  condicaoEspecial: false,
   exclusivoParaCertificado: false,
   categoriaProdutoId: '',
-  empresaId: ''
+  empresaId: '',
+  linkSiteEmpresa: ''
 })
 
 const rules = {
@@ -120,9 +131,9 @@ const rules = {
 
 const isFormValid = computed(() => {
   return form.value.titulo &&
-  form.value.descricao &&
-  form.value.subTitulo &&
-  form.value.orientacao &&
+    form.value.descricao &&
+    form.value.subTitulo &&
+    form.value.orientacao &&
     form.value.preco &&
     form.value.desconto
 
@@ -146,6 +157,7 @@ const submitForm = async () => {
     formData.append('exclusivoParaCertificado', form.value.exclusivoParaCertificado.toString())
     formData.append('categoriaProdutoId', categoriasProdutoSelected.value.id)
     formData.append('empresaId', categoriasEmpresaSelected.value.id)
+    formData.append('linkSiteEmpresa', form.value.linkSiteEmpresa || '')
 
     if (form.value.file) {
       formData.append('file', form.value.file)
