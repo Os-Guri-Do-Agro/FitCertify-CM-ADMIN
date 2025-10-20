@@ -75,6 +75,25 @@
           exact
         ></v-list-item>
       </v-list-group>
+      <v-list-group value="Financeiro">
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            prepend-icon="mdi-bank"
+            title="Financeiro"
+          ></v-list-item>
+        </template>
+
+        <v-list-item
+          v-for="items in financeItemsList"
+          :key="items.value"
+          :prepend-icon="items.icon"
+          :title="items.title"
+          :value="items.value"
+          :to="items.to"
+          exact
+        ></v-list-item>
+      </v-list-group>
     </v-list>
 
     <!-- Footer -->
@@ -171,6 +190,15 @@ const adminItemsList = [
     value: 'Portal',
     to: '/portal',
   },
+]
+const financeItemsList = [
+  {
+    icon: 'mdi-qrcode',
+    title: 'Cupons',
+    value: 'cupons',
+    to: '/cupom',
+  },
+
 ]
 
 const footerMenuItem = [
