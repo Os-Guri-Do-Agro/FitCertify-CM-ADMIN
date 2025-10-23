@@ -75,6 +75,10 @@
           {{ dayjs(item.validade).utcOffset('0').format('DD/MM/YYYY') }}
         </template>
 
+        <template v-slot:item.limiteMaximoDeUso="{ item }">
+          {{item.limiteMaximoDeUso == null ? 'Ilimitado' : item.limiteMaximoDeUso   }}
+        </template>
+
 
         <template v-slot:item.ativo="{ item }">
           <v-chip :color="item.ativo ? 'success' : 'warning'"
@@ -111,7 +115,7 @@
         <v-icon icon="mdi-ticket-percent" class="me-3" color="primary"></v-icon>
         Criar Novo Cupom
       </v-card-title>
-      
+
       <v-form ref="formRef">
         <v-text-field
           v-model="cupomForm.codigo"
@@ -122,7 +126,7 @@
           maxlength="10"
           :rules="[rules.required]"
         ></v-text-field>
-        
+
         <v-text-field
           v-model="cupomForm.porcentagem"
           label="Porcentagem de Desconto"
@@ -132,7 +136,7 @@
           class="mb-3"
           :rules="[rules.required, rules.percentage]"
         ></v-text-field>
-        
+
         <v-text-field
           v-model="cupomForm.validade"
           label="Data de Validade"
@@ -142,19 +146,19 @@
           :rules="[rules.required]"
         ></v-text-field>
       </v-form>
-      
+
       <v-card-actions class="px-0 pt-4">
         <v-spacer></v-spacer>
-        <v-btn 
-          variant="outlined" 
+        <v-btn
+          variant="outlined"
           @click="closeModal"
           :disabled="loading"
         >
           Cancelar
         </v-btn>
-        <v-btn 
-          color="primary" 
-          @click="createCupom" 
+        <v-btn
+          color="primary"
+          @click="createCupom"
           :loading="loading"
         >
           Criar Cupom
@@ -204,9 +208,11 @@ import utc from 'dayjs/plugin/utc'
 import 'vue3-toastify/dist/index.css'
 dayjs.extend(utc)
 const headers = [
-  { title: 'Código', key: 'codigo', width: '500px' },
+  { title: 'Código', key: 'codigo' },
   { title: 'Porcentagem', key: 'porcentagem', sortable: true, align: 'center' as const },
   { title: 'Validade', key: 'validade', sortable: true, align: 'center' as const },
+  { title: 'Quan. Usadas', key: 'quantidadeUtilizada', sortable: true, align: 'center' as const },
+  { title: 'Limite de Uso ', key: 'limiteMaximoDeUso', sortable: true, align: 'center' as const },
   { title: 'Criado Por', key: 'createdBy', sortable: true, align: 'center' as const },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]
@@ -245,7 +251,7 @@ const createCupom = async () => {
   if (!formRef.value) return
   const { valid } = await formRef.value.validate()
   if (!valid) return
-  
+
   loading.value = true
   try {
     const data = {

@@ -14,16 +14,12 @@
       left: 0;
     "
   >
-    <!-- Header -->
     <div class="pa-4 text-center header-section">
       <v-avatar v-if="layoutStore.rail" size="36">
         <v-img src="/favicon.png" />
       </v-avatar>
 
       <div v-else>
-        <!-- <v-avatar size="48" color="blue-lighten-1" class="mb-3">
-                    <span class="text-white font-weight-bold text-h6">NG</span>
-                </v-avatar> -->
         <div class="d-flex align-center">
           <v-img
             src="/src/assets/Camada_1.png"
@@ -43,7 +39,6 @@
       opacity="0.3"
     ></v-divider>
 
-    <!-- Menu -->
     <v-list nav class="px-2">
       <v-list-item
         v-for="item in menuItems"
