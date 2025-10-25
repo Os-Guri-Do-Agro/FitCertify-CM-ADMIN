@@ -188,7 +188,7 @@ const adminItemsList = [
 ]
 const financeItemsList = [
   {
-    icon: 'mdi-qrcode',
+    icon: 'mdi-ticket-percent',
     title: 'Cupons',
     value: 'cupons',
     to: '/cupom',

@@ -6,7 +6,7 @@
         <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4">
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
-              <v-icon icon="mdi-qrcode" class="me-3" size="large"></v-icon>
+              <v-icon icon="mdi-ticket-percent" class="me-3" size="large"></v-icon>
               Cupons
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
