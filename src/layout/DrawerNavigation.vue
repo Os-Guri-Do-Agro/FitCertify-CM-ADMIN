@@ -6,7 +6,7 @@
     @click="layoutStore.rail && layoutStore.toggleRail()"
     class="clean-drawer"
     color=""
-    rail-width="65"
+    rail-width="72"
     style="
       position: fixed !important;
       height: 100vh !important;
@@ -39,7 +39,7 @@
       opacity="0.3"
     ></v-divider>
 
-    <v-list nav class="px-2">
+    <v-list nav class="px-2" v-model:opened="openGroups">
       <v-list-item
         v-for="item in menuItems"
         :key="item.value"
@@ -70,6 +70,27 @@
           exact
         ></v-list-item>
       </v-list-group>
+       <v-list-group value="Marketing">
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            prepend-icon="mdi-chart-donut-variant"
+            title="Marketing"
+          ></v-list-item>
+        </template>
+
+        <v-list-item
+          v-for="items in marketingItemsList"
+          :key="items.value"
+          :prepend-icon="items.icon"
+          :title="items.title"
+          :value="items.value"
+          :to="items.to"
+          class="blue-icon"
+          exact
+        ></v-list-item>
+      </v-list-group>
+
       <v-list-group value="Financeiro">
         <template v-slot:activator="{ props }">
           <v-list-item
@@ -122,9 +143,17 @@
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout'
 import { useRoute } from 'vue-router'
+import { ref, watch } from 'vue'
 
 const layoutStore = useLayoutStore()
 const $route = useRoute()
+const openGroups = ref([])
+
+watch(() => layoutStore.rail, (isRail) => {
+  if (isRail) {
+    openGroups.value = []
+  }
+})
 
 const menuItems = [
   {
@@ -140,7 +169,7 @@ const menuItems = [
     to: '/artigos/',
   },
   {
-    icon: 'mdi-store',
+    icon: 'mdi-shopping-outline',
     title: 'Marketplace',
     value: 'marketplace',
     to: '/marketplace',
@@ -195,6 +224,15 @@ const financeItemsList = [
   },
 
 ]
+const marketingItemsList = [
+  {
+    icon: 'mdi-chart-bubble',
+    title: 'Auditoria',
+    value: 'auditoria',
+    to: '/auditoria',
+  },
+
+]
 
 const footerMenuItem = [
   {
@@ -214,3 +252,76 @@ const footerMenuItem = [
   },
 ]
 </script>
+
+<style scoped>
+.clean-drawer {
+  background: linear-gradient(135deg, #004064 0%, #009ece 100%) !important;
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-section {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  margin: 8px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  transform: translateX(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.active-menu {
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)) !important;
+  border-left: 4px solid #00C6FE;
+  box-shadow: 0 4px 20px rgba(0, 198, 254, 0.3);
+}
+
+
+
+:deep(.v-list-group__items) {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  margin: 4px;
+  backdrop-filter: blur(10px);
+}
+
+:deep(.v-list-item__prepend .v-icon) {
+  color: rgba(255, 255, 255, 0.9);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+:deep(.v-list-item-title) {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+:deep(.v-divider) {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  height: 2px;
+}
+
+.text-blue-lighten-3 {
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+}
+
+.clean-drawer :deep(.v-navigation-drawer__content) {
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.clean-drawer :deep(.v-navigation-drawer__content)::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+</style>

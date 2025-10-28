@@ -76,7 +76,7 @@
         </template>
 
         <template v-slot:item.limiteMaximoDeUso="{ item }">
-          {{item.limiteMaximoDeUso == null ? 'Ilimitado' : item.limiteMaximoDeUso   }}
+          {{ item.limiteMaximoDeUso == null ? 'Ilimitado' : item.limiteMaximoDeUso }}
         </template>
 
 
@@ -99,10 +99,10 @@
           <div class="text-center pa-8">
             <v-icon icon="mdi-newspaper-variant-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
             <div class="text-h6 text-medium-emphasis mb-2">
-              Nenhuma empresa encontrado
+              Nenhum cupom encontrado
             </div>
             <div class="text-body-2 text-medium-emphasis">
-              Comece criando sua primeira Empresa
+              Comece criando sua primeira Cupom
             </div>
           </div>
         </template>
@@ -117,50 +117,22 @@
       </v-card-title>
 
       <v-form ref="formRef">
-        <v-text-field
-          v-model="cupomForm.codigo"
-          label="Código do Cupom"
-          placeholder="Ex: DESCONTO10"
-          variant="outlined"
-          class="mb-3"
-          maxlength="10"
-          :rules="[rules.required]"
-        ></v-text-field>
+        <v-text-field v-model="cupomForm.codigo" label="Código do Cupom" placeholder="Ex: DESCONTO10" variant="outlined"
+          class="mb-3" maxlength="10" :rules="[rules.required]"></v-text-field>
 
-        <v-text-field
-          v-model="cupomForm.porcentagem"
-          label="Porcentagem de Desconto"
-          type="number"
-          suffix="%"
-          variant="outlined"
-          class="mb-3"
-          :rules="[rules.required, rules.percentage]"
-        ></v-text-field>
+        <v-text-field v-model="cupomForm.porcentagem" label="Porcentagem de Desconto" type="number" suffix="%"
+          variant="outlined" class="mb-3" :rules="[rules.required, rules.percentage]"></v-text-field>
 
-        <v-text-field
-          v-model="cupomForm.validade"
-          label="Data de Validade"
-          type="date"
-          variant="outlined"
-          class="mb-3"
-          :rules="[rules.required]"
-        ></v-text-field>
+        <v-text-field v-model="cupomForm.validade" label="Data de Validade" type="date" variant="outlined" class="mb-3"
+          :rules="[rules.required]"></v-text-field>
       </v-form>
 
       <v-card-actions class="px-0 pt-4">
         <v-spacer></v-spacer>
-        <v-btn
-          variant="outlined"
-          @click="closeModal"
-          :disabled="loading"
-        >
+        <v-btn variant="outlined" @click="closeModal" :disabled="loading">
           Cancelar
         </v-btn>
-        <v-btn
-          color="primary"
-          @click="createCupom"
-          :loading="loading"
-        >
+        <v-btn color="primary" @click="createCupom" :loading="loading">
           Criar Cupom
         </v-btn>
       </v-card-actions>
