@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar color="" :elevation="0" class="app-bar">
+    <v-app-bar color="" variant="tonal" rounded="xl" :elevation="1" class="app-bar">
         <template v-slot:prepend>
             <v-btn icon variant="text" @click="layoutStore.toggleRail()" class="ml-2">
                 <v-icon>mdi-menu</v-icon>
@@ -22,6 +22,7 @@
                             <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
                         </v-avatar>
                     </v-btn>
+
                 </template>
 
             </v-menu>
@@ -36,8 +37,5 @@ const layoutStore = useLayoutStore()
 </script>
 
 <style scoped>
-.app-bar {
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
+
 </style>
