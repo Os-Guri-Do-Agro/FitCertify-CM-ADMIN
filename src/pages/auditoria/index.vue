@@ -20,44 +20,45 @@
     </v-row>
 
 
-    <v-row no-gutters class="mb-6 pl-5 d-flex ">
+    <v-tabs v-model="activeTab" class="mb-6">
+      <v-tab value="cadastros">Cadastros (Fem/Masc)</v-tab>
+      <v-tab value="parabens">Cadastro Parabéns</v-tab>
+    </v-tabs>
+
+    <v-row no-gutters class="mb-6 pl-5 d-flex">
       <v-col cols="2" class="d-flex flex-column ga-2">
         <div class="d-flex align-center">
           <div class="legend-circle blue"></div>
           <span class="ml-2">Total</span>
         </div>
-        <div class="d-flex align-center">
+        <div class="d-flex align-center" v-if="activeTab === 'cadastros'">
           <div class="legend-circle pink"></div>
           <span class="ml-2">Feminino</span>
         </div>
-        <div class="d-flex align-center">
+        <div class="d-flex align-center" v-if="activeTab === 'cadastros'">
           <div class="legend-circle green"></div>
           <span class="ml-2">Masculino</span>
         </div>
       </v-col>
 
       <v-col cols="1" class="text-center">
-        <v-progress-circular :indeterminate="initEffect" :model-value="metricsGrafics.valorTotal" :rotate="-90"
+        <v-progress-circular :indeterminate="initEffect" :model-value="currentMetrics.total" :rotate="-90"
           :size="100" :width="15" color="blue" class="mr-6">
-          {{ metricsGrafics.valorTotal }}
+          {{ currentMetrics.total }}
         </v-progress-circular>
-
       </v-col>
-      <v-col cols="1" class="text-center">
-
-        <v-progress-circular :indeterminate="initEffect" :model-value="metricsGrafics.cadastroFem" :rotate="-90"
+      <v-col cols="1" class="text-center" v-if="activeTab === 'cadastros'">
+        <v-progress-circular :indeterminate="initEffect" :model-value="currentMetrics.feminino" :rotate="-90"
           :size="100" :width="15" color="pink" class="mr-6">
-          {{ metricsGrafics.cadastroFem }}
+          {{ currentMetrics.feminino }}
         </v-progress-circular>
       </v-col>
-      <v-col cols=1 class="text-center">
-        <v-progress-circular :indeterminate="initEffect" :model-value="metricsGrafics.cadastroMas" :rotate="-90"
+      <v-col cols="1" class="text-center" v-if="activeTab === 'cadastros'">
+        <v-progress-circular :indeterminate="initEffect" :model-value="currentMetrics.masculino" :rotate="-90"
           :size="100" :width="15" color="green" class="mr-6">
-          {{ metricsGrafics.cadastroMas }}
+          {{ currentMetrics.masculino }}
         </v-progress-circular>
-
       </v-col>
-
     </v-row>
 
 
@@ -78,7 +79,7 @@
       <v-divider></v-divider>
 
 
-      <v-data-table v-model:search="search" :filter-keys="['nomeCompleto']" :headers="headers" :items="relatos"
+      <v-data-table v-model:search="search" :filter-keys="['nomeCompleto']" :headers="headers" :items="filteredRelatos"
         :loading="loading" class="custom-table" hover>
 
         <template v-slot:loading>
@@ -113,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import 'vue3-toastify/dist/index.css'
 import 'vue3-toastify/dist/index.css'
 import auditoriaService from '@/services/auditoria/auditoria-service'
@@ -122,10 +123,28 @@ const search = ref('')
 const relatos = ref<any[]>([])
 const loading = ref(true)
 const initEffect = ref(false)
-const metricsGrafics = ref({
-  valorTotal: 0,
-  cadastroFem: 0,
-  cadastroMas: 0
+const activeTab = ref('cadastros')
+
+const filteredRelatos = computed(() => {
+  if (activeTab.value === 'cadastros') {
+    return relatos.value.filter(r => 
+      r.promocaoRef === 'Fitcertify - Cadastre-se Feminino' || 
+      r.promocaoRef === 'Fitcertify - Cadastre-se Masculino'
+    )
+  } else {
+    return relatos.value.filter(r => r.promocaoRef === 'Fitcertify - Cadastro Parabéns')
+  }
+})
+
+const currentMetrics = computed(() => {
+  if (activeTab.value === 'cadastros') {
+    const fem = relatos.value.filter(r => r.promocaoRef === 'Fitcertify - Cadastre-se Feminino').length
+    const mas = relatos.value.filter(r => r.promocaoRef === 'Fitcertify - Cadastre-se Masculino').length
+    return { total: fem + mas, feminino: fem, masculino: mas }
+  } else {
+    const parabens = relatos.value.filter(r => r.promocaoRef === 'Fitcertify - Cadastro Parabéns').length
+    return { total: parabens, feminino: 0, masculino: 0 }
+  }
 })
 
 import dayjs from 'dayjs'
@@ -148,6 +167,7 @@ const getAllRelatosCTA = async () => {
   try {
     const response = await auditoriaService.getAllRelatosCTA()
     relatos.value = Array.isArray(response.data) ? response.data : []
+    console.log(relatos.value)
     causeEffectOnGraffic()
 
 
@@ -163,10 +183,6 @@ const causeEffectOnGraffic = async () => {
   setTimeout(() => {
     initEffect.value = false
   }, 1500)
-  metricsGrafics.value.valorTotal = relatos.value.length
-  metricsGrafics.value.cadastroMas = relatos.value.filter((e: any) => e.promocaoRef === 'Fitcertify - Cadastre-se Masculino').length
-  metricsGrafics.value.cadastroFem = relatos.value.filter((e: any) => e.promocaoRef === 'Fitcertify - Cadastre-se Feminino').length
-
 }
 onMounted(async () => {
   await getAllRelatosCTA()
