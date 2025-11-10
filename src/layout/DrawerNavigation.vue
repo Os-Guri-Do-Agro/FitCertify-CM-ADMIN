@@ -51,7 +51,46 @@
         :class="{ 'active-menu': $route.path === item.to }"
       >
       </v-list-item>
-      <v-list-group value="Admin">
+      
+      <v-list-item
+        v-if="showEventosMenu"
+        v-for="item in eventosMenuItems"
+        :key="item.value"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :to="item.to"
+        rounded="lg"
+        class="mb-1 menu-item"
+        :class="{ 'active-menu': $route.path === item.to }"
+      >
+      </v-list-item>
+      
+      <v-list-item
+        v-if="showBlogMenu"
+        v-for="item in blogMenuItems"
+        :key="item.value"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :to="item.to"
+        rounded="lg"
+        class="mb-1 menu-item"
+        :class="{ 'active-menu': $route.path === item.to }"
+      >
+      </v-list-item>
+      
+      <v-list-item
+        v-if="showMarketplaceMenu"
+        v-for="item in marketplaceMenuItems"
+        :key="item.value"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :to="item.to"
+        rounded="lg"
+        class="mb-1 menu-item"
+        :class="{ 'active-menu': $route.path === item.to }"
+      >
+      </v-list-item>
+      <v-list-group v-if="showAdminMenu" value="Admin">
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -70,7 +109,7 @@
           exact
         ></v-list-item>
       </v-list-group>
-       <v-list-group value="Marketing">
+       <v-list-group v-if="showMarketingMenu" value="Marketing">
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -91,7 +130,7 @@
         ></v-list-item>
       </v-list-group>
 
-      <v-list-group value="Financeiro">
+      <v-list-group v-if="showFinanceMenu" value="Financeiro">
         <template v-slot:activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -143,11 +182,31 @@
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout'
 import { useRoute } from 'vue-router'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { getUserRole, SubRole } from '@/utils/auth'
 
 const layoutStore = useLayoutStore()
 const $route = useRoute()
 const openGroups = ref([])
+
+const userRole = computed(() => getUserRole())
+
+const showAdminMenu = computed(() => userRole.value === SubRole.ADMIN)
+const showMarketingMenu = computed(() =>
+  userRole.value === SubRole.ADMIN || userRole.value === SubRole.MARKETING
+)
+const showFinanceMenu = computed(() =>
+  userRole.value === SubRole.ADMIN || userRole.value === SubRole.FINANCEIRO
+)
+const showEventosMenu = computed(() =>
+  userRole.value === SubRole.ADMIN || userRole.value === SubRole.ORGANIZADOR
+)
+const showBlogMenu = computed(() =>
+  userRole.value === SubRole.ADMIN || userRole.value === SubRole.BLOG
+)
+const showMarketplaceMenu = computed(() =>
+  userRole.value === SubRole.ADMIN || userRole.value === SubRole.MARKETPLACE
+)
 
 watch(() => layoutStore.rail, (isRail) => {
   if (isRail) {
@@ -162,25 +221,34 @@ const menuItems = [
     value: 'dashboard',
     to: '/',
   },
-  {
-    icon: 'mdi-post-outline',
-    title: 'Artigos',
-    value: 'blog',
-    to: '/artigos/',
-  },
+]
+
+const marketplaceMenuItems = [
   {
     icon: 'mdi-shopping-outline',
     title: 'Marketplace',
     value: 'marketplace',
     to: '/marketplace',
   },
+  { icon: 'mdi-domain', title: 'Empresa', value: 'empresa', to: '/empresa' },
+]
+
+const blogMenuItems = [
+  {
+    icon: 'mdi-post-outline',
+    title: 'Artigos',
+    value: 'blog',
+    to: '/artigos/',
+  },
+]
+
+const eventosMenuItems = [
   {
     icon: 'mdi-calendar-multiple',
     title: 'Eventos',
     value: 'evento',
     to: '/evento',
   },
-  { icon: 'mdi-domain', title: 'Empresa', value: 'empresa', to: '/empresa' },
   {
     icon: 'mdi-calendar-multiple',
     title: 'Organização',
@@ -221,6 +289,12 @@ const financeItemsList = [
     title: 'Cupons',
     value: 'cupons',
     to: '/cupom',
+  },
+  {
+    icon: 'mdi-cash-multiple',
+    title: 'Assinaturas',
+    value: 'assinaturas',
+    to: '/assinaturas',
   },
 
 ]
