@@ -274,7 +274,7 @@ const adminItemsList = [
     icon: 'mdi-account-multiple',
     title: 'Médicos',
     value: 'medicos',
-    to: '/users/medico',
+    to: '/users/medicos/',
   },
   {
     icon: 'mdi-dock-window',
