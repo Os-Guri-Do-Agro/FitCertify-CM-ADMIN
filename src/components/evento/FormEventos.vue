@@ -44,20 +44,116 @@
           </v-card>
 
 
-          <v-col>
+          <v-card variant="outlined" class="pa-4 mb-3">
+            <v-card-subtitle class="pa-0 mb-4">Configurações do Evento</v-card-subtitle>
 
-            <v-card variant="outlined" class="pa-2">
-              <v-card-subtitle class="pa-0 mb-3">Configurações</v-card-subtitle>
-              <v-row>
-                <v-col cols="2">
-                  <v-switch color="primary" v-model="form.ativo" label="Ativo"></v-switch>
-                </v-col>
-              </v-row>
-            </v-card>
-          </v-col>
+            <div class="mb-4">
+              <div class="text-subtitle-2 mb-2">Status do Evento</div>
+              <v-switch
+                color="primary"
+                v-model="form.ativo"
+                :label="form.ativo ? 'Evento Ativo' : 'Evento Inativo'"
+                hide-details
+              ></v-switch>
+            </div>
+
+            <v-divider class="my-4"></v-divider>
+
+            <div>
+              <div class="text-subtitle-2 mb-2">Certificado Exclusivo</div>
+              <v-switch
+                color="primary"
+                v-model="form.isCertificadoExclusivo"
+                :label="form.isCertificadoExclusivo ? 'Possui certificado exclusivo' : 'Sem certificado exclusivo'"
+                hide-details
+              ></v-switch>
+
+              <v-alert
+                v-if="form.isCertificadoExclusivo"
+                type="info"
+                variant="tonal"
+                class="mt-3"
+                density="compact"
+              >
+                <div class="text-caption">
+                  Você pode selecionar os campos necessários para o certificado. Nosso sistema gerará automaticamente
+                  ou você pode anexar um template personalizado para emissão pelos atletas.
+                </div>
+              </v-alert>
+              <v-alert
+                v-else
+                type="warning"
+                variant="tonal"
+                class="mt-3"
+                density="compact"
+              >
+                <div class="text-caption">
+                  Sem certificado exclusivo, os atletas utilizarão o template padrão da FitCertify365.
+                  Você receberá os certificados com um dos templates que o sistema tem.
+                </div>
+              </v-alert>
+
+              <v-expansion-panels v-if="form.isCertificadoExclusivo" class="mt-4">
+                <v-expansion-panel>
+                  <v-expansion-panel-title>
+                    <v-icon icon="mdi-certificate" class="me-2"></v-icon>
+                    Configurar Certificado
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <div class="mb-4">
+                      <v-alert type="info" variant="tonal" density="compact" class="mb-4">
+                        <div class="text-caption">
+                          A logo será automaticamente incluída do arquivo enviado acima. 
+                          Selecione os campos que deseja incluir no certificado.
+                        </div>
+                      </v-alert>
+                      
+                      <div class="text-subtitle-2 mb-3">Campos do Certificado:</div>
+                      <v-row>
+                        <v-col cols="6">
+                          <v-checkbox v-model="form.certificadoCampos" value="nomeAtleta" label="Nome do Atleta" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="nomeEvento" label="Nome do Evento" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="dataEvento" label="Data do Evento" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="localEvento" label="Local do Evento" hide-details></v-checkbox>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-checkbox v-model="form.certificadoCampos" value="distancia" label="Distância Percorrida" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="tempo" label="Tempo de Conclusão" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="colocacao" label="Colocação" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="organizacao" label="Organização" hide-details></v-checkbox>
+                        </v-col>
+                      </v-row>
+                    </div>
+
+                    <v-divider class="my-4"></v-divider>
+
+                    <div>
+                      <div class="text-subtitle-2 mb-3">Template Personalizado:</div>
+                      <v-checkbox 
+                        v-model="form.usarTemplatePersonalizado" 
+                        label="Desejo anexar um template personalizado" 
+                        hide-details
+                        class="mb-3"
+                      ></v-checkbox>
+                      
+                      <v-file-upload 
+                        v-if="form.usarTemplatePersonalizado"
+                        v-model="form.templateCertificado" 
+                        label="Anexar Template (PDF, PNG, JPG)" 
+                        accept=".pdf,.png,.jpg,.jpeg"
+                        variant="outlined"
+                        clearable
+                        show-size
+                      ></v-file-upload>
+                    </div>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+          </v-card>
         </v-col>
 
-        <v-col>
+        <v-col cols="6">
           <v-card variant="outlined" class="pa-4">
             <v-card-subtitle class="pa-0 mb-3">Imagem do Evento</v-card-subtitle>
             <v-file-upload v-model="form.imagem" label="Selecionar imagem" clearable show-size accept="image/*"
@@ -110,6 +206,7 @@ const OrganizacaoEventos = ref([])
 const novaDistancia = ref('')
 const tipoEventoSelected = ref('')
 const OrganizacaoEventosSelected = ref('')
+// const isCertificadoExclusivo = ref(false)
 
 const form = ref({
   imagem: null,
@@ -121,7 +218,11 @@ const form = ref({
   ativo: true,
   tipoEventoId: '',
   distanciasEvento: [],
-  organizacoesEvento: []
+  organizacoesEvento: [],
+  isCertificadoExclusivo: false,
+  certificadoCampos: ['nomeAtleta', 'nomeEvento', 'dataEvento'],
+  usarTemplatePersonalizado: false,
+  templateCertificado: null
 })
 
 const rules = {
