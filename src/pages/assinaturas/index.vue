@@ -94,10 +94,13 @@ onMounted(async () => {
   })
 
   const statusChart = echarts.init(document.getElementById('status-chart'))
-  const contadorStatus = metrica.reduce((acc, item) => {
-    acc[item.status] = (acc[item.status] || 0) + 1
-    return acc
-  }, {})
+  const statusMap = { active: 'Ativo', canceled: 'Cancelado', future: 'Faturado'}
+  const contadorStatus = {}
+  
+  for (const item of metrica) {
+    const nomeConvertido = statusMap[item.status] || item.status
+    contadorStatus[nomeConvertido] = (contadorStatus[nomeConvertido] || 0) + 1
+  }
   
   const dadosStatus = Object.entries(contadorStatus).map(([nome, valor]) => ({ value: valor, name: nome }))
   
@@ -133,10 +136,13 @@ onMounted(async () => {
   })
 
   const paymentChart = echarts.init(document.getElementById('payment-chart'))
-  const contadorPagamento = metrica.reduce((acc, item) => {
-    acc[item.payment_method] = (acc[item.payment_method] || 0) + 1
-    return acc
-  }, {})
+  const paymentMap = { credit_card: 'Cartão de Crédito', boleto: 'Boleto', debit_card: 'Cartão de Débito' }
+  const contadorPagamento = {}
+  
+  for (const item of metrica) {
+    const nomeConvertido = paymentMap[item.payment_method] || item.payment_method
+    contadorPagamento[nomeConvertido] = (contadorPagamento[nomeConvertido] || 0) + 1
+  }
   
   const dadosPagamento = Object.entries(contadorPagamento).map(([nome, valor]) => ({ value: valor, name: nome }))
   
