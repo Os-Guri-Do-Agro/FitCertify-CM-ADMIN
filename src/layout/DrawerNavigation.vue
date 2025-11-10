@@ -222,6 +222,12 @@ const financeItemsList = [
     value: 'cupons',
     to: '/cupom',
   },
+  {
+    icon: 'mdi-cash-multiple',
+    title: 'Assinaturas',
+    value: 'assinaturas',
+    to: '/assinaturas',
+  },
 
 ]
 const marketingItemsList = [
