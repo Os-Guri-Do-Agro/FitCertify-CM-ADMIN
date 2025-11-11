@@ -146,6 +146,7 @@
 </template>
 
 <script setup lang="ts">
+import authService from '@/services/auth/auth-service'
 import { ref, computed } from 'vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -218,8 +219,10 @@ const changePassword = async () => {
 
   changingPassword.value = true
   try {
-    console.log('Alterando senha...', passwordData.value)
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    await authService.forgotPasswordLogado({
+      senhaAtual: passwordData.value.currentPassword,
+      senhaNova: passwordData.value.newPassword
+    })
 
     toast.success('Senha alterada com sucesso!')
     passwordData.value = { currentPassword: '', newPassword: '', confirmPassword: '' }

@@ -90,7 +90,7 @@
             <div class="user-section" v-bind="props">
               <div class="user-info">
                 <div class="user-name">{{ infoUser?.user?.nome || 'Usuário' }}</div>
-                <div class="user-role">Administrador</div>
+                <div class="user-role">{{ mappedRole() }}</div>
               </div>
               <v-avatar size="40" class="user-avatar">
                 <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
@@ -106,8 +106,8 @@
                   <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
                 </v-avatar>
                 <div>
-                  <div class="text-subtitle-1 font-weight-medium">João Silva</div>
-                  <div class="text-caption text-medium-emphasis">joao@fitcertify.com</div>
+                  <div class="text-subtitle-1 font-weight-medium">{{ infoUser?.user?.nome }}</div>
+                  <div class="text-caption text-medium-emphasis">{{infoUser?.user?.email}}</div>
                 </div>
               </div>
             </v-card-text>
@@ -140,18 +140,33 @@ const searchExpanded = ref(false)
 const isFullscreen = ref(false)
 const notificationCount = ref(0)
 const infoUser = ref()
+const roleUser = ref()
 
 onMounted(async () => {
   infoUser.value = getInfoUser()
   console.log(infoUser.value)
 })
+function mappedRole() {
+
+  const subRole = {
+    financeiro: 'Financeiro',
+    marketing: 'Marketing',
+    admin: 'Administrador',
+    organizador: 'Organizador',
+    blog: 'Blog',
+    marketplace: 'Marketplace',
+  }
+  return subRole[infoUser.value?.subRole] || 'Contatar Suporte'
+}
+
+
 
 const currentPageTitle = computed(() => {
   const titles = {
     '/': 'Dashboard',
     '/users': 'Usuários',
     '/users/atletas': 'Atletas',
-    '/users/medico': 'Médicos',
+    '/users/medicos/': 'Médicos',
     '/evento': 'Eventos',
     '/evento/form': 'Novo Evento',
     '/evento/editForm': 'Editar Evento',
@@ -167,9 +182,10 @@ const currentPageTitle = computed(() => {
     '/empresa': 'Empresa',
     '/empresa/form': 'Nova Empresa',
     '/empresa/editForm': 'Editar Empresa',
-    '/cupom': 'Cupons',
+    '/cupom': 'Cupom',
+    '/assinaturas': 'Assinaturas',
     '/auditoria': 'Auditoria',
-    '/configuracoes': 'Configurações'
+    '/configuracoes/': 'Configurações'
   }
   return titles[route.path] || 'Dashboard'
 })
