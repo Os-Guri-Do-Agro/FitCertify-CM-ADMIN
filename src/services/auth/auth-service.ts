@@ -1,9 +1,9 @@
 import { handleError } from '@/common/error.utils'
 import apiClient from '../api-service'
-import { tokenToString } from 'typescript'
+// import { tokenToString } from 'typescript'
 // import type IArtigo from '@/Interfaces/artigo-interface'
 // import { CategoryEntity, CreateCategoryDto, UpdateCategoryDto } from '@/common/types/category'
-
+let tokenSession = sessionStorage.getItem('token')
 class AuthService {
   private async handleRequest<T>(
     request: Promise<{ data: T }>,
@@ -20,7 +20,7 @@ class AuthService {
     }
   }
 
-  login(data:any): Promise<any> {
+  login(data: any): Promise<any> {
     return this.handleRequest(
       apiClient.post('/auth/login-admin', data
 
@@ -31,7 +31,7 @@ class AuthService {
   }
 
 
-    validarCodigoEmail(data: { token: string, codigo: string }): Promise<any> {
+  validarCodigoEmail(data: { token: string, codigo: string }): Promise<any> {
     return this.handleRequest(
       apiClient.post(`/auth/validar-codigo-email`, data, {
       }),
@@ -41,7 +41,7 @@ class AuthService {
 
 
 
-    enviarCodigo(email: string): Promise<any> {
+  enviarCodigo(email: string): Promise<any> {
     return this.handleRequest(
       apiClient.post(`/auth/enviar-codigo-email?email=${email}&isAdmin=false&isCmAdmin=true&isMobile=false`),
       'Erro ao enviar email de redefinição de senha'
@@ -49,16 +49,27 @@ class AuthService {
   }
 
 
-    forgotPassword(data: { token: string, codigo: string, senhaNova: string }): Promise<any> {
+  forgotPassword(data: { token: string, codigo: string, senhaNova: string }): Promise<any> {
     return this.handleRequest(
       apiClient.post(`/auth/forgot-password`, data, {
       }),
       'ERROR - 404'
     )
   }
+  forgotPasswordLogado(data: any): Promise<any> {
+    return this.handleRequest(
+      apiClient.post(`/auth/forgot-password-logado`, data, {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'ERROR - 404'
+    )
+  }
 
 
-    validarToken(token: string): Promise<any> {
+
+  validarToken(token: string): Promise<any> {
     return this.handleRequest(
       apiClient.post(`/auth/validar-token?token=${token}`, {
       }),

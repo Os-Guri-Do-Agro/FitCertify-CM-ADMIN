@@ -17,7 +17,7 @@
         </div>
       </v-col>
       <v-col cols="6" class="text-end">
-        <router-link to="/empresa">
+        <router-link to="/organizacao">
           <v-btn
             color="primary"
             size="large"
