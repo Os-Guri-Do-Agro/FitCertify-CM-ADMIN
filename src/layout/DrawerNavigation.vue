@@ -51,7 +51,7 @@
         :class="{ 'active-menu': $route.path === item.to }"
       >
       </v-list-item>
-      
+
       <v-list-item
         v-if="showEventosMenu"
         v-for="item in eventosMenuItems"
@@ -64,7 +64,7 @@
         :class="{ 'active-menu': $route.path === item.to }"
       >
       </v-list-item>
-      
+
       <v-list-item
         v-if="showBlogMenu"
         v-for="item in blogMenuItems"
@@ -77,7 +77,7 @@
         :class="{ 'active-menu': $route.path === item.to }"
       >
       </v-list-item>
-      
+
       <v-list-item
         v-if="showMarketplaceMenu"
         v-for="item in marketplaceMenuItems"
@@ -274,7 +274,7 @@ const adminItemsList = [
     icon: 'mdi-account-multiple',
     title: 'Médicos',
     value: 'medicos',
-    to: '/users/medico',
+    to: '/users/medicos/',
   },
   {
     icon: 'mdi-dock-window',
@@ -313,7 +313,7 @@ const footerMenuItem = [
     icon: 'mdi-cog',
     title: 'Configurações',
     value: 'settings',
-    to: '',
+    to: '/configuracoes/',
   },
   {
     icon: 'mdi-logout',

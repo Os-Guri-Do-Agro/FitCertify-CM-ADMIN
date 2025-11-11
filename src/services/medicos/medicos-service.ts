@@ -28,6 +28,39 @@ class medicosService {
     )
   }
 
+  getAllMedicoInativos(): Promise<any> {
+    return this.handleRequest(
+      apiClient.get('/medico/inativos', {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to fetch all users'
+    )
+  }
+
+  patchMedicosInativos(id: string, data: any): Promise<any> {
+    return this.handleRequest(
+      apiClient.patch(`/medico/inativos/${id}`, data, {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to patch all doctors'
+    )
+  }
+
+  patchAtivarLoteMedicos(id: string[], data: any): Promise<any> {
+    return this.handleRequest(
+      apiClient.patch('/medico/toggleStatusEmLote', data, {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to patch all doctors'
+    )
+  }
+
 }
 
 

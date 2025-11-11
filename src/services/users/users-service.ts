@@ -28,7 +28,19 @@ class userService {
     )
   }
 
-  validarExisteEmail(email:string): Promise<any> {
+  createUserWithRole(data: any): Promise<any> {
+    const token = sessionStorage.getItem('token')
+    return this.handleRequest(
+      apiClient.post('/user', data, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      }),
+      'Failed to fetch all users'
+    )
+  }
+
+  validarExisteEmail(email: string): Promise<any> {
     return this.handleRequest(
       apiClient.get(`/user/validarExisteEmail?email=${email}`, {
       }),
