@@ -59,7 +59,7 @@
         </v-card>
       </v-col>
       </v-sheet>
-      
+
       <v-sheet>
         <v-btn @click="dialogAprovar = true" color="primary" size="large">
           <v-icon icon="mdi-account-multiple-check" class="me-2"></v-icon>
@@ -217,9 +217,9 @@
           <span class="text-h5">Aprovar Médicos em Lote</span>
         </div>
       </v-card-title>
-      
+
       <v-divider></v-divider>
-      
+
       <v-card-text class="pa-0">
         <v-data-table
           v-model="selectedMedicos"
@@ -247,17 +247,17 @@
             </template>
         </v-data-table>
       </v-card-text>
-      
+
       <v-divider></v-divider>
-      
+
       <v-card-actions class="pa-6">
         <v-spacer></v-spacer>
         <v-btn @click="dialogAprovar = false" variant="outlined">
           Cancelar
         </v-btn>
-        <v-btn 
-          @click="confirmarAtivarLote()" 
-          color="success" 
+        <v-btn
+          @click="confirmarAtivarLote()"
+          color="success"
           :disabled="selectedMedicos.length === 0"
           :loading="ativarLoteMedicosLoading"
         >
@@ -293,6 +293,7 @@
 import medicosService from '@/services/medicos/medicos-service'
 import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 
 const formatTelefone = (telefone: string) => {
   if (!telefone) return ''
@@ -376,11 +377,11 @@ const carregarDados = async () => {
       medicosService.getAllMedicos(),
       medicosService.getAllMedicoInativos()
     ])
-    
+
     CountActiveUsers.value = responseAtivos.data.filter((e: any) => e.ativo == true).length
     CountAllUsers.value = responseAtivos.data.length
     AllUsers.value = responseAtivos.data || []
-    
+
     medicosInativos.value = responseInativos.data.medicosInativos || []
     ContadorUsuariosInativos.value = responseInativos.data.medicosInativos?.length
   } catch (error) {
@@ -397,9 +398,9 @@ const ativarMedico = async (id: string) => {
       ativo: true
     }
     await medicosService.patchMedicosInativos(id, data)
-    
+
     toast.success('Médico ativado com sucesso!')
-    
+
     setTimeout(() => {
       carregarDados()
     }, 2000)
@@ -434,7 +435,7 @@ const ativarLoteMedicos = async (ids: string[]) => {
 
     setTimeout(() => {
       carregarDados()
-    }, 2000)  
+    }, 2000)
   } catch (error) {
     toast.error('Erro ao ativar lote de médicos!')
     console.error('Erro ao ativar lote de médicos:', error)
