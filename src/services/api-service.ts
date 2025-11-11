@@ -8,7 +8,7 @@ import axios, {
 //   import { useAuthStore } from '@/stores/auth'
 
   const apiClient: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL || 'http://localhost:5555',
+    baseURL: 'http://localhost:2525/',
     headers: {
         'Content-Type': 'application/json',
         "Access-Control-Allow-Origin": "*",

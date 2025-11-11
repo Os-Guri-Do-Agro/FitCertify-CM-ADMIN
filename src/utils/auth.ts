@@ -33,6 +33,10 @@ export const getUserRole = (): SubRole | null => {
   return payload?.subRole || null
 }
 
+export const getInfoUser = () => {
+  const payload = getPayload()
+  return payload
+}
 export const hasRole = (role: SubRole): boolean => {
   const userRole = getUserRole()
   return userRole === role
