@@ -94,7 +94,7 @@ onMounted(async () => {
   })
 
   const statusChart = echarts.init(document.getElementById('status-chart'))
-  const statusMap = { active: 'Ativo', canceled: 'Cancelado', future: 'Faturado'}
+  const statusMap = { active: 'Ativo', canceled: 'Cancelado', future: 'Faturado', failed: 'Falhou'}
   const contadorStatus = {}
   
   for (const item of metrica) {
