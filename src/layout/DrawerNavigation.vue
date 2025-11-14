@@ -285,6 +285,12 @@ const adminItemsList = [
 ]
 const financeItemsList = [
   {
+    icon: 'mdi-bank-transfer',
+    title: 'Solicitações',
+    value: 'solicitacoes',
+    to: '/solicitacoes',
+  },
+  {
     icon: 'mdi-ticket-percent',
     title: 'Cupons',
     value: 'cupons',

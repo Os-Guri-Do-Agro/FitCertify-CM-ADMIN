@@ -43,6 +43,7 @@ declare module 'vue-router/auto-routes' {
     '/organizacao/form': RouteRecordInfo<'/organizacao/form', '/organizacao/form', Record<never, never>, Record<never, never>>,
     '/politicaPrivacidade': RouteRecordInfo<'/politicaPrivacidade', '/politicaPrivacidade', Record<never, never>, Record<never, never>>,
     '/portal/': RouteRecordInfo<'/portal/', '/portal', Record<never, never>, Record<never, never>>,
+    '/solicitacoes/': RouteRecordInfo<'/solicitacoes/', '/solicitacoes', Record<never, never>, Record<never, never>>,
     '/users/': RouteRecordInfo<'/users/', '/users', Record<never, never>, Record<never, never>>,
     '/users/atletas': RouteRecordInfo<'/users/atletas', '/users/atletas', Record<never, never>, Record<never, never>>,
     '/users/medicos/': RouteRecordInfo<'/users/medicos/', '/users/medicos', Record<never, never>, Record<never, never>>,

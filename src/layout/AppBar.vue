@@ -183,6 +183,7 @@ const currentPageTitle = computed(() => {
     '/empresa/form': 'Nova Empresa',
     '/empresa/editForm': 'Editar Empresa',
     '/cupom': 'Cupom',
+    '/solicitacoes': 'Solicitações',
     '/assinaturas': 'Assinaturas',
     '/auditoria': 'Auditoria',
     '/configuracoes/': 'Configurações'
