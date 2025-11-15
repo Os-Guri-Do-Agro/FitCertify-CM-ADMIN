@@ -248,7 +248,6 @@ const confirmDelete = async () => {
     await eventoService.deleteEvento(selectedEvento.value.id)
     evento.value = evento.value.filter((a) => a.id !== selectedEvento.value?.id)
     toast.success('Evento excluído com sucesso!')
-    console.log('Evento excluído com sucesso')
   } catch (error) {
     toast.error('Erro ao excluir Evento')
     console.error('Erro ao excluir Empresa:', error)
@@ -262,9 +261,7 @@ const confirmDelete = async () => {
 onMounted(async () => {
   try {
     const response = await eventoService.getAllEventos()
-    console.log(response)
     evento.value = Array.isArray(response.data) ? response.data : []
-    console.log(evento.value)
   } catch (error) {
     console.error('Erro ao carregar empresas:', error)
   } finally {

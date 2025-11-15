@@ -208,7 +208,6 @@ const confirmDelete = async () => {
   try {
     await cupomService.deleteCupom(selectedCupom.value)
     toast.success('Cupom excluída com sucesso!')
-    console.log('Cupom excluído com sucesso')
   } catch (error) {
     toast.error('Error ao excluir Cupom')
     console.error('Erro ao excluir Cupom:', error)

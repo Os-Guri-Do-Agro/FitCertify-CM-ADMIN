@@ -498,9 +498,7 @@ const createUser = async () => {
   newUser.value.senha = '@Senha'+ newUser.value.cpf.replace(/\D/g, '').slice(0, 3)
 
   try {
-    console.log('Criando usuário:', newUser.value)
  const response =    await usersService.createUserWithRole(newUser.value)
- console.log(response)
     closeDialog()
   } catch (error) {
     console.error('Erro ao criar usuário:', error)

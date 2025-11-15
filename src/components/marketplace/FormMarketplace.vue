@@ -163,7 +163,6 @@ const submitForm = async () => {
       formData.append('file', form.value.file)
     }
 
-    console.log(formData)
 
     await produtoService.createProduto(formData)
 
@@ -187,6 +186,5 @@ onMounted(async () => {
   categoriasEmpresa.value = responseEmpresas.data || []
   const responseCategoriaProduto = await categoriaProdutoService.getAllCategoriasProduto()
   categoriasProduto.value = responseCategoriaProduto.data || []
-  console.log(categoriasProduto.value)
 })
 </script>

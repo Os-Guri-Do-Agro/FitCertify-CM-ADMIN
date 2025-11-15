@@ -202,7 +202,6 @@ const headers = [
 onMounted(async () => {
   try {
     const response = await atletaService.getAllAtletas()
-    console.log(response)
     CountActiveUsers.value = response.data.filter((e: any) => e.ativo == true).length
     CountAllUsers.value = response.data.length
     AllUsers.value = response.data || []

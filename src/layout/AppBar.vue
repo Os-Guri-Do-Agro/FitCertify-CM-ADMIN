@@ -144,7 +144,6 @@ const roleUser = ref()
 
 onMounted(async () => {
   infoUser.value = getInfoUser()
-  console.log(infoUser.value)
 })
 function mappedRole() {
 

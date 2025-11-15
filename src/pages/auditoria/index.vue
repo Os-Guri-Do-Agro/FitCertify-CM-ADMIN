@@ -127,8 +127,8 @@ const activeTab = ref('cadastros')
 
 const filteredRelatos = computed(() => {
   if (activeTab.value === 'cadastros') {
-    return relatos.value.filter(r => 
-      r.promocaoRef === 'Fitcertify - Cadastre-se Feminino' || 
+    return relatos.value.filter(r =>
+      r.promocaoRef === 'Fitcertify - Cadastre-se Feminino' ||
       r.promocaoRef === 'Fitcertify - Cadastre-se Masculino'
     )
   } else {
@@ -167,7 +167,6 @@ const getAllRelatosCTA = async () => {
   try {
     const response = await auditoriaService.getAllRelatosCTA()
     relatos.value = Array.isArray(response.data) ? response.data : []
-    console.log(relatos.value)
     causeEffectOnGraffic()
 
 

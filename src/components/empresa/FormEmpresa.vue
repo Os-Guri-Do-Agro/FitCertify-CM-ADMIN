@@ -103,7 +103,6 @@ const submitForm = async () => {
       formData.append('logo', form.value.logoUrl)
     }
 
-    console.log(formData)
 
     await empresaService.createEmpresa(formData)
 
