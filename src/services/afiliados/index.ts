@@ -61,7 +61,7 @@ class AfiliadoService {
 
   editarAfiliado(id: string, data: any): Promise<any> {
     return this.handleRequest(
-      apiClient.put(`/afiliado/${id}`, data, {
+      apiClient.patch(`/afiliado/${id}`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${tokenSession}`

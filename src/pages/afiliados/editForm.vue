@@ -40,7 +40,7 @@
         <v-divider></v-divider>
         
         <v-card-text class="pa-6">
-          <v-form @submit.prevent="submitForm">
+          <v-form @submit.prevent="editAfiliado">
             <!-- Basic Information Section -->
             <div class="mb-6">
               <h3 class="text-h6 font-weight-medium mb-4 text-primary">
@@ -93,8 +93,7 @@
                     <div v-else class="preview-content">
                       <v-img :src="imagePreview" class="preview-image" cover></v-img>
                       <div class="preview-overlay">
-                        <v-btn icon="mdi-pencil" color="white" variant="elevated" size="small" @click="fileInput?.click()" class="me-2"></v-btn>
-                        <v-btn icon="mdi-delete" color="error" variant="elevated" size="small" @click="removeImage"></v-btn>
+                        <v-btn icon="mdi-pencil" color="white" variant="elevated" size="small" @click="fileInput?.click()"></v-btn>
                       </div>
                     </div>
                   </div>
@@ -166,13 +165,13 @@
                 Cancelar
               </v-btn>
               <v-btn
-                type="submit"
                 color="primary"
                 size="large"
                 :loading="loading"
                 prepend-icon="mdi-check"
+                @click="editAfiliado"
               >
-                Criar Afiliado
+                Atualizar Afiliado
               </v-btn>
             </div>
           </v-form>
@@ -182,31 +181,25 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { toast } from 'vue3-toastify'
   import afiliadoService from '@/services/afiliados'
   
   const router = useRouter()
   const loading = ref(false)
+  const afiliadoId = ref<string | null>(null)
   
   const form = ref({
     nome: '',
-    file: null as File[] | null,
+    file: null as File | null,
     linkRedirect: '',
     ativo: true,
     isPatrocinador: false,
     isApoiador: false
   })
 
-  const editarAfiliado = async () => {
-    try {
-      const response = await afiliadoService.editarAfiliado(Id, form.value)
-      console.log(response)
-    } catch (error) {
-      console.error(error)
-    }
-  }
+
   
   const dragOver = ref(false)
   const imagePreview = ref<string | null>(null)
@@ -232,7 +225,7 @@
         toast.error('Arquivo muito grande. Máximo 5MB.')
         return
       }
-      form.value.file = [file]
+      form.value.file = file
       createImagePreview(file)
     }
   }
@@ -246,7 +239,7 @@
           toast.error('Arquivo muito grande. Máximo 5MB.')
           return
         }
-        form.value.file = [file]
+        form.value.file = file
         createImagePreview(file)
       } else {
         toast.error('Por favor, selecione apenas imagens.')
@@ -266,23 +259,64 @@
     form.value.file = null
     imagePreview.value = null
   }
-  
-  const submitForm = async () => {
-    loading.value = true
+
+  const loadAfiliado = async () => {
+    if (!afiliadoId.value) return
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await afiliadoService.getAfiliadoById(afiliadoId.value)
+      const afiliado = response.data
       
-      toast.success('Afiliado criado com sucesso!')
-      router.push('/afiliados')
+      form.value = {
+        nome: afiliado.nome || '',
+        file: null,
+        linkRedirect: afiliado.linkRedirect || '',
+        ativo: afiliado.ativo,
+        isPatrocinador: afiliado.isPatrocinador,
+        isApoiador: afiliado.isApoiador
+      }
+      
+      if (afiliado.imagemUrl) {
+        imagePreview.value = afiliado.imagemUrl
+      }
     } catch (error) {
-      toast.error('Erro ao criar afiliado')
-      console.error('Erro:', error)
+      toast.error('Erro ao carregar afiliado')
+      console.error(error)
+    }
+  }
+
+  onMounted(() => {
+    afiliadoId.value = (window as any).editingAfiliadoId
+    loadAfiliado()
+  })
+
+  const editAfiliado = async () => {
+    loading.value = true
+    try {
+      if (!afiliadoId.value) return
+
+      const id = afiliadoId.value
+      const data = {
+        nome: form.value.nome,
+        file: form.value.file,
+        linkRedirect: form.value.linkRedirect,
+        ativo: form.value.ativo,
+        isPatrocinador: form.value.isPatrocinador,
+        isApoiador: form.value.isApoiador
+      }
+      await afiliadoService.editarAfiliado(id, data)
+      toast.success('Afiliado editado com sucesso!')
+      setTimeout(() => {
+        router.push('/afiliados')
+      }, 2000)
+    } catch (error) {
+      toast.error('Erro ao editar afiliado')
+      console.error(error)
     } finally {
       loading.value = false
     }
   }
+  
   </script>
   
   <style scoped>

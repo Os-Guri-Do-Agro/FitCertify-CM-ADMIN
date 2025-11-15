@@ -36,7 +36,7 @@
         <v-card class="stats-card" elevation="2">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
-              <v-avatar color="primary" class="me-3">
+              <v-avatar color="blue-grey-darken-3" class="me-3">
                 <v-icon icon="mdi-account-multiple-outline" color="white"></v-icon>
               </v-avatar>
               <div>
@@ -55,7 +55,7 @@
         <v-card class="stats-card" elevation="2">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
-              <v-avatar color="success" class="me-3">
+              <v-avatar color="primary" class="me-3">
                 <v-icon icon="mdi-account-multiple-outline" color="white"></v-icon>
               </v-avatar>
               <div>
@@ -72,7 +72,7 @@
         <v-card class="stats-card" elevation="2">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
-              <v-avatar color="grey" class="me-3">
+              <v-avatar color="success" class="me-3">
                 <v-icon icon="mdi-account-multiple-outline" color="white"></v-icon>
               </v-avatar>
               <div>
