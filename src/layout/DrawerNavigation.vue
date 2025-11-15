@@ -311,6 +311,12 @@ const marketingItemsList = [
     value: 'auditoria',
     to: '/auditoria',
   },
+  {
+    icon: 'mdi-handshake-outline',
+    title: 'Afiliados',
+    value: 'afiliados',
+    to: '/afiliados'
+  }
 
 ]
 
