@@ -265,7 +265,6 @@ const confirmDelete = async () => {
     await produtoService.deleteProduto(selectedMarketplace.value.id)
     produtos.value = produtos.value.filter(a => a.id !== selectedMarketplace.value?.id)
     toast.success('Produto excluído com sucesso!')
-    console.log('Produto excluído com sucesso')
   } catch (error) {
     toast.error('Erro ao excluir produto')
     console.error('Erro ao excluir Produto:', error)
@@ -279,7 +278,6 @@ const confirmDelete = async () => {
 onMounted(async () => {
   try {
     const response = await produtoService.getAllProdutos()
-    console.log(response)
     produtos.value = Array.isArray(response.data)
       ? response.data.map((produto: any) => {
         // Procura a primeira imagem onde isBanner é false

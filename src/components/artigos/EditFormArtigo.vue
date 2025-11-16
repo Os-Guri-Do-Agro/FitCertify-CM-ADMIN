@@ -206,7 +206,6 @@ const loadArtigo = async () => {
   try {
     const response = await artigoService.getArtigosById(props.id)
     const artigo = response.data
-    console.log(artigo)
 
     form.value = {
       titulo: artigo.titulo || '',

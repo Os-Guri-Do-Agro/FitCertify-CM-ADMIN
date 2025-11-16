@@ -1,4 +1,4 @@
-<template>
+    <template>
   <v-container fluid class="pa-6">
     <!-- Header Section -->
     <v-row class="mb-6">
@@ -8,14 +8,14 @@
         >
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
-              <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Eventos
+              <v-icon icon="mdi-handshake-outline" class="me-3" size="large"></v-icon>
+              Afiliados
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todas os Eventos
+              Gerencie todos os afiliados
             </p>
           </div>
-          <router-link :to="{ path: '/evento/form' }">
+          <router-link :to="{ path: '/afiliados/form' }">
             <v-btn
               color="primary"
               size="large"
@@ -23,7 +23,7 @@
               class="create-btn"
               elevation="2"
             >
-              Criar Evento
+              Adicionar Afiliado
             </v-btn>
           </router-link>
         </div>
@@ -36,15 +36,32 @@
         <v-card class="stats-card" elevation="2">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
-              <v-avatar color="primary" class="me-3">
-                <v-icon icon="mdi-file-document" color="white"></v-icon>
+              <v-avatar color="blue-grey-darken-3" class="me-3">
+                <v-icon icon="mdi-account-multiple-outline" color="white"></v-icon>
               </v-avatar>
               <div>
                 <div class="text-h5 font-weight-bold">
-                  {{ evento?.length || 0 }}
+                  {{ totalAfiliados }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Eventos
+                  Total de afiliados
+                </div>
+              </div>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="3">
+        <v-card class="stats-card" elevation="2">
+          <v-card-text class="pa-4">
+            <div class="d-flex align-center">
+              <v-avatar color="primary" class="me-3">
+                <v-icon icon="mdi-account-multiple-outline" color="white"></v-icon>
+              </v-avatar>
+              <div>
+                <div class="text-h5 font-weight-bold">{{ totalPatrocinadores }}</div>
+                <div class="text-caption text-medium-emphasis">
+                  Patrocinadores
                 </div>
               </div>
             </div>
@@ -56,12 +73,12 @@
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
               <v-avatar color="success" class="me-3">
-                <v-icon icon="mdi-check-circle" color="white"></v-icon>
+                <v-icon icon="mdi-account-multiple-outline" color="white"></v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold">{{ activeCount }}</div>
+                <div class="text-h5 font-weight-bold">{{ totalApoiadores }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Eventos Ativos
+                  Apoiadores
                 </div>
               </div>
             </div>
@@ -79,13 +96,13 @@
         >
           <div class="d-flex align-center">
             <v-icon icon="mdi-table" class="me-2" color="primary"></v-icon>
-            <span class="text-h6 font-weight-medium">Lista de Eventos</span>
+            <span class="text-h6 font-weight-medium">Lista de Afiliados</span>
           </div>
           <v-spacer class="d-none d-sm-flex"></v-spacer>
           <v-text-field
             v-model="search"
             density="comfortable"
-            label="Buscar Eventos..."
+            label="Buscar Afiliado..."
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
             hide-details
@@ -101,9 +118,9 @@
       <!-- Data Table -->
       <v-data-table
         v-model:search="search"
-        :filter-keys="['titulo']"
+        :filter-keys="['nome']"
         :headers="headers"
-        :items="evento"
+        :items="afiliados"
         :loading="loading"
         class="custom-table"
         hover
@@ -113,10 +130,10 @@
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
         </template>
 
-        <!-- Foto -->
+        <!-- Logo -->
         <template v-slot:item.imagemUrl="{ item }">
           <v-avatar size="48" class="ma-2">
-            <v-img :src="item.imagemUrl" alt="foto evento" cover>
+            <v-img :src="item.imagemUrl" alt="logo afiliado" cover>
               <template v-slot:error>
                 <v-icon icon="mdi-image-broken" size="24"></v-icon>
               </template>
@@ -124,8 +141,15 @@
           </v-avatar>
         </template>
 
-        <template v-slot:item.data="{ item }">
-          <p>{{ dayjs(item.data).utc().format('DD/MM/YYYY') }}</p>
+        <template v-slot:item.tipo="{ item }">
+          <div class="d-flex ga-1">
+            <v-chip v-if="item?.isPatrocinador" color="primary" size="small" variant="flat">
+              Patrocinador
+            </v-chip>
+            <v-chip v-if="item.isApoiador" color="success" size="small" variant="flat">
+              Apoiador
+            </v-chip>
+          </div>
         </template>
 
         <template v-slot:item.ativo="{ item }">
@@ -147,14 +171,14 @@
               size="small"
               variant="text"
               color="warning"
-              @click="editEvento(item.id)"
+              @click="editAfiliado(item.id)"
             ></v-btn>
             <v-btn
               icon="mdi-delete"
               size="small"
               variant="text"
               color="error"
-              @click="deleteEvento(item)"
+              @click="deleteAfiliado(item)"
             ></v-btn>
           </div>
         </template>
@@ -169,10 +193,10 @@
               class="mb-4"
             ></v-icon>
             <div class="text-h6 text-medium-emphasis mb-2">
-              Nenhum evento encontrado
+              Nenhum afiliado encontrado
             </div>
             <div class="text-body-2 text-medium-emphasis">
-              Comece criando seu primeiro Evento
+              Comece criando seu primeiro afiliado
             </div>
           </div>
         </template>
@@ -183,7 +207,7 @@
   <v-dialog v-model="dialog" max-width="400" persistent>
     <v-card
       prepend-icon="mdi-post-outline"
-      text="Deseja excluir este evento?"
+      text="Deseja excluir este afiliado?"
       title="Confirmação de Exclusão"
     >
       <template v-slot:actions>
@@ -198,76 +222,88 @@
 </template>
 
 <script setup lang="ts">
-import eventoService from '@/services/evento/evento-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import 'vue3-toastify/dist/index.css'
+import afiliadoService from '@/services/afiliados'
 
-dayjs.extend(utc)
+interface Afiliado {
+  id: string
+  nome: string
+  imagemUrl: string
+  linkRedirect: string
+  ativo: boolean
+  isPatrocinador: boolean
+  isApoiador: boolean
+}
+
 const router = useRouter()
 const search = ref('')
-const evento = ref<any[]>([])
+const afiliados = ref<any[]>([])
 const loading = ref(true)
 const loadingDelete = ref(false)
-const selectedEvento = ref<any | null>(null)
+const selectedAfiliado = ref<any>(null)
 const dialog = ref(false)
+
+
 const headers = [
-  { title: 'Imagem', key: 'imagemUrl', sortable: false, width: '100px' },
-  { title: 'Titulo', key: 'titulo', align: 'center' as const },
-  { title: 'Local', key: 'local', align: 'center' as const },
-  { title: 'Data', key: 'data', align: 'center' as const },
-  { title: 'Status', key: 'ativo', sortable: true },
+  { title: 'Logo', key: 'imagemUrl', sortable: false, width: '100px' },
+  { title: 'Nome', key: 'nome' },
+  { title: 'Tipo', key: 'tipo', sortable: false },
+  { title: 'Status', key: 'ativo' },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
 ]
 
-// Computed stats
-const activeCount = computed(
-  () => evento.value?.filter((evento) => evento.ativo).length || 0
-)
+onMounted(() => {
+  buscarAfiliados()
+})
 
-// Actions
+const buscarAfiliados = async () => {
+  try {
+    const response = await afiliadoService.getAllAfiliados()
+    afiliados.value = response.data
+  } catch (error) {
+    console.error('Erro ao buscar afiliados:', error)
+    toast.error('Erro ao carregar afiliados')
+  } finally {
+    loading.value = false
+  }
+}
+const totalAfiliados = computed(() => afiliados.value.length)
+const totalPatrocinadores = computed(() => afiliados.value.filter(a => a.isPatrocinador).length)
+const totalApoiadores = computed(() => afiliados.value.filter(a => a.isApoiador).length)
 
-const editEvento = (id: any) => {
-  ;(window as any).editingEventoId = id
-  router.push('/evento/editForm')
+
+const editAfiliado = (id: string) => {
+  ;(window as any).editingAfiliadoId = id
+  router.push('/afiliados/editForm')
 }
 
-const deleteEvento = (item: any) => {
-  selectedEvento.value = item
+const deleteAfiliado = (afiliado: Afiliado) => {
+  selectedAfiliado.value = afiliado
   dialog.value = true
 }
 
 const confirmDelete = async () => {
   loadingDelete.value = true
-  if (!selectedEvento.value) return
+  if (!selectedAfiliado.value) return
 
   try {
-    await eventoService.deleteEvento(selectedEvento.value.id)
-    evento.value = evento.value.filter((a) => a.id !== selectedEvento.value?.id)
-    toast.success('Evento excluído com sucesso!')
+    await afiliadoService.apagarAfiliados(selectedAfiliado.value.id)
+    afiliados.value = afiliados.value.filter(
+      (a) => a.id !== selectedAfiliado.value?.id
+    )
+    toast.success('Afiliado excluído com sucesso')
   } catch (error) {
-    toast.error('Erro ao excluir Evento')
-    console.error('Erro ao excluir Empresa:', error)
+    toast.error('Erro ao excluir afiliado')
+    console.error('Erro ao excluir afiliado:', error)
   } finally {
     loadingDelete.value = false
     dialog.value = false
-    selectedEvento.value = null
+    selectedAfiliado.value = null
   }
 }
-
-onMounted(async () => {
-  try {
-    const response = await eventoService.getAllEventos()
-    evento.value = Array.isArray(response.data) ? response.data : []
-  } catch (error) {
-    console.error('Erro ao carregar empresas:', error)
-  } finally {
-    loading.value = false
-  }
-})
 </script>
 
 <style scoped>

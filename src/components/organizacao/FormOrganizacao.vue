@@ -98,7 +98,6 @@ const submitForm = async () => {
       formData.append('logo', form.value.logo)
     }
 
-    console.log(formData)
 
     await organizacaoService.createOrganizacao(formData)
 

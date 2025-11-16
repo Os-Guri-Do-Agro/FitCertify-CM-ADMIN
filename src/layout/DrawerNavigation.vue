@@ -285,6 +285,12 @@ const adminItemsList = [
 ]
 const financeItemsList = [
   {
+    icon: 'mdi-bank-transfer',
+    title: 'Solicitações',
+    value: 'solicitacoes',
+    to: '/solicitacoes',
+  },
+  {
     icon: 'mdi-ticket-percent',
     title: 'Cupons',
     value: 'cupons',
@@ -305,6 +311,12 @@ const marketingItemsList = [
     value: 'auditoria',
     to: '/auditoria',
   },
+  {
+    icon: 'mdi-handshake-outline',
+    title: 'Afiliados',
+    value: 'afiliados',
+    to: '/afiliados'
+  }
 
 ]
 

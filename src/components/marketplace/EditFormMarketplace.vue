@@ -182,7 +182,6 @@ const submitForm = async () => {
       formData.append('file', form.value.file)
     }
 
-    console.log(formData)
 
     await produtoService.updateProduto(props.id, formData)
 
@@ -206,7 +205,6 @@ if (!props.id) return
   try {
     const response = await marketplaceService.getProdutosById(props.id)
     const produto = response.data
-    console.log(produto)
 
 form.value = {
    titulo:produto.titulo || '',
@@ -245,7 +243,6 @@ onMounted(async () => {
   categoriasEmpresa.value = responseEmpresas.data || []
  const responseCategoriaProduto = await categoriaProdutoService.getAllCategoriasProduto()
   categoriasProduto.value = responseCategoriaProduto.data || []
-    console.log(props.id)
   if (props.id) {
     await loadProdutos()
   }

@@ -69,6 +69,39 @@ class CupomService {
     )
   }
 
+  getAllSolicitacoes(): Promise<any> {
+    return this.handleRequest(
+      apiClient.get('/cupom/solicitacoes-resgate/todos', {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to fetch all solicitacoes'
+    )
+  }
+
+  aprovarSolicitacao(id: string): Promise<any> {
+    return this.handleRequest(
+      apiClient.patch(`/cupom/solicitacao-resgate/${id}/aprovar`, {}, {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to aprovar solicitacao'
+    )
+  }
+
+  rejeitarSolicitacao(id: string, data: any): Promise<any> {
+    return this.handleRequest(
+      apiClient.patch(`/cupom/solicitacao-resgate/${id}/rejeitar`, data, {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to rejeitar solicitacao'
+    )
+  }
+
 
 }
 

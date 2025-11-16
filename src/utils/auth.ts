@@ -23,7 +23,7 @@ const getPayload = () => {
     const payload = JSON.parse(jsonPayloadInfoUser)
     return payload
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return null
   }
 }
@@ -63,7 +63,7 @@ export const isTokenValid = (): boolean => {
 
     return payload.exp > currentTime
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return false
   }
 }

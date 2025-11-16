@@ -231,7 +231,6 @@ const loadEvento = async () => {
   try {
     const response = await eventoService.getEventoById(props.id)
     const evento = response.data
-    console.log(evento)
 
     form.value = {
       titulo: evento.titulo || '',
