@@ -8,11 +8,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    EditFormAfiliados: typeof import('./components/afiliados/EditFormAfiliados.vue')['default']
     EditFormArtigo: typeof import('./components/artigos/EditFormArtigo.vue')['default']
     EditFormEmpresa: typeof import('./components/empresa/EditFormEmpresa.vue')['default']
     EditFormEventos: typeof import('./components/evento/EditFormEventos.vue')['default']
     EditFormMarketplace: typeof import('./components/marketplace/EditFormMarketplace.vue')['default']
     EditFormOrganizacao: typeof import('./components/organizacao/EditFormOrganizacao.vue')['default']
+    FormAfiliados: typeof import('./components/afiliados/FormAfiliados.vue')['default']
     FormArtigo: typeof import('./components/artigos/FormArtigo.vue')['default']
     FormEmpresa: typeof import('./components/empresa/FormEmpresa.vue')['default']
     FormEventos: typeof import('./components/evento/FormEventos.vue')['default']
