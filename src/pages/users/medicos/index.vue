@@ -269,7 +269,23 @@
   </v-dialog>
 
   <v-dialog v-model="dialogConfirmarAtivar" max-width="400" persistent>
-    <v-card prepend-icon="mdi-account-check" text="Deseja ativar este médico?" title="Confirmar Ativação">
+    <v-card prepend-icon="mdi-account-check" title="Confirmar Ativação">
+      <v-card-text>
+        <p class="mb-3">Deseja ativar este médico?</p>
+        <v-divider class="mb-3"></v-divider>
+        <div class="text-center">
+          <v-btn
+            href="https://portal.cfm.org.br/busca-medicos"
+            target="_blank"
+            variant="outlined"
+            color="primary"
+            prepend-icon="mdi-open-in-new"
+            size="small"
+          >
+            Verificar no Portal CFM
+          </v-btn>
+        </div>
+      </v-card-text>
       <template v-slot:actions>
         <v-spacer></v-spacer>
         <v-btn @click="dialogConfirmarAtivar = false" variant="outlined">Cancelar</v-btn>
