@@ -117,10 +117,10 @@
                           <v-checkbox v-model="form.certificadoCampos" value="localEvento" label="Local do Evento" hide-details></v-checkbox>
                         </v-col>
                         <v-col cols="6">
-                          <v-checkbox v-model="form.certificadoCampos" value="distancia" label="Distância Percorrida" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="distancia" label="Medico que certificou" hide-details></v-checkbox>
                           <v-checkbox v-model="form.certificadoCampos" value="tempo" label="Tempo de Conclusão" hide-details></v-checkbox>
-                          <v-checkbox v-model="form.certificadoCampos" value="colocacao" label="Colocação" hide-details></v-checkbox>
                           <v-checkbox v-model="form.certificadoCampos" value="organizacao" label="Organização" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="cpfAtleta" label="Documento do Atleta" hide-details></v-checkbox>
                         </v-col>
                       </v-row>
                     </div>
