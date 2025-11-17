@@ -25,7 +25,6 @@
           closable
           @click:close="isFirstAccess = false"
         >
-          <v-icon start>mdi-shield-alert</v-icon>
           <strong>Caso seja o primeiro acesso,</strong> recomendamos fortemente que altere sua senha padrão por uma senha forte.
         </v-alert>
 
