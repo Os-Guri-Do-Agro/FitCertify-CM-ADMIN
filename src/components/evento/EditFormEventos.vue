@@ -44,17 +44,120 @@
             </div>
           </v-card>
 
-          <v-col>
+          <v-card variant="outlined" class="pa-4 mb-3">
+            <v-card-subtitle class="pa-0 mb-4">Configurações do Evento</v-card-subtitle>
 
-            <v-card variant="outlined" class="pa-2">
-              <v-card-subtitle class="pa-0 mb-3">Configurações</v-card-subtitle>
-              <v-row>
-                <v-col cols="2">
-                  <v-switch color="primary" v-model="form.ativo" label="Ativo"></v-switch>
-                </v-col>
-              </v-row>
-            </v-card>
-          </v-col>
+            <div class="mb-4">
+              <div class="text-subtitle-2 mb-2">Status do Evento</div>
+              <v-switch color="primary" v-model="form.ativo" :label="form.ativo ? 'Evento Ativo' : 'Evento Inativo'"
+                hide-details></v-switch>
+            </div>
+
+            <v-divider class="my-4"></v-divider>
+
+            <div>
+              <div class="text-subtitle-2 mb-2">Certificado Exclusivo</div>
+
+              <!-- Aviso de pendente (substitui todas as informações quando pendente) -->
+              <v-alert v-if="isTemplatePendente" type="warning" variant="tonal"
+                class="mt-3" density="compact">
+                <div class="text-caption">
+                  O template do certificado está pendente de avaliação. Aguarde a aprovação para poder alterá-lo.
+                </div>
+              </v-alert>
+
+              <!-- Informações normais (só aparecem se não estiver pendente) -->
+              <template v-if="!isTemplatePendente">
+                <v-switch color="primary" v-model="form.isCertificadoExclusivo"
+                  :label="form.isCertificadoExclusivo ? 'Possui certificado exclusivo' : 'Sem certificado exclusivo'"
+                  hide-details></v-switch>
+
+                <v-alert v-if="form.isCertificadoExclusivo" type="info" variant="tonal" class="mt-3" density="compact">
+                  <div class="text-caption">
+                    Você pode selecionar os campos necessários para o certificado. Nosso sistema gerará automaticamente
+                    ou você pode anexar um template personalizado para emissão pelos atletas.
+                  </div>
+                </v-alert>
+                <v-alert v-else type="warning" variant="tonal" class="mt-3" density="compact">
+                  <div class="text-caption">
+                    Sem certificado exclusivo, os atletas utilizarão o template padrão da FitCertify365.
+                    Você receberá os certificados com um dos templates que o sistema tem.
+                  </div>
+                </v-alert>
+              </template>
+
+              <!-- Expansion panel para configurar certificado (aparece se puder alterar ou se não houver solicitação) -->
+              <v-expansion-panels v-if="form.isCertificadoExclusivo && (podeAlterarTemplate || !temSolicitacaoCertificado)" class="mt-4">
+                <v-expansion-panel>
+                  <v-expansion-panel-title>
+                    <v-icon icon="mdi-certificate" class="me-2"></v-icon>
+                    Configurar Certificado
+                  </v-expansion-panel-title>
+                  <v-expansion-panel-text>
+                    <div class="mb-4">
+                      <v-alert type="info" variant="tonal" density="compact" class="mb-4">
+                        <div class="text-caption">
+                          A logo será automaticamente incluída do arquivo enviado acima.
+                          Selecione os campos que deseja incluir no certificado.
+                        </div>
+                      </v-alert>
+
+                      <div class="text-subtitle-2 mb-3">Campos do Certificado:</div>
+                      <v-row>
+                        <v-col cols="6">
+                          <v-checkbox v-model="form.certificadoCampos" value="nomeAtleta" label="Nome do Atleta"
+                            hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="nomeEvento" label="Nome do Evento"
+                            hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="dataEvento" label="Data do Evento"
+                            hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="localEvento" label="Local do Evento"
+                            hide-details></v-checkbox>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-checkbox v-model="form.certificadoCampos" value="distancia" label="Medico que certificou"
+                            hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="tempo" label="Tempo de Conclusão"
+                            hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="organizacao" label="Organização"
+                            hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="cpfAtleta" label="Documento do Atleta"
+                            hide-details></v-checkbox>
+                        </v-col>
+                      </v-row>
+                    </div>
+
+                    <v-divider class="my-4"></v-divider>
+
+                    <div>
+                      <div class="text-subtitle-2 mb-3">Template Personalizado:</div>
+
+                      <v-checkbox v-model="form.usarTemplatePersonalizado"
+                        label="Desejo anexar um template personalizado" hide-details class="mb-3"></v-checkbox>
+
+                      <div v-if="templatePreview && !form.templateCertificado && !form.usarTemplatePersonalizado"
+                        class="text-center mb-3">
+                        <!-- PDF Preview -->
+                        <div v-if="isTemplatePdf" class="template-preview-pdf mb-3">
+                          <iframe :src="templatePreview" class="template-iframe" frameborder="0"></iframe>
+                        </div>
+                        <!-- Image Preview -->
+                        <v-img v-else-if="isTemplateImage" :src="templatePreview" max-height="200" class="mb-3"></v-img>
+                        <v-btn @click="form.usarTemplatePersonalizado = true" color="primary" variant="outlined"
+                          size="small">
+                          Alterar Template
+                        </v-btn>
+                      </div>
+
+                      <v-file-upload v-if="form.usarTemplatePersonalizado" v-model="form.templateCertificado"
+                        label="Anexar Template (PDF, PNG, JPG)" accept=".pdf,.png,.jpg,.jpeg" variant="outlined"
+                        clearable show-size></v-file-upload>
+                    </div>
+                  </v-expansion-panel-text>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+          </v-card>
         </v-col>
 
         <v-col>
@@ -105,7 +208,7 @@
   </v-card>
 </template>
 
-<script setup >
+<script setup>
 import eventoService from '@/services/evento/evento-service'
 import organizacaoEventos from '@/services/organizacao-evento/organizacao-evento-service'
 import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
@@ -129,7 +232,7 @@ const tipoEventos = ref([])
 const OrganizacaoEventos = ref([])
 const novaDistancia = ref('')
 const tipoEventoSelected = ref('')
-
+const ultimaSolicitacaoCertificado = ref(null)
 const imagePreview = ref({
   imagem: null,
   logo: null
@@ -138,6 +241,35 @@ const imagePreview = ref({
 const editingImage = ref({
   imagem: false,
   logo: false
+})
+
+const templatePreview = ref(null)
+const templateContentType = ref(null)
+const situacaoCertificado = ref(null)
+const temSolicitacaoCertificado = ref(false)
+
+const isTemplatePdf = computed(() => {
+  if (!templateContentType.value) return false
+  const contentType = templateContentType.value.toLowerCase()
+  return contentType === 'application/pdf' || contentType.includes('pdf')
+})
+
+const isTemplateImage = computed(() => {
+  if (!templateContentType.value) return false
+  const contentType = templateContentType.value.toLowerCase()
+  return contentType.startsWith('image/')
+})
+
+const podeAlterarTemplate = computed(() => {
+  if (!situacaoCertificado.value) return false
+  const situacao = situacaoCertificado.value.toUpperCase()
+  return situacao === 'VALIDO' || situacao === 'INVALIDO'
+})
+
+const isTemplatePendente = computed(() => {
+  if (!situacaoCertificado.value) return false
+  const situacao = situacaoCertificado.value.toUpperCase()
+  return situacao === 'PENDENTE'
 })
 
 const form = ref({
@@ -150,7 +282,11 @@ const form = ref({
   ativo: true,
   tipoEventoId: '',
   distanciasEvento: [],
-  organizacoesEvento: []
+  organizacoesEvento: [],
+  isCertificadoExclusivo: false,
+  certificadoCampos: [],
+  usarTemplatePersonalizado: false,
+  templateCertificado: null
 })
 
 const rules = {
@@ -206,17 +342,31 @@ const submitForm = async () => {
       formData.append('imagem', form.value.imagem)
     }
 
-    if (props.id) {
-      await eventoService.updateEvento(props.id, formData)
-      toast.success('Evento atualizado com sucesso!')
-    } else {
-      await eventoService.createEvento(formData)
-      toast.success('Evento criado com sucesso!')
+    if (form.value.isCertificadoExclusivo) {
+      formData.append('possuiCertificadoExclusivo', form.value.isCertificadoExclusivo)
+      
+      // Enviar campos do certificado como array JSON
+      formData.append('solicitacaoCertificado.camposCertificado', JSON.stringify(form.value.certificadoCampos))
+
+      // Enviar arquivo do template se existir
+      if (form.value.templateCertificado) {
+        formData.append('solicitacaoCertificado.arquivo', form.value.templateCertificado)
+      }
+      formData.append('solicitacaoCertificado.situacao', 'Pendente')
     }
 
-    setTimeout(() => {
-      router.push('/evento/')
-    }, 2500)
+    if (props.id) {
+      await eventoService.updateEvento(props.id, formData)
+      router.push('/evento/').then(() => {
+        toast.success('Evento atualizado com sucesso!')
+      })
+    } else {
+      await eventoService.createEvento(formData)
+      router.push('/evento/').then(() => {
+        toast.success('Evento criado com sucesso!')
+      })
+    }
+
   } catch (error) {
     toast.error(props.id ? 'Erro ao atualizar evento' : 'Erro ao criar evento')
     console.error('Error submitting evento:', error)
@@ -226,11 +376,38 @@ const submitForm = async () => {
 }
 
 const loadEvento = async () => {
-  if (!props.id) return
+  if (!props.id) {
+    temSolicitacaoCertificado.value = false
+    return
+  }
 
   try {
     const response = await eventoService.getEventoById(props.id)
     const evento = response.data
+
+    // Carregar campos do certificado se existir (pegar sempre o último)
+    let certificadoCampos = ['nomeAtleta', 'nomeEvento', 'dataEvento']
+    const solicitacoesCertificado = evento.solicitacoesCertificado || []
+    const ultimaSolicitacao = solicitacoesCertificado.length > 0
+      ? solicitacoesCertificado[solicitacoesCertificado.length - 1]
+      : null
+    // Atualizar se existe solicitação de certificado
+    temSolicitacaoCertificado.value = ultimaSolicitacao !== null
+    ultimaSolicitacaoCertificado.value = ultimaSolicitacao
+    // Resetar situação e preview do template
+    situacaoCertificado.value = null
+    templatePreview.value = null
+    templateContentType.value = null
+
+    if (ultimaSolicitacao?.camposCertificado) {
+      try {
+        certificadoCampos = typeof ultimaSolicitacao.camposCertificado === 'string'
+          ? JSON.parse(ultimaSolicitacao.camposCertificado)
+          : ultimaSolicitacao.camposCertificado
+      } catch (e) {
+        console.error('Erro ao parsear campos do certificado:', e)
+      }
+    }
 
     form.value = {
       titulo: evento.titulo || '',
@@ -242,7 +419,11 @@ const loadEvento = async () => {
       ativo: evento.ativo,
       tipoEventoId: evento.tipoEventoId || '',
       distanciasEvento: evento.distanciasEvento?.map(d => d.distancia) || [],
-      organizacoesEvento: evento.organizacaoEvento?.map(org => org.organizacao) || []
+      organizacoesEvento: evento.organizacaoEvento?.map(org => org.organizacao) || [],
+      isCertificadoExclusivo: evento.possuiCertificadoExclusivo || false,
+      certificadoCampos: certificadoCampos,
+      usarTemplatePersonalizado: false,
+      templateCertificado: null
     }
 
     // Buscar tipo de evento pelos dados carregados
@@ -251,6 +432,17 @@ const loadEvento = async () => {
     // Definir previews das imagens
     imagePreview.value.imagem = evento.imagemUrl || null
     imagePreview.value.logo = evento.logoUrl || null
+
+    // Definir preview do template e situação se existir (pegar sempre o último)
+    if (ultimaSolicitacao?.arquivoUrl) {
+      templatePreview.value = ultimaSolicitacao.arquivoUrl
+      templateContentType.value = ultimaSolicitacao.contentTypeArquivo || null
+    }
+    
+    // Carregar situação do último certificado
+    if (ultimaSolicitacao?.situacao) {
+      situacaoCertificado.value = ultimaSolicitacao.situacao
+    }
   } catch (error) {
     toast.error('Erro ao carregar evento')
     console.error('Error loading evento:', error)
@@ -279,3 +471,19 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+.template-preview-pdf {
+  width: 100%;
+  height: 300px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.template-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
