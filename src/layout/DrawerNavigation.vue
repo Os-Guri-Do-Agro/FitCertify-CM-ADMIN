@@ -255,6 +255,12 @@ const eventosMenuItems = [
     value: 'organizacao',
     to: '/organizacao',
   },
+  {
+    icon: 'mdi-certificate',
+    title: 'Solicitações de Certificado',
+    value: 'solicitacaoCertificado',
+    to: '/solicitacaoCertificado',
+  },
 ]
 
 const adminItemsList = [

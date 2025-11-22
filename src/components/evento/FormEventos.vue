@@ -29,7 +29,7 @@
               <v-text-field v-model="novaDistancia" label="Distância (km)" type="number" variant="outlined"
                 density="compact" @keyup.enter="adicionarDistancia"></v-text-field>
               <v-btn @click="adicionarDistancia" color="primary" variant="outlined">
-                Add
+                Adicionar
               </v-btn>
             </div>
             <div v-if="form.distanciasEvento.length > 0">
@@ -273,12 +273,23 @@ const submitForm = async () => {
     if (form.value.imagem) {
       formData.append('imagem', form.value.imagem)
     }
+    if (form.value.isCertificadoExclusivo) {
+      formData.append('possuiCertificadoExclusivo', form.value.isCertificadoExclusivo)
+      
+      // Enviar campos do certificado como array JSON
+      formData.append('solicitacaoCertificado.camposCertificado', JSON.stringify(form.value.certificadoCampos))
+      
+      // Enviar arquivo do template se existir
+      if (form.value.templateCertificado) {
+        formData.append('solicitacaoCertificado.arquivo', form.value.templateCertificado)
+      }
+      formData.append('solicitacaoCertificado.situacao', 'Pendente')
+    }
     await eventoService.createEvento(formData)
 
-    toast.success('Evento criado com sucesso!')
-    setTimeout(() => {
-      router.push('/evento/')
-    }, 2500)
+    router.push('/evento/').then(() => {
+      toast.success('Evento criado com sucesso!')
+    })
   } catch (error) {
     toast.error('Erro ao criar evento')
     console.error('Error creating evento:', error)
