@@ -120,11 +120,8 @@ const submitForm = async () => {
       formData.append('logo', form.value.logo)
     }
 
-    console.log(formData)
 
     await empresaService.updateEmpresa(props.id, formData)
-    console.log(formData)
-    console.log(props.id)
 
     toast.success('Produto atualizado com sucesso!')
     setTimeout(() => {
@@ -143,11 +140,9 @@ const submitForm = async () => {
 
 const loadEmpresa = async () => {
   if (!props.id) return
-  console.log(props.id)
   try {
     const response = await empresaService.getEmpresaById(props.id)
     const empresa = response.data
-    console.log(empresa)
     form.value = {
       nome: empresa.nome || '',
       sobre: empresa.sobre || '',

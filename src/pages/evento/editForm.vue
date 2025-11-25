@@ -41,6 +41,5 @@ const id = ref<string | undefined>()
 
 onMounted(() => {
   id.value = (window as any).editingEventoId
-  console.log('ID para edição:', id.value)
 })
 </script>

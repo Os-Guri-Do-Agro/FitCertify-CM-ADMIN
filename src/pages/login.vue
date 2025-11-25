@@ -140,7 +140,6 @@ const removeToken = () => {
 async function enviarCodigo() {
   try {
     await authService.enviarCodigo(emailModal.value).then((resp) => {
-      console.log(resp);
       toast.success('Código enviado com sucesso!');
     })
 
@@ -179,7 +178,7 @@ watch(emailModal, (newEmail) => {
   if (debounceTimer) {
     clearTimeout(debounceTimer)
   }
-  
+
   if (newEmail && validarEmail(newEmail)) {
     debounceTimer = setTimeout(() => {
       onBlurEmailModal(newEmail)

@@ -29,7 +29,7 @@
               <v-text-field v-model="novaDistancia" label="Distância (km)" type="number" variant="outlined"
                 density="compact" @keyup.enter="adicionarDistancia"></v-text-field>
               <v-btn @click="adicionarDistancia" color="primary" variant="outlined">
-                Add
+                Adicionar
               </v-btn>
             </div>
             <div v-if="form.distanciasEvento.length > 0">
@@ -103,11 +103,11 @@
                     <div class="mb-4">
                       <v-alert type="info" variant="tonal" density="compact" class="mb-4">
                         <div class="text-caption">
-                          A logo será automaticamente incluída do arquivo enviado acima. 
+                          A logo será automaticamente incluída do arquivo enviado acima.
                           Selecione os campos que deseja incluir no certificado.
                         </div>
                       </v-alert>
-                      
+
                       <div class="text-subtitle-2 mb-3">Campos do Certificado:</div>
                       <v-row>
                         <v-col cols="6">
@@ -117,10 +117,10 @@
                           <v-checkbox v-model="form.certificadoCampos" value="localEvento" label="Local do Evento" hide-details></v-checkbox>
                         </v-col>
                         <v-col cols="6">
-                          <v-checkbox v-model="form.certificadoCampos" value="distancia" label="Distância Percorrida" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="distancia" label="Medico que certificou" hide-details></v-checkbox>
                           <v-checkbox v-model="form.certificadoCampos" value="tempo" label="Tempo de Conclusão" hide-details></v-checkbox>
-                          <v-checkbox v-model="form.certificadoCampos" value="colocacao" label="Colocação" hide-details></v-checkbox>
                           <v-checkbox v-model="form.certificadoCampos" value="organizacao" label="Organização" hide-details></v-checkbox>
+                          <v-checkbox v-model="form.certificadoCampos" value="cpfAtleta" label="Documento do Atleta" hide-details></v-checkbox>
                         </v-col>
                       </v-row>
                     </div>
@@ -129,17 +129,17 @@
 
                     <div>
                       <div class="text-subtitle-2 mb-3">Template Personalizado:</div>
-                      <v-checkbox 
-                        v-model="form.usarTemplatePersonalizado" 
-                        label="Desejo anexar um template personalizado" 
+                      <v-checkbox
+                        v-model="form.usarTemplatePersonalizado"
+                        label="Desejo anexar um template personalizado"
                         hide-details
                         class="mb-3"
                       ></v-checkbox>
-                      
-                      <v-file-upload 
+
+                      <v-file-upload
                         v-if="form.usarTemplatePersonalizado"
-                        v-model="form.templateCertificado" 
-                        label="Anexar Template (PDF, PNG, JPG)" 
+                        v-model="form.templateCertificado"
+                        label="Anexar Template (PDF, PNG, JPG)"
                         accept=".pdf,.png,.jpg,.jpeg"
                         variant="outlined"
                         clearable
@@ -273,13 +273,23 @@ const submitForm = async () => {
     if (form.value.imagem) {
       formData.append('imagem', form.value.imagem)
     }
-    console.log(formData)
+    if (form.value.isCertificadoExclusivo) {
+      formData.append('possuiCertificadoExclusivo', form.value.isCertificadoExclusivo)
+      
+      // Enviar campos do certificado como array JSON
+      formData.append('solicitacaoCertificado.camposCertificado', JSON.stringify(form.value.certificadoCampos))
+      
+      // Enviar arquivo do template se existir
+      if (form.value.templateCertificado) {
+        formData.append('solicitacaoCertificado.arquivo', form.value.templateCertificado)
+      }
+      formData.append('solicitacaoCertificado.situacao', 'Pendente')
+    }
     await eventoService.createEvento(formData)
 
-    toast.success('Evento criado com sucesso!')
-    setTimeout(() => {
-      router.push('/evento/')
-    }, 2500)
+    router.push('/evento/').then(() => {
+      toast.success('Evento criado com sucesso!')
+    })
   } catch (error) {
     toast.error('Erro ao criar evento')
     console.error('Error creating evento:', error)
@@ -293,10 +303,8 @@ onMounted(async () => {
 
   const response = await tipoEventoService.getAllTipoEventos()
   tipoEventos.value = response.data || []
-  console.log(tipoEventos.value)
   const responseOrganizacao = await organizacaoEventos.getAllOrganizacoes()
   OrganizacaoEventos.value = responseOrganizacao.data || []
-  console.log(OrganizacaoEventos.value)
 
 })
 </script>

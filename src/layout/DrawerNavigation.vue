@@ -255,6 +255,12 @@ const eventosMenuItems = [
     value: 'organizacao',
     to: '/organizacao',
   },
+  {
+    icon: 'mdi-certificate',
+    title: 'Solicitações de Certificado',
+    value: 'solicitacaoCertificado',
+    to: '/solicitacaoCertificado',
+  },
 ]
 
 const adminItemsList = [
@@ -311,6 +317,12 @@ const marketingItemsList = [
     value: 'auditoria',
     to: '/auditoria',
   },
+  {
+    icon: 'mdi-handshake-outline',
+    title: 'Afiliados',
+    value: 'afiliados',
+    to: '/afiliados'
+  }
 
 ]
 

@@ -245,7 +245,6 @@ const confirmDelete = async () => {
       (a) => a.id !== selectedOrganizacao.value?.id
     )
     toast.success('Organização excluído com sucesso')
-    console.log('Organização excluído com sucesso')
   } catch (error) {
     toast.error('Erro ao excluir Organização')
     console.error('Erro ao excluir Organização:', error)
@@ -259,9 +258,7 @@ const confirmDelete = async () => {
 onMounted(async () => {
   try {
     const response = await organizacaoService.getAllOrganizacoes()
-    console.log(response)
     organizacao.value = Array.isArray(response.data) ? response.data : []
-    console.log(organizacao.value)
   } catch (error) {
     console.error('Erro ao carregar organizacao:', error)
   } finally {

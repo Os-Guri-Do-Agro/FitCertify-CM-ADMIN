@@ -144,7 +144,6 @@ const roleUser = ref()
 
 onMounted(async () => {
   infoUser.value = getInfoUser()
-  console.log(infoUser.value)
 })
 function mappedRole() {
 
@@ -186,7 +185,10 @@ const currentPageTitle = computed(() => {
     '/solicitacoes': 'Solicitações',
     '/assinaturas': 'Assinaturas',
     '/auditoria': 'Auditoria',
-    '/configuracoes/': 'Configurações'
+    '/configuracoes/': 'Configurações',
+    '/afiliados': 'Afiliados',
+    '/afiliados/form': 'Novo Afiliado',
+    '/afiliados/editForm': 'Editar Afiliado',
   }
   return titles[route.path] || 'Dashboard'
 })
