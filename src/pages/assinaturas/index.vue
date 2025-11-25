@@ -62,6 +62,7 @@ import AssinaturaService from '@/services/pagarMe/assinaturas'
      try {
         const response = await AssinaturaService.getPlansSubscriptions();
          assinaturas.value = response.data
+         console.log(response.data)
          return response.data
      } catch (error) {
         console.error('Erro ao buscar assinaturas:', error)
@@ -94,7 +95,7 @@ onMounted(async () => {
   })
 
   const statusChart = echarts.init(document.getElementById('status-chart'))
-  const statusMap = { active: 'Ativo', canceled: 'Cancelado', future: 'Faturado'}
+  const statusMap = { active: 'Ativo', canceled: 'Cancelado', future: 'Faturado', failed: 'Falhou'}
   const contadorStatus = {}
   
   for (const item of metrica) {
