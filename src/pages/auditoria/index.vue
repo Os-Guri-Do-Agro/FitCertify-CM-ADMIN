@@ -91,10 +91,10 @@
           {{ dayjs(item.validade).utcOffset('0').format('DD/MM/YYYY') }}
         </template>
 
-        <template v-slot:item.acessouObrigado="{ item }">
+        <!-- <template v-slot:item.acessouObrigado="{ item }">
           <v-chip variant="flat" :color="item.acessouObrigado === true ? 'blue' : 'orange'">{{ item.acessouObrigado ===
             true ? 'Sim' : 'Não' }}</v-chip>
-        </template>
+        </template> -->
 
         <template v-slot:no-data>
           <div class="text-center pa-8">
@@ -158,7 +158,7 @@ const headers = [
   { title: 'Número Whatsapp', key: 'numberWhatsapp', sortable: true, align: 'center' as const },
   { title: 'email', key: 'email', sortable: true, align: 'center' as const },
   { title: 'Feito na Página', key: 'promocaoRef', sortable: true, align: 'center' as const },
-  { title: 'Acessou o Obrigado', key: 'acessouObrigado', sortable: true, align: 'center' as const },
+  // { title: 'Acessou o Obrigado', key: 'acessouObrigado', sortable: true, align: 'center' as const },
   { title: 'Criado em', key: 'createdAt', sortable: true, align: 'center' as const },
 ]
 
