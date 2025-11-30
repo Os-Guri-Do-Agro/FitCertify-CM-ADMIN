@@ -72,6 +72,49 @@ class ArtigoService {
     );
   }
 
+  getAllCategorias(): Promise<any> {
+    return this.handleRequest(
+      apiClient.get('/categoria-artigo'),
+      'Failed to fetch all categories'
+    )
+  }
+
+  apagarCategoria(id: string): Promise<any> {
+    return this.handleRequest(
+      apiClient.delete(`/categoria-artigo/${id}`,{
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${tokenSession}`
+        },
+    }),
+      'Failed to delete category'
+    )
+  }
+
+  updateCategoria(id: string, data: any): Promise<any> {
+    return this.handleRequest(
+      apiClient.patch(`/categoria-artigo/${id}`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to update category'
+    );
+  }
+
+  criarCategoria(data: any): Promise<any> {
+    return this.handleRequest(
+      apiClient.post('/categoria-artigo', data, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to create category'
+    );
+  }
+
 }
 
 
