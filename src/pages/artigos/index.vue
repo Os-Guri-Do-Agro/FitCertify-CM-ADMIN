@@ -13,11 +13,24 @@
               Gerencie todos os artigos do blog
             </p>
           </div>
-           <router-link :to="{ path: 'form' }">
-             <v-btn color="primary" size="large" prepend-icon="mdi-plus" class="create-btn" elevation="2">
-               Criar Artigo
+          <div class="d-flex flex-column ga-2">
+            <router-link to="/artigos/form">
+              <v-btn color="primary" size="large" prepend-icon="mdi-plus" class="create-btn" elevation="2">
+                Criar Artigo
               </v-btn>
             </router-link>
+            <v-btn
+              prepend-icon="mdi-tag-plus"
+              size="large"
+              variant="outlined"
+              color="primary"
+              @click="createCategoryDialog = true"
+              class="create-btn"
+              elevation="1"
+            >
+              Nova Categoria
+            </v-btn>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -95,6 +108,97 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Categories Section -->
+    <v-card class="mb-6 main-card" elevation="2">
+      <v-expansion-panels>
+        <v-expansion-panel>
+          <v-expansion-panel-title>
+            <div class="d-flex align-center">
+              <v-icon icon="mdi-tag-multiple" class="me-2" color="primary"></v-icon>
+              <span class="text-h6 font-weight-medium">Categorias de Artigos</span>
+              <v-spacer></v-spacer>
+              <v-chip class="ml-2" size="small" color="primary" variant="flat">
+                {{ categorias.length }} categorias
+              </v-chip>
+            </div>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-data-table
+              :headers="categoryHeaders"
+              :items="categorias"
+              :loading="loadingCategorias"
+              class="custom-table"
+              hover
+            >
+              <!-- Loading -->
+              <template v-slot:loading>
+                <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+              </template>
+              <!-- Nome -->
+              <template v-slot:item.nome="{ item }">
+                <div class="d-flex align-center">
+                  <v-avatar color="primary" size="32" class="me-3">
+                    <span class="text-caption font-weight-bold">{{ item.nome.charAt(0).toUpperCase() }}</span>
+                  </v-avatar>
+                  <span class="font-weight-medium">{{ item.nome }}</span>
+                </div>
+              </template>
+
+              <!-- Data Criação -->
+              <template v-slot:item.createdAt="{ item }">
+                {{ formatDate(item.createdAt) }}
+              </template>
+
+              <!-- Status -->
+              <template v-slot:item.ativo="{ item }">
+                <v-chip
+                  :color="item.ativo ? 'success' : 'error'"
+                  :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-close-circle'"
+                  size="small"
+                  variant="flat"
+                >
+                  {{ item.ativo ? 'Ativo' : 'Inativo' }}
+                </v-chip>
+              </template>
+
+              <!-- Actions -->
+              <template v-slot:item.actions="{ item }">
+                <div class="d-flex ga-2">
+                  <v-btn
+                    icon="mdi-pencil"
+                    size="small"
+                    variant="text"
+                    color="warning"
+                    @click="editCategory(item)"
+                  ></v-btn>
+                  <v-btn
+                    icon="mdi-delete"
+                    size="small"
+                    variant="text"
+                    color="error"
+                    @click="deleteCategory(item)"
+                  ></v-btn>
+                </div>
+              </template>
+
+              <!-- No data -->
+              <template v-slot:no-data>
+                <div class="text-center pa-8">
+                  <v-icon icon="mdi-tag-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
+                  <div class="text-h6 text-medium-emphasis mb-2">
+                    Nenhuma categoria encontrada
+                  </div>
+                  <div class="text-body-2 text-medium-emphasis">
+                    Crie sua primeira categoria
+                  </div>
+                </div>
+              </template>
+            </v-data-table>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-card>
 
     <!-- Main Content Card -->
     <v-card class="main-card" elevation="3">
@@ -193,29 +297,98 @@
 
 
 
- <v-dialog
-      v-model="dialog"
-      max-width="400"
-      persistent
+ <!-- Dialog Exclusão Artigo -->
+  <v-dialog v-model="dialog" max-width="400" persistent>
+    <v-card
+      prepend-icon="mdi-post-outline"
+      text="Deseja excluir este artigo?"
+      title="Confirmação de Exclusão"
     >
+      <template v-slot:actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="dialog = false">recusar</v-btn>
+        <v-btn @click="confirmDelete" color="primary" :loading="deleteLoading">
+          confirmar
+        </v-btn>
+      </template>
+    </v-card>
+  </v-dialog>
 
-      <v-card
-        prepend-icon="mdi-post-outline"
-        text="Deseja excluir este artigo?"
-        title="Confirmação de Exclusão"
-      >
-        <template v-slot:actions>
-          <v-spacer></v-spacer>
+  <!-- Dialog Exclusão Categoria -->
+  <v-dialog v-model="categoryDialog" max-width="400" persistent>
+    <v-card
+      prepend-icon="mdi-tag-outline"
+      text="Deseja excluir esta categoria?"
+      title="Confirmação de Exclusão"
+    >
+      <template v-slot:actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="categoryDialog = false">recusar</v-btn>
+        <v-btn @click="confirmDeleteCategory" color="primary" :loading="deleteLoading">
+          confirmar
+        </v-btn>
+      </template>
+    </v-card>
+  </v-dialog>
 
-          <v-btn @click="dialog = false">
-            recusar
-          </v-btn>
+  <!-- Dialog Edição Categoria -->
+  <v-dialog v-model="editCategoryDialog" max-width="400" persistent>
+    <v-card prepend-icon="mdi-tag-outline" title="Editar Categoria">
+      <v-card-text>
+        <v-text-field
+          v-model="editCategoryName"
+          label="Nome da Categoria"
+          variant="outlined"
+          density="comfortable"
+          :rules="[v => !!v || 'Nome é obrigatório']"
+          class="mb-4"
+        ></v-text-field>
 
-          <v-btn @click="confirmDelete" color="primary" :loading="deleteLoading">
-            confirmar
-          </v-btn>
-        </template>
-      </v-card>
+        <v-switch
+          v-model="editCategoryActive"
+          label="Ativo"
+          color="primary"
+          hide-details
+        ></v-switch>
+      </v-card-text>
+      <template v-slot:actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="editCategoryDialog = false">cancelar</v-btn>
+        <v-btn @click="confirmEditCategory" color="primary" :loading="editLoading" :disabled="!editCategoryName.trim()">
+          salvar
+        </v-btn>
+      </template>
+    </v-card>
+  </v-dialog>
+
+  <!-- Dialog Criação Categoria -->
+  <v-dialog v-model="createCategoryDialog" max-width="400" persistent>
+    <v-card prepend-icon="mdi-tag-plus" title="Criar Categoria">
+      <v-card-text>
+        <v-text-field
+          v-model="createCategoryName"
+          label="Nome da Categoria"
+          variant="outlined"
+          density="comfortable"
+          :rules="[v => !!v || 'Nome é obrigatório']"
+          class="mb-4"
+        ></v-text-field>
+
+        <v-switch
+          v-model="createCategoryActive"
+          label="Categoria ativa"
+          color="primary"
+          hide-details
+        ></v-switch>
+      </v-card-text>
+      <template v-slot:actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="createCategoryDialog = false">cancelar</v-btn>
+        <v-btn @click="confirmCreateCategory" color="primary" :loading="createLoading" :disabled="!createCategoryName.trim()">
+          criar
+        </v-btn>
+      </template>
+    </v-card>
   </v-dialog>
 
 </template>
@@ -230,10 +403,22 @@ import 'vue3-toastify/dist/index.css'
 const router = useRouter()
 const search = ref('')
 const artigos = ref<any[]>([])
+const categorias = ref<any[]>([])
 const loading = ref(true)
+const loadingCategorias = ref(true)
 const selectedArticle = ref<any | null>(null)
+const selectedCategory = ref<any | null>(null)
 const dialog = ref(false)
+const categoryDialog = ref(false)
+const editCategoryDialog = ref(false)
+const createCategoryDialog = ref(false)
 const deleteLoading = ref(false)
+const editCategoryName = ref('')
+const createCategoryName = ref('')
+const editCategoryActive = ref<boolean>(true)
+const createCategoryActive = ref<boolean>(true)
+const editLoading = ref(false)
+const createLoading = ref(false)
 const headers = [
   { title: 'Foto', key: 'foto', sortable: true, width: '100px' },
   { title: 'Titulo', key: 'titulo', width: '700px' },
@@ -242,6 +427,14 @@ const headers = [
   { title: 'Desktop', key: 'isDesktop', sortable: true, width: '120px' },
   { title: 'Status', key: 'ativo', sortable: true, width: '120px' },
   { title: 'Ações', key: 'actions', sortable: false, width: '150px' },
+]
+
+const categoryHeaders = [
+  { title: 'Nome', key: 'nome', sortable: true },
+  { title: 'ID', key: 'id', sortable: true, width: '100px' },
+  { title: 'Data Criação', key: 'createdAt', sortable: true, width: '150px' },
+  { title: 'Status', key: 'ativo', sortable: true, width: '120px' },
+  { title: 'Ações', key: 'actions', sortable: false, width: '100px' },
 ]
 
 // Computed stats
@@ -271,6 +464,87 @@ const deleteArticle = (item: any) => {
 }
 
 
+const deleteCategory = (item: any) => {
+  selectedCategory.value = item
+  categoryDialog.value = true
+}
+
+const editCategory = (item: any) => {
+  selectedCategory.value = item
+  editCategoryName.value = item.nome
+  editCategoryActive.value = item.ativo
+  editCategoryDialog.value = true
+}
+
+const confirmEditCategory = async () => {
+  if (!selectedCategory.value || !editCategoryName.value) return
+
+  editLoading.value = true
+  try {
+    await artigoService.updateCategoria(selectedCategory.value.id, {
+      nome: editCategoryName.value,
+      ativo: editCategoryActive.value
+    })
+
+    // Recarregar categorias da API
+    await buscarCategrias()
+
+    toast.success('Categoria atualizada com sucesso!')
+  } catch (error) {
+    console.error('Erro ao atualizar categoria:', error)
+    toast.error('Erro ao atualizar categoria')
+  } finally {
+    editLoading.value = false
+    editCategoryDialog.value = false
+    selectedCategory.value = null
+    editCategoryName.value = ''
+    editCategoryActive.value = true
+  }
+}
+
+const confirmCreateCategory = async () => {
+  if (!createCategoryName.value) return
+
+  createLoading.value = true
+  try {
+    await artigoService.criarCategoria({
+      nome: createCategoryName.value,
+      ativo: createCategoryActive.value
+    })
+
+    // Recarregar categorias da API
+    await buscarCategrias()
+
+    toast.success('Categoria criada com sucesso!')
+  } catch (error) {
+    console.error('Erro ao criar categoria:', error)
+    toast.error('Erro ao criar categoria')
+  } finally {
+    createLoading.value = false
+    createCategoryDialog.value = false
+    createCategoryName.value = ''
+    createCategoryActive.value = true
+  }
+}
+
+const confirmDeleteCategory = async () => {
+  if (!selectedCategory.value) return
+
+  deleteLoading.value = true
+  try {
+    await artigoService.apagarCategoria(selectedCategory.value.id)
+    categorias.value = categorias.value.filter(c => c.id !== selectedCategory.value?.id)
+    toast.success('Categoria excluída com sucesso!')
+  } catch (error) {
+    console.error('Erro ao excluir categoria:', error)
+    toast.error('Erro ao excluir categoria')
+  } finally {
+    deleteLoading.value = false
+    categoryDialog.value = false
+    selectedCategory.value = null
+  }
+}
+
 const confirmDelete = async () => {
   if (!selectedArticle.value) return
 
@@ -289,25 +563,46 @@ const confirmDelete = async () => {
   }
 }
 
+const formatDate = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  return new Date(dateString).toLocaleDateString('pt-BR')
+}
+
+const buscarCategrias = async () => {
+  loadingCategorias.value = true
+  try {
+    const response = await artigoService.getAllCategorias()
+    categorias.value = response.data
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error)
+  } finally {
+    loadingCategorias.value = false
+  }
+}
+
 onMounted(async () => {
   try {
-    const response = await artigoService.getAllArtigos()
-
-    artigos.value = Array.isArray(response.data)
-      ? response.data.map((artigo:any) => {
-          // Procura a primeira imagem onde isBanner é false
+    // Carregar artigos
+    const artigosResponse = await artigoService.getAllArtigos()
+    artigos.value = Array.isArray(artigosResponse.data)
+      ? artigosResponse.data.map((artigo:any) => {
           const imgNaoBanner = artigo.imagensArtigo?.find(
             (img:any) => img.isBanner === false
           )
-
           return {
             ...artigo,
             fotoUrl: imgNaoBanner ? imgNaoBanner.imagemUrl : null
           }
         })
       : []
+
+      buscarCategrias()
+    // Carregar categorias
+    // const categoriasResponse = await artigoService.getAllCategorias()
+    // categorias.value = Array.isArray(categoriasResponse) ? categoriasResponse : []
+    // console.log('Categorias carregadas:', categorias.value)
   } catch (error) {
-    console.error('Erro ao carregar artigos:', error)
+    console.error('Erro ao carregar dados:', error)
   } finally {
     loading.value = false
   }
