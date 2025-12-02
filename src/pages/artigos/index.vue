@@ -332,63 +332,137 @@
   </v-dialog>
 
   <!-- Dialog Edição Categoria -->
-  <v-dialog v-model="editCategoryDialog" max-width="400" persistent>
-    <v-card prepend-icon="mdi-tag-outline" title="Editar Categoria">
-      <v-card-text>
-        <v-text-field
-          v-model="editCategoryName"
-          label="Nome da Categoria"
-          variant="outlined"
-          density="comfortable"
-          :rules="[v => !!v || 'Nome é obrigatório']"
-          class="mb-4"
-        ></v-text-field>
+  <v-dialog v-model="editCategoryDialog" max-width="600" persistent>
+    <div>
+      <!-- Formulário Principal -->
+      <v-card v-if="!showEditCategoryPreview" prepend-icon="mdi-tag-outline" title="Editar Categoria">
+        <v-card-text>
+          <v-text-field
+            v-model="editCategoryName"
+            label="Nome da Categoria (PT-BR)"
+            variant="outlined"
+            density="comfortable"
+            :rules="[v => !!v || 'Nome é obrigatório']"
+            class="mb-4"
+          ></v-text-field>
 
-        <v-switch
-          v-model="editCategoryActive"
-          label="Ativo"
-          color="primary"
-          hide-details
-        ></v-switch>
-      </v-card-text>
-      <template v-slot:actions>
-        <v-spacer></v-spacer>
-        <v-btn @click="editCategoryDialog = false">cancelar</v-btn>
-        <v-btn @click="confirmEditCategory" color="primary" :loading="editLoading" :disabled="!editCategoryName.trim()">
-          salvar
-        </v-btn>
-      </template>
-    </v-card>
+          <v-switch
+            v-model="editCategoryActive"
+            label="Ativo"
+            color="primary"
+            hide-details
+          ></v-switch>
+        </v-card-text>
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="editCategoryDialog = false">cancelar</v-btn>
+          <v-btn @click="showEditCategoryPreviewForm" color="primary" :loading="editTranslateLoading" :disabled="!editCategoryName.trim()">
+            Próximo: Visualizar
+          </v-btn>
+        </template>
+      </v-card>
+
+      <!-- Preview da Categoria -->
+      <v-card v-else prepend-icon="mdi-eye" title="Prévia da Categoria">
+        <v-card-text>
+          <div class="d-flex justify-end mb-4">
+            <v-btn-toggle v-model="currentEditCategoryLanguage" mandatory>
+              <v-btn value="pt" size="small">PT</v-btn>
+              <v-btn value="en" size="small">EN</v-btn>
+            </v-btn-toggle>
+          </div>
+
+          <v-text-field
+            v-model="editCategoryPreviewData[currentEditCategoryLanguage].nome"
+            :label="`Nome da Categoria (${currentEditCategoryLanguage.toUpperCase()})`"
+            variant="outlined"
+            density="comfortable"
+            class="mb-4"
+          ></v-text-field>
+
+          <v-switch
+            v-model="editCategoryActive"
+            label="Ativo"
+            color="primary"
+            hide-details
+          ></v-switch>
+        </v-card-text>
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="showEditCategoryPreview = false">voltar</v-btn>
+          <v-btn @click="confirmEditCategory" color="primary" :loading="editLoading">
+            salvar categoria
+          </v-btn>
+        </template>
+      </v-card>
+    </div>
   </v-dialog>
 
   <!-- Dialog Criação Categoria -->
-  <v-dialog v-model="createCategoryDialog" max-width="400" persistent>
-    <v-card prepend-icon="mdi-tag-plus" title="Criar Categoria">
-      <v-card-text>
-        <v-text-field
-          v-model="createCategoryName"
-          label="Nome da Categoria"
-          variant="outlined"
-          density="comfortable"
-          :rules="[v => !!v || 'Nome é obrigatório']"
-          class="mb-4"
-        ></v-text-field>
+  <v-dialog v-model="createCategoryDialog" max-width="600" persistent>
+    <div>
+      <!-- Formulário Principal -->
+      <v-card v-if="!showCategoryPreview" prepend-icon="mdi-tag-plus" title="Criar Categoria">
+        <v-card-text>
+          <v-text-field
+            v-model="createCategoryName"
+            label="Nome da Categoria (PT-BR)"
+            variant="outlined"
+            density="comfortable"
+            :rules="[v => !!v || 'Nome é obrigatório']"
+            class="mb-4"
+          ></v-text-field>
 
-        <v-switch
-          v-model="createCategoryActive"
-          label="Categoria ativa"
-          color="primary"
-          hide-details
-        ></v-switch>
-      </v-card-text>
-      <template v-slot:actions>
-        <v-spacer></v-spacer>
-        <v-btn @click="createCategoryDialog = false">cancelar</v-btn>
-        <v-btn @click="confirmCreateCategory" color="primary" :loading="createLoading" :disabled="!createCategoryName.trim()">
-          criar
-        </v-btn>
-      </template>
-    </v-card>
+          <v-switch
+            v-model="createCategoryActive"
+            label="Categoria ativa"
+            color="primary"
+            hide-details
+          ></v-switch>
+        </v-card-text>
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="createCategoryDialog = false">cancelar</v-btn>
+          <v-btn @click="showCategoryPreviewForm" color="primary" :loading="translateLoading" :disabled="!createCategoryName.trim()">
+            Próximo: Visualizar
+          </v-btn>
+        </template>
+      </v-card>
+
+      <!-- Preview da Categoria -->
+      <v-card v-else prepend-icon="mdi-eye" title="Prévia da Categoria">
+        <v-card-text>
+          <div class="d-flex justify-end mb-4">
+            <v-btn-toggle v-model="currentCategoryLanguage" mandatory>
+              <v-btn value="pt" size="small">PT</v-btn>
+              <v-btn value="en" size="small">EN</v-btn>
+            </v-btn-toggle>
+          </div>
+
+          <v-text-field
+            v-model="categoryPreviewData[currentCategoryLanguage].nome"
+            :label="`Nome da Categoria (${currentCategoryLanguage.toUpperCase()})`"
+            variant="outlined"
+            density="comfortable"
+            class="mb-4"
+          ></v-text-field>
+
+          <v-switch
+            v-model="createCategoryActive"
+            label="Categoria ativa"
+            color="primary"
+            hide-details
+          ></v-switch>
+        </v-card-text>
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="showCategoryPreview = false">voltar</v-btn>
+          <v-btn @click="confirmCreateCategory" color="primary" :loading="createLoading">
+            criar categoria
+          </v-btn>
+        </template>
+      </v-card>
+    </div>
   </v-dialog>
 
 </template>
@@ -419,6 +493,31 @@ const editCategoryActive = ref<boolean>(true)
 const createCategoryActive = ref<boolean>(true)
 const editLoading = ref(false)
 const createLoading = ref(false)
+const translateLoading = ref(false)
+const showCategoryPreview = ref(false)
+const currentCategoryLanguage = ref('en')
+
+const categoryPreviewData = ref({
+  pt: {
+    nome: ''
+  },
+  en: {
+    nome: ''
+  }
+})
+
+const editTranslateLoading = ref(false)
+const showEditCategoryPreview = ref(false)
+const currentEditCategoryLanguage = ref('en')
+
+const editCategoryPreviewData = ref({
+  pt: {
+    nome: ''
+  },
+  en: {
+    nome: ''
+  }
+})
 const headers = [
   { title: 'Foto', key: 'foto', sortable: true, width: '100px' },
   { title: 'Titulo', key: 'titulo', width: '700px' },
@@ -473,16 +572,43 @@ const editCategory = (item: any) => {
   selectedCategory.value = item
   editCategoryName.value = item.nome
   editCategoryActive.value = item.ativo
+  
+  // Carregar dados existentes no preview
+  editCategoryPreviewData.value.pt.nome = item.nome
+  editCategoryPreviewData.value.en.nome = item.en_nome || ''
+  
   editCategoryDialog.value = true
 }
 
+const showEditCategoryPreviewForm = async () => {
+  if (!editCategoryName.value.trim()) return
+
+  editTranslateLoading.value = true
+  try {
+    editCategoryPreviewData.value.pt.nome = editCategoryName.value
+    
+    // Se não tem tradução existente, traduzir
+    if (!editCategoryPreviewData.value.en.nome) {
+      editCategoryPreviewData.value.en.nome = await traduzirTexto('pt', 'en', editCategoryName.value)
+    }
+    
+    showEditCategoryPreview.value = true
+  } catch (error) {
+    toast.error('Erro ao traduzir categoria')
+    console.error('Error translating category:', error)
+  } finally {
+    editTranslateLoading.value = false
+  }
+}
+
 const confirmEditCategory = async () => {
-  if (!selectedCategory.value || !editCategoryName.value) return
+  if (!selectedCategory.value) return
 
   editLoading.value = true
   try {
     await artigoService.updateCategoria(selectedCategory.value.id, {
-      nome: editCategoryName.value,
+      nome: editCategoryPreviewData.value.pt.nome,
+      en_nome: editCategoryPreviewData.value.en.nome,
       ativo: editCategoryActive.value
     })
 
@@ -496,19 +622,69 @@ const confirmEditCategory = async () => {
   } finally {
     editLoading.value = false
     editCategoryDialog.value = false
+    showEditCategoryPreview.value = false
     selectedCategory.value = null
     editCategoryName.value = ''
     editCategoryActive.value = true
+    editCategoryPreviewData.value = {
+      pt: { nome: '' },
+      en: { nome: '' }
+    }
+  }
+}
+
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+  if (!content || content.trim() === '') return ''
+
+  try {
+    const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        q: content,
+        source: sourceLanguage,
+        target: targetLanguage
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to translate text', response.statusText)
+    }
+
+    const data = await response.json()
+    return data.data.translations[0].translatedText
+
+  } catch (error) {
+    console.error('Translation error:', error)
+    return content
+  }
+}
+
+const showCategoryPreviewForm = async () => {
+  if (!createCategoryName.value.trim()) return
+
+  translateLoading.value = true
+  try {
+    categoryPreviewData.value.pt.nome = createCategoryName.value
+    categoryPreviewData.value.en.nome = await traduzirTexto('pt', 'en', createCategoryName.value)
+    
+    showCategoryPreview.value = true
+  } catch (error) {
+    toast.error('Erro ao traduzir categoria')
+    console.error('Error translating category:', error)
+  } finally {
+    translateLoading.value = false
   }
 }
 
 const confirmCreateCategory = async () => {
-  if (!createCategoryName.value) return
-
   createLoading.value = true
   try {
     await artigoService.criarCategoria({
-      nome: createCategoryName.value,
+      nome: categoryPreviewData.value.pt.nome,
+      en_nome: categoryPreviewData.value.en.nome,
       ativo: createCategoryActive.value
     })
 
@@ -522,8 +698,13 @@ const confirmCreateCategory = async () => {
   } finally {
     createLoading.value = false
     createCategoryDialog.value = false
+    showCategoryPreview.value = false
     createCategoryName.value = ''
     createCategoryActive.value = true
+    categoryPreviewData.value = {
+      pt: { nome: '' },
+      en: { nome: '' }
+    }
   }
 }
 

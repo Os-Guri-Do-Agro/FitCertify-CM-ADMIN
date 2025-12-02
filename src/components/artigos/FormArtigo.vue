@@ -1,16 +1,21 @@
+Inicialmente ao clicar em criar artigo, uma prévia deve ser mostrada (no idioma oposto), com opção de trocar idioma e o usuário deve poder editar qualquer campo dessa prévia. Caso não edite, ele envia os campos em pt-br e em en.
+
+
 <template>
-  <v-card class="form-card" elevation="4">
-    <v-card-title class="pa-6 pb-4">
-      <div class="d-flex align-center">
-        <v-icon icon="mdi-form-select" class="me-2" color="primary"></v-icon>
-        <span class="text-h6 font-weight-medium">Informações do Artigo</span>
-      </div>
-    </v-card-title>
-    
-    <v-divider></v-divider>
-    
-    <v-card-text class="pa-6">
-      <v-form ref="formRef" @submit.prevent="submitForm">
+  <div>
+    <!-- Formulário Principal -->
+    <v-card v-if="!showPreview" class="form-card" elevation="4">
+      <v-card-title class="pa-6 pb-4">
+        <div class="d-flex align-center">
+          <v-icon icon="mdi-form-select" class="me-2" color="primary"></v-icon>
+          <span class="text-h6 font-weight-medium">Informações do Artigo</span>
+        </div>
+      </v-card-title>
+
+      <v-divider></v-divider>
+
+      <v-card-text class="pa-6">
+        <v-form ref="formRef" @submit.prevent="showPreviewForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
           <h3 class="text-h6 font-weight-medium mb-4 text-primary">
@@ -211,10 +216,9 @@
           <v-btn
             color="primary"
             size="large"
-            :loading="loading"
             :disabled="!isFormValid"
-            prepend-icon="mdi-check"
-            @click="submitForm"
+            prepend-icon="mdi-eye"
+            @click="showPreviewForm"
           >
             Criar Artigo
           </v-btn>
@@ -222,6 +226,127 @@
       </v-form>
     </v-card-text>
   </v-card>
+
+  <!-- Prévia do Artigo -->
+  <v-card v-else class="form-card" elevation="4">
+    <v-card-title class="pa-6 pb-4">
+      <div class="d-flex align-center justify-space-between">
+        <div class="d-flex align-center">
+          <v-icon icon="mdi-eye" class="me-2" color="primary"></v-icon>
+          <span class="text-h6 font-weight-medium">Prévia do Artigo</span>
+        </div>
+        <v-btn-toggle v-model="currentLanguage" mandatory>
+          <v-btn value="pt" size="small">PT</v-btn>
+          <v-btn value="en" size="small">EN</v-btn>
+        </v-btn-toggle>
+      </div>
+    </v-card-title>
+
+    <v-divider></v-divider>
+
+    <v-card-text class="pa-6">
+      <v-form ref="previewFormRef">
+        <!-- Informações Básicas -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+            Informações Básicas ({{ currentLanguage.toUpperCase() }})
+          </h3>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="previewData[currentLanguage].titulo"
+                label="Título"
+                variant="outlined"
+                prepend-inner-icon="mdi-format-title"
+                density="comfortable"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="previewData[currentLanguage].subTitulo"
+                label="Subtítulo"
+                variant="outlined"
+                prepend-inner-icon="mdi-format-header-2"
+                density="comfortable"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
+            Conteúdo ({{ currentLanguage.toUpperCase() }})
+          </h3>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-textarea
+                v-model="previewData[currentLanguage].introducao"
+                label="Introdução"
+                rows="4"
+                variant="outlined"
+                prepend-inner-icon="mdi-text-box-outline"
+                density="comfortable"
+                class="mb-3"
+              ></v-textarea>
+              <v-textarea
+                v-model="previewData[currentLanguage].conteudo"
+                label="Conteúdo"
+                rows="4"
+                variant="outlined"
+                prepend-inner-icon="mdi-text-long"
+                density="comfortable"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-textarea
+                v-model="previewData[currentLanguage].citacao"
+                label="Citação"
+                rows="4"
+                variant="outlined"
+                prepend-inner-icon="mdi-format-quote-close"
+                density="comfortable"
+                class="mb-3"
+              ></v-textarea>
+              <v-textarea
+                v-model="previewData[currentLanguage].conclusao"
+                label="Conclusão"
+                rows="4"
+                variant="outlined"
+                prepend-inner-icon="mdi-check-circle-outline"
+                density="comfortable"
+              ></v-textarea>
+            </v-col>
+          </v-row>
+        </div>
+
+        <!-- Actions -->
+        <v-divider class="mb-6"></v-divider>
+        <div class="d-flex justify-space-between">
+          <v-btn
+            variant="outlined"
+            size="large"
+            prepend-icon="mdi-arrow-left"
+            @click="showPreview = false"
+          >
+            Voltar ao Formulário
+          </v-btn>
+          <v-btn
+            color="primary"
+            size="large"
+            :loading="loading"
+            prepend-icon="mdi-check"
+            @click="submitForm"
+          >
+            Confirmar e Criar
+          </v-btn>
+        </div>
+      </v-form>
+    </v-card-text>
+  </v-card>
+</div>
 </template>
 
 <script setup>
@@ -235,8 +360,12 @@ import 'vue3-toastify/dist/index.css';
 const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
+const previewFormRef = ref(null)
 const categoriasArtigo = ref([])
 const categoriasArtigoSelected = ref("")
+const showPreview = ref(false)
+const currentLanguage = ref('en')
+
 const form = ref({
   titulo: '',
   subTitulo: '',
@@ -252,6 +381,25 @@ const form = ref({
   categoriaArtigoId: '',
 })
 
+const previewData = ref({
+  pt: {
+    titulo: '',
+    subTitulo: '',
+    introducao: '',
+    conteudo: '',
+    citacao: '',
+    conclusao: ''
+  },
+  en: {
+    titulo: '',
+    subTitulo: '',
+    introducao: '',
+    conteudo: '',
+    citacao: '',
+    conclusao: ''
+  }
+})
+
 const rules = {
   required: (value) => !!value || 'Campo obrigatório'
 }
@@ -264,19 +412,88 @@ const isFormValid = computed(() => {
     form.value.banner
 })
 
-const submitForm = async () => {
+const showPreviewForm = async () => {
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
   loading.value = true
   try {
+    previewData.value.pt = {
+      titulo: form.value.titulo,
+      subTitulo: form.value.subTitulo,
+      introducao: form.value.introducao,
+      conteudo: form.value.conteudo,
+      citacao: form.value.citacao,
+      conclusao: form.value.conclusao
+    }
+
+    previewData.value.en = {
+      titulo: await traduzirTexto('pt', 'en', form.value.titulo),
+      subTitulo: await traduzirTexto('pt', 'en', form.value.subTitulo),
+      introducao: await traduzirTexto('pt', 'en', form.value.introducao),
+      conteudo: await traduzirTexto('pt', 'en', form.value.conteudo),
+      citacao: await traduzirTexto('pt', 'en', form.value.citacao),
+      conclusao: await traduzirTexto('pt', 'en', form.value.conclusao)
+    }
+
+    showPreview.value = true
+  } catch (error) {
+    toast.error('Erro ao processar formulário')
+    console.error('Error processing form:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+  if (!content || content.trim() === '') return ''
+
+  try {
+    const response  = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    q: content,
+    source: sourceLanguage,
+    target: targetLanguage
+  })
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to translate text', response.statusText)
+  }
+
+  const data = await response.json()
+
+  return data.data.translations[0].translatedText
+
+  } catch (error) {
+    console.error('Translation error:', error)
+    return content
+  }
+}
+
+const submitForm = async () => {
+  loading.value = true
+  try {
     const formData = new FormData()
-    formData.append('titulo', form.value.titulo)
-    formData.append('subTitulo', form.value.subTitulo)
-    formData.append('introducao', form.value.introducao || '')
-    formData.append('conteudo', form.value.conteudo || '')
-    formData.append('citacao', form.value.citacao || '')
-    formData.append('conclusao', form.value.conclusao || '')
+
+    formData.append('titulo', previewData.value.pt.titulo)
+    formData.append('subTitulo', previewData.value.pt.subTitulo)
+    formData.append('introducao', previewData.value.pt.introducao || '')
+    formData.append('conteudo', previewData.value.pt.conteudo || '')
+    formData.append('citacao', previewData.value.pt.citacao || '')
+    formData.append('conclusao', previewData.value.pt.conclusao || '')
+
+    formData.append('en_titulo', previewData.value.en.titulo)
+    formData.append('en_subTitulo', previewData.value.en.subTitulo)
+    formData.append('en_introducao', previewData.value.en.introducao || '')
+    formData.append('en_conteudo', previewData.value.en.conteudo || '')
+    formData.append('en_citacao', previewData.value.en.citacao || '')
+    formData.append('en_conclusao', previewData.value.en.conclusao || '')
+
     formData.append('ativo', form.value.ativo.toString())
     formData.append('isMobile', form.value.isMobile.toString())
     formData.append('isDesktop', form.value.isDesktop.toString())
