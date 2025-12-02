@@ -1,40 +1,135 @@
 <template>
-  <v-card class="pa-6">
-    <v-card-title class="text-h5 mb-4">Criar Novo Evento</v-card-title>
+  <v-card class="form-card" elevation="4">
+    <v-card-title class="pa-6 pb-4">
+      <div class="d-flex align-center">
+        <v-icon icon="mdi-calendar-plus" class="me-2" color="primary"></v-icon>
+        <span class="text-h6 font-weight-medium">Criar Novo Evento</span>
+      </div>
+    </v-card-title>
 
-    <v-form ref="formRef" @submit.prevent="submitForm">
-      <v-row>
-        <v-col cols="6">
-          <v-text-field v-model="form.titulo" label="Titulo" :rules="[rules.required]" variant="outlined"
-            class="mb-3"></v-text-field>
+    <v-divider></v-divider>
 
-          <v-textarea v-model="form.descricao" label="Descricao" :rules="[rules.required]" variant="outlined"
-            class="mb-3"></v-textarea>
+    <v-card-text class="pa-6">
+      <v-form ref="formRef" @submit.prevent="submitForm">
+        <!-- Basic Information Section -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+            Informações Básicas
+          </h3>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.titulo"
+                label="Título do Evento"
+                variant="outlined"
+                prepend-inner-icon="mdi-calendar"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+                class="mb-3"
+              ></v-text-field>
+              <v-text-field
+                v-model="form.data"
+                label="Data do Evento"
+                type="date"
+                variant="outlined"
+                prepend-inner-icon="mdi-calendar-clock"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+                class="mb-3"
+              ></v-text-field>
+              <v-combobox
+                v-model="tipoEventoSelected"
+                variant="outlined"
+                label="Tipo do Evento"
+                prepend-inner-icon="mdi-tag"
+                :items="tipoEventos"
+                item-title="nome"
+                item-value="id"
+                density="comfortable"
+                class="mb-3"
+              ></v-combobox>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-textarea
+                v-model="form.descricao"
+                label="Descrição do Evento"
+                rows="3"
+                variant="outlined"
+                prepend-inner-icon="mdi-text-box-outline"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+                class="mb-3"
+              ></v-textarea>
+              <v-text-field
+                v-model="form.local"
+                label="Local do Evento"
+                variant="outlined"
+                prepend-inner-icon="mdi-map-marker"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+                class="mb-3"
+              ></v-text-field>
+              <v-combobox
+                v-model="form.organizacoesEvento"
+                variant="outlined"
+                label="Organizações do Evento"
+                prepend-inner-icon="mdi-domain"
+                :items="OrganizacaoEventos"
+                item-title="nome"
+                item-value="id"
+                multiple
+                chips
+                closable-chips
+                density="comfortable"
+                class="mb-3"
+              ></v-combobox>
+            </v-col>
+          </v-row>
+        </div>
 
-          <v-text-field v-model="form.data" label="Data" type="date" :rules="[rules.required]" variant="outlined"
-            class="mb-3"></v-text-field>
-
-          <v-text-field v-model="form.local" label="Local" :rules="[rules.required]" variant="outlined"
-            class="mb-3"></v-text-field>
-
-          <v-combobox v-model="tipoEventoSelected" variant="outlined" label="Tipo do Evento" :items="tipoEventos"
-            item-title="nome" item-value="id" class="mb-3"></v-combobox>
-          <v-combobox v-model="form.organizacoesEvento" variant="outlined" label="Organizações do Evento"
-            :items="OrganizacaoEventos" item-title="nome" item-value="id" multiple chips closable-chips
-            class="mb-3"></v-combobox>
-
-          <v-card variant="outlined" class="pa-4 mb-3">
-            <v-card-subtitle class="pa-0 mb-3">Distâncias do Evento</v-card-subtitle>
-            <div class="d-flex gap-6 mb-3">
-              <v-text-field v-model="novaDistancia" label="Distância (km)" type="number" variant="outlined"
-                density="compact" @keyup.enter="adicionarDistancia"></v-text-field>
-              <v-btn @click="adicionarDistancia" color="primary" variant="outlined">
+        <!-- Distances Section -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-run" class="me-2" size="small"></v-icon>
+            Distâncias do Evento
+          </h3>
+          <v-card class="pa-4 upload-card" elevation="1">
+            <div class="d-flex ga-3 mb-3">
+              <v-text-field
+                v-model="novaDistancia"
+                label="Distância (km)"
+                type="number"
+                variant="outlined"
+                prepend-inner-icon="mdi-map-marker-distance"
+                density="comfortable"
+                @keyup.enter="adicionarDistancia"
+                class="flex-grow-1"
+              ></v-text-field>
+              <v-btn
+                @click="adicionarDistancia"
+                color="primary"
+                variant="outlined"
+                prepend-icon="mdi-plus"
+                size="large"
+              >
                 Adicionar
               </v-btn>
             </div>
-            <div v-if="form.distanciasEvento.length > 0">
-              <v-chip v-for="(distancia, index) in form.distanciasEvento" :key="index" class="ma-1" closable
-                @click:close="removerDistancia(index)">
+            <div v-if="form.distanciasEvento.length > 0" class="mb-2">
+              <v-chip
+                v-for="(distancia, index) in form.distanciasEvento"
+                :key="index"
+                class="ma-1"
+                closable
+                color="primary"
+                variant="tonal"
+                @click:close="removerDistancia(index)"
+              >
                 {{ distancia }} km
               </v-chip>
             </div>
@@ -42,56 +137,70 @@
               Nenhuma distância adicionada
             </div>
           </v-card>
+        </div>
 
 
-          <v-card variant="outlined" class="pa-4 mb-3">
-            <v-card-subtitle class="pa-0 mb-4">Configurações do Evento</v-card-subtitle>
+        <!-- Configuration Section -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-cog" class="me-2" size="small"></v-icon>
+            Configurações do Evento
+          </h3>
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.ativo }" elevation="1">
 
-            <div class="mb-4">
-              <div class="text-subtitle-2 mb-2">Status do Evento</div>
-              <v-switch
-                color="primary"
-                v-model="form.ativo"
-                :label="form.ativo ? 'Evento Ativo' : 'Evento Inativo'"
-                hide-details
-              ></v-switch>
-            </div>
+                <v-switch
+                  v-model="form.ativo"
+                  label="Evento Ativo"
+                  color="primary"
+                  hide-details
+                ></v-switch>
+                <p class="text-caption text-medium-emphasis mt-2 mb-0">
+                  Evento visível no sistema
+                </p>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="8">
+              <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.isCertificadoExclusivo }" elevation="1">
 
-            <v-divider class="my-4"></v-divider>
+                <v-switch
+                  v-model="form.isCertificadoExclusivo"
+                  label="Certificado Exclusivo"
+                  color="success"
+                  hide-details
+                ></v-switch>
+                <p class="text-caption text-medium-emphasis mt-2 mb-0">
+                  {{ form.isCertificadoExclusivo ? 'Possui certificado exclusivo' : 'Sem certificado exclusivo' }}
+                </p>
 
-            <div>
-              <div class="text-subtitle-2 mb-2">Certificado Exclusivo</div>
-              <v-switch
-                color="primary"
-                v-model="form.isCertificadoExclusivo"
-                :label="form.isCertificadoExclusivo ? 'Possui certificado exclusivo' : 'Sem certificado exclusivo'"
-                hide-details
-              ></v-switch>
-
-              <v-alert
-                v-if="form.isCertificadoExclusivo"
-                type="info"
-                variant="tonal"
-                class="mt-3"
-                density="compact"
-              >
-                <div class="text-caption">
-                  Você pode selecionar os campos necessários para o certificado. Nosso sistema gerará automaticamente
-                  ou você pode anexar um template personalizado para emissão pelos atletas.
-                </div>
-              </v-alert>
-              <v-alert
-                v-else
-                type="warning"
-                variant="tonal"
-                class="mt-3"
-                density="compact"
-              >
-                <div class="text-caption">
-                  Sem certificado exclusivo, os atletas utilizarão o template padrão da FitCertify365.
-                  Você receberá os certificados com um dos templates que o sistema tem.
-                </div>
-              </v-alert>
+                <v-alert
+                  v-if="form.isCertificadoExclusivo"
+                  type="info"
+                  variant="tonal"
+                  class="mt-3"
+                  density="compact"
+                >
+                  <div class="text-caption">
+                    Você pode selecionar os campos necessários para o certificado. Nosso sistema gerará automaticamente
+                    ou você pode anexar um template personalizado para emissão pelos atletas.
+                  </div>
+                </v-alert>
+                <v-alert
+                  v-else
+                  type="warning"
+                  variant="tonal"
+                  class="mt-3"
+                  density="compact"
+                >
+                  <div class="text-caption">
+                    Sem certificado exclusivo, os atletas utilizarão o template padrão da FitCertify365.
+                    Você receberá os certificados com um dos templates que o sistema tem.
+                  </div>
+                </v-alert>
+              </v-card>
+            </v-col>
+          </v-row>
 
               <v-expansion-panels v-if="form.isCertificadoExclusivo" class="mt-4">
                 <v-expansion-panel>
@@ -149,39 +258,77 @@
                   </v-expansion-panel-text>
                 </v-expansion-panel>
               </v-expansion-panels>
-            </div>
-          </v-card>
-        </v-col>
+        </div>
 
-        <v-col cols="6">
-          <v-card variant="outlined" class="pa-4">
-            <v-card-subtitle class="pa-0 mb-3">Imagem do Evento</v-card-subtitle>
-            <v-file-upload v-model="form.imagem" label="Selecionar imagem" clearable show-size accept="image/*"
-              variant="outlined"></v-file-upload>
-          </v-card>
-          <!-- #Todo -->
-          <v-card variant="outlined" class="pa-4">
-            <v-card-subtitle class="pa-0 mb-3">Logo do Evento</v-card-subtitle>
-            <v-file-upload v-model="form.logo" label="Selecionar Logo" clearable show-size accept="image/*"
-              variant="outlined"></v-file-upload>
-          </v-card>
-        </v-col>
-      </v-row>
+        <!-- Images Section -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-image" class="me-2" size="small"></v-icon>
+            Imagens do Evento
+          </h3>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-card class="pa-4 upload-card" elevation="1">
+                <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
+                  <v-icon icon="mdi-image-outline" class="me-2" size="small"></v-icon>
+                  Imagem do Evento
+                </v-card-subtitle>
+                <v-file-upload
+                  v-model="form.imagem"
+                  label="Selecionar imagem"
+                  clearable
+                  show-size
+                  accept="image/*"
+                  variant="outlined"
+                  density="comfortable"
+                ></v-file-upload>
+                <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-card class="pa-4 upload-card" elevation="1">
+                <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
+                  <v-icon icon="mdi-image-frame" class="me-2" size="small"></v-icon>
+                  Logo do Evento
+                </v-card-subtitle>
+                <v-file-upload
+                  v-model="form.logo"
+                  label="Selecionar logo"
+                  clearable
+                  show-size
+                  accept="image/*"
+                  variant="outlined"
+                  density="comfortable"
+                ></v-file-upload>
+                <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
+              </v-card>
+            </v-col>
+          </v-row>
+        </div>
 
-      <v-divider class="my-6"></v-divider>
-
-      <v-row>
-        <v-col class="d-flex justify-space-between">
-          <v-btn variant="outlined" @click="router.push('/evento/')" size="large">
+        <!-- Actions -->
+        <v-divider class="mb-6"></v-divider>
+        <div class="d-flex justify-end ga-3">
+          <v-btn
+            variant="outlined"
+            size="large"
+            @click="router.push('/evento')"
+          >
             Cancelar
           </v-btn>
-
-          <v-btn :disabled="!isFormValid" @click="submitForm" color="primary" :loading="loading" size="large">
+          <v-btn
+            color="primary"
+            size="large"
+            :disabled="!isFormValid"
+            :loading="loading"
+            prepend-icon="mdi-check"
+            @click="submitForm"
+          >
             Criar Evento
           </v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
+        </div>
+      </v-form>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -275,10 +422,10 @@ const submitForm = async () => {
     }
     if (form.value.isCertificadoExclusivo) {
       formData.append('possuiCertificadoExclusivo', form.value.isCertificadoExclusivo)
-      
+
       // Enviar campos do certificado como array JSON
       formData.append('solicitacaoCertificado.camposCertificado', JSON.stringify(form.value.certificadoCampos))
-      
+
       // Enviar arquivo do template se existir
       if (form.value.templateCertificado) {
         formData.append('solicitacaoCertificado.arquivo', form.value.templateCertificado)
@@ -308,3 +455,43 @@ onMounted(async () => {
 
 })
 </script>
+
+<style scoped>
+.form-card {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.checkbox-card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.checkbox-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-card.selected {
+  border-color: rgb(var(--v-theme-primary));
+  background-color: rgba(var(--v-theme-primary), 0.05);
+}
+
+.upload-card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.upload-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 600px) {
+  .upload-card {
+    margin-bottom: 1rem;
+  }
+}
+</style>
