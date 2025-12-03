@@ -447,63 +447,31 @@ const showPreviewForm = async () => {
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
-  loading.value = true
-  try {
-    previewData.value.pt = {
-      titulo: form.value.titulo,
-      subTitulo: form.value.subTitulo,
-      introducao: form.value.introducao,
-      conteudo: form.value.conteudo,
-      citacao: form.value.citacao,
-      conclusao: form.value.conclusao
-    }
+  previewData.value.pt = {
+    titulo: form.value.titulo,
+    subTitulo: form.value.subTitulo,
+    introducao: form.value.introducao,
+    conteudo: form.value.conteudo,
+    citacao: form.value.citacao,
+    conclusao: form.value.conclusao
+  }
 
+  // Se não há dados em inglês carregados, inicializar campos vazios
+  if (!previewData.value.en.titulo) {
     previewData.value.en = {
-      titulo: await traduzirTexto('pt', 'en', form.value.titulo),
-      subTitulo: await traduzirTexto('pt', 'en', form.value.subTitulo),
-      introducao: await traduzirTexto('pt', 'en', form.value.introducao),
-      conteudo: await traduzirTexto('pt', 'en', form.value.conteudo),
-      citacao: await traduzirTexto('pt', 'en', form.value.citacao),
-      conclusao: await traduzirTexto('pt', 'en', form.value.conclusao)
+      titulo: '',
+      subTitulo: '',
+      introducao: '',
+      conteudo: '',
+      citacao: '',
+      conclusao: ''
     }
-
-    showPreview.value = true
-  } catch (error) {
-    toast.error('Erro ao processar formulário')
-    console.error('Error processing form:', error)
-  } finally {
-    loading.value = false
   }
+
+  showPreview.value = true
 }
 
-const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
-  if (!content || content.trim() === '') return ''
 
-  try {
-    const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        q: content,
-        source: sourceLanguage,
-        target: targetLanguage
-      })
-    })
-
-    if (!response.ok) {
-      throw new Error('Failed to translate text', response.statusText)
-    }
-
-    const data = await response.json()
-    return data.data.translations[0].translatedText
-
-  } catch (error) {
-    console.error('Translation error:', error)
-    return content
-  }
-}
 
 const submitForm = async () => {
   loading.value = true

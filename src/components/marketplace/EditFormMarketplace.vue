@@ -45,9 +45,6 @@
 
                 <v-switch color="primary" v-model="form.ativo" label="Ativo"></v-switch>
               </v-col>
-              <v-col cols="4">
-                <v-switch color="primary" v-model="form.condicaoEspecial" label="Condição Especial"></v-switch>
-              </v-col>
               <v-col cols="6">
                 <v-switch color="primary" v-model="form.exclusivoParaCertificado" label="Exclusivo para Certificado"></v-switch>
               </v-col>
@@ -139,6 +136,16 @@ const form = ref({
   empresaId: '',
   linkSiteEmpresa:''
 })
+
+function condicaoEspecial() {
+  if (form.value.desconto > 0) {
+    form.value.condicaoEspecial = true
+  } else {
+    form.value.condicaoEspecial = false
+  }
+}
+
+watch(() => form.value.desconto, condicaoEspecial)
 
 const rules = {
   required: (value) => !!value || 'Campo obrigatório'

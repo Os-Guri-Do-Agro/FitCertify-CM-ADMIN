@@ -445,35 +445,7 @@ const showPreviewForm = async () => {
   }
 }
 
-const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
-  if (!content || content.trim() === '') return ''
 
-  try {
-    const response  = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    q: content,
-    source: sourceLanguage,
-    target: targetLanguage
-  })
-  })
-
-  if (!response.ok) {
-    throw new Error('Failed to translate text', response.statusText)
-  }
-
-  const data = await response.json()
-
-  return data.data.translations[0].translatedText
-
-  } catch (error) {
-    console.error('Translation error:', error)
-    return content
-  }
-}
 
 const submitForm = async () => {
   loading.value = true
@@ -518,6 +490,36 @@ const submitForm = async () => {
     console.error('Error creating artigo:', error)
   } finally {
     loading.value = false
+  }
+}
+
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+  if (!content || content.trim() === '') return ''
+
+  try {
+    const response  = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    q: content,
+    source: sourceLanguage,
+    target: targetLanguage
+  })
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to translate text', response.statusText)
+  }
+
+  const data = await response.json()
+
+  return data.data.translations[0].translatedText
+
+  } catch (error) {
+    console.error('Translation error:', error)
+    return content
   }
 }
 

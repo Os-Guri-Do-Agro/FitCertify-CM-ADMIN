@@ -373,7 +373,7 @@
           </div>
 
           <v-text-field
-            v-model="editCategoryPreviewData[currentEditCategoryLanguage].nome"
+            v-model="editCategoryPreviewData[currentEditCategoryLanguage as keyof typeof editCategoryPreviewData].nome"
             :label="`Nome da Categoria (${currentEditCategoryLanguage.toUpperCase()})`"
             variant="outlined"
             density="comfortable"
@@ -440,7 +440,7 @@
           </div>
 
           <v-text-field
-            v-model="categoryPreviewData[currentCategoryLanguage].nome"
+            v-model="categoryPreviewData[currentCategoryLanguage as keyof typeof categoryPreviewData].nome"
             :label="`Nome da Categoria (${currentCategoryLanguage.toUpperCase()})`"
             variant="outlined"
             density="comfortable"
@@ -633,7 +633,7 @@ const confirmEditCategory = async () => {
   }
 }
 
-const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content: string) => {
   if (!content || content.trim() === '') return ''
 
   try {
@@ -650,7 +650,7 @@ const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', conte
     })
 
     if (!response.ok) {
-      throw new Error('Failed to translate text', response.statusText)
+      throw new Error(`Failed to translate text: ${response.statusText}`)
     }
 
     const data = await response.json()

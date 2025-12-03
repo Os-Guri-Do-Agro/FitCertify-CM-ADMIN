@@ -38,9 +38,6 @@
 
                 <v-switch color="primary" v-model="form.ativo" label="Ativo"></v-switch>
               </v-col>
-              <v-col cols="4">
-                <v-switch color="primary" v-model="form.condicaoEspecial" label="Condição Especial"></v-switch>
-              </v-col>
               <v-col cols="6">
                 <v-switch color="primary" v-model="form.exclusivoParaCertificado"
                   label="Exclusivo para Certificado"></v-switch>
@@ -91,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import produtoService from '@/services/marketplace/marketplace-service'
@@ -123,6 +120,18 @@ const form = ref({
   categoriaProdutoId: '',
   empresaId: '',
   linkSiteEmpresa: ''
+})
+
+function condicaoEspecial() {
+  if (form.value.desconto > 0) {
+    form.value.condicaoEspecial = true
+  } else {
+    form.value.condicaoEspecial = false
+  }
+}
+
+watch(() => form.value.desconto, () => {
+  condicaoEspecial()
 })
 
 const rules = {
