@@ -13,12 +13,37 @@
       <v-form ref="formRef" @submit.prevent="submitForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
-          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+          <v-sheet class="d-flex justify-space-between mb-6">
+          <div class="">
+          <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
             <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
             Informações Básicas
           </h3>
-          <v-row>
-            <v-col cols="12" md="6">
+
+          <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+            Informações Básicas (EN)
+          </h3>
+          </div>
+
+          <div class="">
+            <v-tabs v-model="tab" class="">
+              <v-tab value="one">
+                PT
+              </v-tab>
+              <v-tab value="two">
+                EN
+              </v-tab>
+            </v-tabs>
+          </div>
+          </v-sheet>
+
+
+
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one">
+              <v-row>
+            <v-col class="mt-2" cols="12" md="6">
               <v-text-field
                 v-model="form.titulo"
                 label="Título do Evento"
@@ -52,7 +77,7 @@
                 class="mb-3"
               ></v-combobox>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col class="mt-md-2" cols="12" md="6">
               <v-textarea
                 v-model="form.descricao"
                 label="Descrição do Evento"
@@ -90,6 +115,48 @@
               ></v-combobox>
             </v-col>
           </v-row>
+            </v-tabs-window-item>
+
+            <v-tabs-window-item value="two">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                v-model="form.en_titulo"
+                label="Título do Evento"
+                variant="outlined"
+                prepend-inner-icon="mdi-calendar"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-text-field>
+                  <v-textarea
+                v-model="form.en_descricao"
+                label="Descrição do Evento"
+                rows="3"
+                variant="outlined"
+                prepend-inner-icon="mdi-text-box-outline"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-textarea>
+                </v-col>
+
+                <v-col class="mb-6 d-flex items-center flex-column mt-md-2" cols="12" md="4">
+                  <v-btn prepend-icon="mdi-translate" color="primary" size="large" elevation="0" @click="traduzirCampos" :loading="loadingTranslation">
+                    Traduzir
+                  </v-btn>
+
+                  <v-chip class="d-flex items-center justify-center mt-3" color="orange">
+                    <v-icon class="mr-2" size="24">mdi-information</v-icon>
+                    <span>
+                    A tradução pode não ser 100% precisa.
+                    </span>
+
+                  </v-chip>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+          </v-tabs-window>
         </div>
 
         <!-- Distances Section -->
@@ -306,6 +373,34 @@
           </v-row>
         </div>
 
+        <!-- Links do Evento -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-link-plus" class="me-2" size="small"></v-icon>
+            Links do Evento
+          </h3>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.linkEnviarCertificado"
+                label="Link para enviar certificado"
+                variant="outlined"
+                prepend-inner-icon="mdi-link"
+                density="comfortable"
+                ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.linkSiteProva"
+                label="Link para site da prova"
+                variant="outlined"
+                prepend-inner-icon="mdi-link"
+                density="comfortable"
+                class="mb-3"></v-text-field>
+            </v-col>
+          </v-row>
+        </div>
+
         <!-- Actions -->
         <v-divider class="mb-6"></v-divider>
         <div class="d-flex justify-end ga-3">
@@ -343,10 +438,13 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import 'vue3-toastify/dist/index.css'
 
+
 dayjs.extend(utc)
 
+const tab = ref('one')
 const router = useRouter()
 const loading = ref(false)
+const loadingTranslation = ref(false)
 const formRef = ref(null)
 const tipoEventos = ref([])
 const OrganizacaoEventos = ref([])
@@ -359,7 +457,9 @@ const form = ref({
   imagem: null,
   logo: null,
   titulo: '',
+  en_titulo: '',
   descricao: '',
+  en_descricao: '',
   data: '',
   local: '',
   ativo: true,
@@ -369,7 +469,9 @@ const form = ref({
   isCertificadoExclusivo: false,
   certificadoCampos: ['nomeAtleta', 'nomeEvento', 'dataEvento'],
   usarTemplatePersonalizado: false,
-  templateCertificado: null
+  templateCertificado: null,
+  linkEnviarCertificado: '',
+  linkSiteProva: '',
 })
 
 const rules = {
@@ -377,7 +479,7 @@ const rules = {
 }
 
 const isFormValid = computed(() => {
-  return form.value.titulo && form.value.descricao && form.value.local && form.value.imagem && form.value.logo && form.value.data && form.value.local
+  return form.value.titulo && form.value.descricao && form.value.en_titulo && form.value.en_descricao && form.value.local && form.value.imagem && form.value.logo && form.value.data && form.value.local
 })
 
 const adicionarDistancia = () => {
@@ -391,6 +493,57 @@ const removerDistancia = (index) => {
   form.value.distanciasEvento.splice(index, 1)
 }
 
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+  if (!content || content.trim() === '') return ''
+
+  try {
+    const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        q: content,
+        source: sourceLanguage,
+        target: targetLanguage
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to translate text', response.statusText)
+    }
+
+    const data = await response.json()
+    return data.data.translations[0].translatedText
+  } catch (error) {
+    console.error('Translation error:', error)
+    return content
+  }
+}
+
+const traduzirCampos = async () => {
+  if (!form.value.titulo && !form.value.descricao) {
+    toast.error('Preencha pelo menos o título ou descrição para traduzir')
+    return
+  }
+
+  loadingTranslation.value = true
+  try {
+    if (form.value.titulo) {
+      form.value.en_titulo = await traduzirTexto('pt', 'en', form.value.titulo)
+    }
+    if (form.value.descricao) {
+      form.value.en_descricao = await traduzirTexto('pt', 'en', form.value.descricao)
+    }
+    toast.success('Tradução concluída!')
+  } catch (error) {
+    toast.error('Erro ao traduzir campos')
+    console.error('Translation error:', error)
+  } finally {
+    loadingTranslation.value = false
+  }
+}
+
 const submitForm = async () => {
   const { valid } = await formRef.value.validate()
   if (!valid) return
@@ -399,10 +552,14 @@ const submitForm = async () => {
   try {
     const formData = new FormData()
     formData.append('titulo', form.value.titulo)
+    formData.append('en_titulo', form.value.en_titulo)
     formData.append('descricao', form.value.descricao)
+    formData.append('en_descricao', form.value.en_descricao)
     formData.append('data', dayjs(form.value.data).utc().startOf('day').toISOString())
     formData.append('local', form.value.local)
     formData.append('tipoEventoId', tipoEventoSelected.value.id)
+    formData.append('linkEnviarCertificado', form.value.linkEnviarCertificado)
+    formData.append('linkSiteProva', form.value.linkSiteProva)
 
     // Adicionar distâncias como array
    formData.append('distanciasEvento', form.value.distanciasEvento)

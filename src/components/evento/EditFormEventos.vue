@@ -13,12 +13,35 @@
       <v-form ref="formRef" @submit.prevent="submitForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
-          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+          <v-sheet class="d-flex justify-space-between mb-6">
+          <div class="">
+          <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
             <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
             Informações Básicas
           </h3>
-          <v-row>
-            <v-col cols="12" md="6">
+
+          <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+            Informações Básicas (EN)
+          </h3>
+          </div>
+
+          <div class="">
+            <v-tabs v-model="tab" class="">
+              <v-tab value="one">
+                PT
+              </v-tab>
+              <v-tab value="two">
+                EN
+              </v-tab>
+            </v-tabs>
+          </div>
+          </v-sheet>
+
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one">
+              <v-row>
+            <v-col class="mt-2" cols="12" md="6">
               <v-text-field
                 v-model="form.titulo"
                 label="Título do Evento"
@@ -52,7 +75,7 @@
                 class="mb-3"
               ></v-combobox>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col class="mt-md-2" cols="12" md="6">
               <v-textarea
                 v-model="form.descricao"
                 label="Descrição do Evento"
@@ -90,6 +113,34 @@
               ></v-combobox>
             </v-col>
           </v-row>
+            </v-tabs-window-item>
+
+            <v-tabs-window-item value="two">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                v-model="form.en_titulo"
+                label="Título do Evento"
+                variant="outlined"
+                prepend-inner-icon="mdi-calendar"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-text-field>
+                  <v-textarea
+                v-model="form.en_descricao"
+                label="Descrição do Evento"
+                rows="3"
+                variant="outlined"
+                prepend-inner-icon="mdi-text-box-outline"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+          </v-tabs-window>
         </div>
 
         <!-- Distances Section -->
@@ -341,6 +392,34 @@
           </v-row>
         </div>
 
+        <!-- Links do Evento -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-link-plus" class="me-2" size="small"></v-icon>
+            Links do Evento
+          </h3>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.linkEnviarCertificado"
+                label="Link para enviar certificado"
+                variant="outlined"
+                prepend-inner-icon="mdi-link"
+                density="comfortable"
+                ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.linkSiteProva"
+                label="Link para site da prova"
+                variant="outlined"
+                prepend-inner-icon="mdi-link"
+                density="comfortable"
+                class="mb-3"></v-text-field>
+            </v-col>
+          </v-row>
+        </div>
+
         <!-- Actions -->
         <v-divider class="mb-6"></v-divider>
         <div class="d-flex justify-end ga-3">
@@ -387,6 +466,7 @@ const props = defineProps({
 const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
+const tab = ref('one')
 const tipoEventos = ref([])
 const OrganizacaoEventos = ref([])
 const novaDistancia = ref('')
@@ -436,6 +516,8 @@ const form = ref({
   logo: null,
   titulo: '',
   descricao: '',
+  en_titulo: '',
+  en_descricao: '',
   data: '',
   local: '',
   ativo: true,
@@ -445,7 +527,9 @@ const form = ref({
   isCertificadoExclusivo: false,
   certificadoCampos: [],
   usarTemplatePersonalizado: false,
-  templateCertificado: null
+  templateCertificado: null,
+  linkEnviarCertificado: '',
+  linkSiteProva: ''
 })
 
 const rules = {
@@ -457,7 +541,7 @@ const isFormValid = computed(() => {
     (imagePreview.value.imagem || form.value.imagem) && (imagePreview.value.logo || form.value.logo) :
     form.value.imagem && form.value.logo
 
-  return form.value.titulo && form.value.descricao && form.value.local && form.value.data && hasImages
+  return form.value.titulo && form.value.descricao && form.value.en_titulo && form.value.en_descricao && form.value.local && form.value.data && hasImages
 })
 
 const adicionarDistancia = () => {
@@ -480,9 +564,13 @@ const submitForm = async () => {
     const formData = new FormData()
     formData.append('titulo', form.value.titulo)
     formData.append('descricao', form.value.descricao)
+    formData.append('en_titulo', form.value.en_titulo)
+    formData.append('en_descricao', form.value.en_descricao)
     formData.append('data', dayjs(form.value.data).format('YYYY-MM-DD'))
     formData.append('local', form.value.local)
     formData.append('tipoEventoId', tipoEventoSelected.value.id)
+    formData.append('linkEnviarCertificado', form.value.linkEnviarCertificado)
+    formData.append('linkSiteProva', form.value.linkSiteProva)
 
     // Adicionar distâncias como array
     formData.append('distanciasEvento', form.value.distanciasEvento)
@@ -571,6 +659,8 @@ const loadEvento = async () => {
     form.value = {
       titulo: evento.titulo || '',
       descricao: evento.descricao || '',
+      en_titulo: evento.en_titulo || '',
+      en_descricao: evento.en_descricao || '',
       data: dayjs(evento.data).utc().format('YYYY-MM-DD'),
       local: evento.local || '',
       imagem: null,
@@ -582,7 +672,9 @@ const loadEvento = async () => {
       isCertificadoExclusivo: evento.possuiCertificadoExclusivo || false,
       certificadoCampos: certificadoCampos,
       usarTemplatePersonalizado: false,
-      templateCertificado: null
+      templateCertificado: null,
+      linkEnviarCertificado: evento.linkEnviarCertificado || '',
+      linkSiteProva: evento.linkSiteProva || ''
     }
 
     // Buscar tipo de evento pelos dados carregados
