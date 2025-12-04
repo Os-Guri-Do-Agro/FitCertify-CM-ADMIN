@@ -19,17 +19,6 @@
                 Criar Artigo
               </v-btn>
             </router-link>
-            <v-btn
-              prepend-icon="mdi-tag-plus"
-              size="large"
-              variant="outlined"
-              color="primary"
-              @click="createCategoryDialog = true"
-              class="create-btn"
-              elevation="1"
-            >
-              Nova Categoria
-            </v-btn>
           </div>
         </div>
       </v-col>
@@ -114,13 +103,17 @@
       <v-expansion-panels>
         <v-expansion-panel>
           <v-expansion-panel-title>
-            <div class="d-flex align-center">
+            <div class="d-flex align-center justify-space-between w-100">
+              <div class="d-flex align-center">
               <v-icon icon="mdi-tag-multiple" class="me-2" color="primary"></v-icon>
               <span class="text-h6 font-weight-medium">Categorias de Artigos</span>
               <v-spacer></v-spacer>
               <v-chip class="ml-2" size="small" color="primary" variant="flat">
                 {{ categorias.length }} categorias
               </v-chip>
+              </div>
+              <v-btn class="mx-2" prepend-icon="mdi-plus" variant="outlined" color="primary" rounded="xl" @Click="createCategoryDialog = true">Adicionar</v-btn>
+
             </div>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
@@ -572,11 +565,11 @@ const editCategory = (item: any) => {
   selectedCategory.value = item
   editCategoryName.value = item.nome
   editCategoryActive.value = item.ativo
-  
+
   // Carregar dados existentes no preview
   editCategoryPreviewData.value.pt.nome = item.nome
   editCategoryPreviewData.value.en.nome = item.en_nome || ''
-  
+
   editCategoryDialog.value = true
 }
 
@@ -586,12 +579,12 @@ const showEditCategoryPreviewForm = async () => {
   editTranslateLoading.value = true
   try {
     editCategoryPreviewData.value.pt.nome = editCategoryName.value
-    
+
     // Se não tem tradução existente, traduzir
     if (!editCategoryPreviewData.value.en.nome) {
       editCategoryPreviewData.value.en.nome = await traduzirTexto('pt', 'en', editCategoryName.value)
     }
-    
+
     showEditCategoryPreview.value = true
   } catch (error) {
     toast.error('Erro ao traduzir categoria')
@@ -669,7 +662,7 @@ const showCategoryPreviewForm = async () => {
   try {
     categoryPreviewData.value.pt.nome = createCategoryName.value
     categoryPreviewData.value.en.nome = await traduzirTexto('pt', 'en', createCategoryName.value)
-    
+
     showCategoryPreview.value = true
   } catch (error) {
     toast.error('Erro ao traduzir categoria')
