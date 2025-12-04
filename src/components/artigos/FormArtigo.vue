@@ -26,8 +26,8 @@
             </div>
             <div>
               <v-tabs v-model="tab">
-                <v-tab value="one">PT</v-tab>
-                <v-tab value="two">EN</v-tab>
+                <v-tab value="one"><v-img src="/br-flag.png" :width="20" cover class="mr-2"></v-img> PT</v-tab>
+                <v-tab value="two"><v-img src="/en-flag.png" :width="20" cover class="mr-2"></v-img> EN</v-tab>
               </v-tabs>
             </div>
           </v-sheet>
@@ -35,7 +35,7 @@
           <v-tabs-window v-model="tab">
             <v-tabs-window-item value="one">
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col class="mt-2" cols="12" md="6">
                   <v-text-field
                     v-model="form.titulo"
                     label="Título"
@@ -46,7 +46,7 @@
                     density="comfortable"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col class="mt-2" cols="12" md="6">
                   <v-text-field
                     v-model="form.subTitulo"
                     label="Subtítulo"
@@ -74,7 +74,7 @@
 
             <v-tabs-window-item value="two">
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col class="mt-2" cols="12" md="6">
                   <v-text-field
                     v-model="form.en_titulo"
                     label="Título"
@@ -85,6 +85,7 @@
                     density="comfortable"
                   ></v-text-field>
                   <v-text-field
+                  class="mt-2"
                     v-model="form.en_subTitulo"
                     label="Subtítulo"
                     variant="outlined"
@@ -125,7 +126,7 @@
 
           <v-tabs-window v-model="tab">
             <v-tabs-window-item value="one">
-              <v-row>
+              <v-row class="mt-2">
                 <v-col cols="12" md="6">
                   <v-textarea
                     v-model="form.introducao"
@@ -134,9 +135,9 @@
                     variant="outlined"
                     prepend-inner-icon="mdi-text-box-outline"
                     density="comfortable"
-                    class="mb-3"
                   ></v-textarea>
                   <v-textarea
+                  class="mt-2"
                     v-model="form.conteudo"
                     label="Conteúdo"
                     rows="4"
@@ -169,7 +170,7 @@
 
             <v-tabs-window-item value="two">
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col class="mt-2" cols="12" md="6">
                   <v-textarea
                     v-model="form.en_introducao"
                     label="Introdução"
@@ -188,7 +189,7 @@
                     density="comfortable"
                   ></v-textarea>
                 </v-col>
-                <v-col cols="12" md="6">
+                <v-col class="mt-2" cols="12" md="6">
                   <v-textarea
                     v-model="form.en_citacao"
                     label="Citação"

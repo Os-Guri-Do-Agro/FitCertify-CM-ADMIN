@@ -13,35 +13,80 @@
       <v-form ref="formRef" @submit.prevent="submitForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
-          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-            <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
-            Informações Básicas
-          </h3>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="form.nome"
-                label="Nome da Empresa"
-                variant="outlined"
-                prepend-inner-icon="mdi-domain"
-                :rules="[rules.required]"
-                required
-                density="comfortable"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-textarea
-                v-model="form.sobre"
-                label="Sobre a Empresa"
-                rows="3"
-                variant="outlined"
-                prepend-inner-icon="mdi-text-box-outline"
-                :rules="[rules.required]"
-                required
-                density="comfortable"
-              ></v-textarea>
-            </v-col>
-          </v-row>
+          <v-sheet class="d-flex justify-space-between mb-6">
+            <div>
+              <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+                Informações Básicas
+              </h3>
+              <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+                Informações Básicas (EN)
+              </h3>
+            </div>
+            <div>
+              <v-tabs v-model="tab">
+                <v-tab value="one"><v-img src="/br-flag.png" :width="20" cover class="mr-2"></v-img> PT</v-tab>
+                <v-tab value="two"><v-img src="/en-flag.png" :width="20" cover class="mr-2"></v-img> EN</v-tab>
+              </v-tabs>
+            </div>
+          </v-sheet>
+
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                    v-model="form.nome"
+                    label="Nome da Empresa"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-domain"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-textarea
+                    v-model="form.sobre"
+                    label="Sobre a Empresa"
+                    rows="3"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-box-outline"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+
+            <v-tabs-window-item value="two">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-textarea
+                    v-model="form.en_sobre"
+                    label="Sobre a Empresa"
+                    rows="3"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-box-outline"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+                <v-col class="mb-6 d-flex items-center flex-column mt-md-2" cols="12" md="4">
+                  <v-btn prepend-icon="mdi-translate" color="primary" size="large" elevation="0" @click="traduzirCampos" :loading="loadingTranslation">
+                    Traduzir
+                  </v-btn>
+                  <v-chip class="d-flex items-center justify-center mt-3" color="orange">
+                    <v-icon class="mr-2" size="24">mdi-information</v-icon>
+                    <span>A tradução pode não ser 100% precisa.</span>
+                  </v-chip>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+          </v-tabs-window>
         </div>
 
         <!-- Logo Section -->
@@ -133,9 +178,13 @@ const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
 
+const tab = ref('one')
+const loadingTranslation = ref(false)
+
 const form = ref({
   nome: '',
   sobre: '',
+  en_sobre: '',
   logoUrl: null,
   ativo: true,
 })
@@ -145,10 +194,58 @@ const rules = {
 }
 
 const isFormValid = computed(() => {
-  return  form.value.sobre &&
-    form.value.nome
-
+  return form.value.sobre &&
+    form.value.nome &&
+    form.value.en_sobre
 })
+
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+  if (!content || content.trim() === '') return ''
+
+  try {
+    const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        q: content,
+        source: sourceLanguage,
+        target: targetLanguage
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to translate text', response.statusText)
+    }
+
+    const data = await response.json()
+    return data.data.translations[0].translatedText
+  } catch (error) {
+    console.error('Translation error:', error)
+    return content
+  }
+}
+
+const traduzirCampos = async () => {
+  if (!form.value.sobre) {
+    toast.error('Preencha o campo "Sobre" para traduzir')
+    return
+  }
+
+  loadingTranslation.value = true
+  try {
+    if (form.value.sobre) {
+      form.value.en_sobre = await traduzirTexto('pt', 'en', form.value.sobre)
+    }
+    toast.success('Tradução concluída!')
+  } catch (error) {
+    toast.error('Erro ao traduzir campos')
+    console.error('Translation error:', error)
+  } finally {
+    loadingTranslation.value = false
+  }
+}
 
 const submitForm = async () => {
   const { valid } = await formRef.value.validate()
@@ -159,12 +256,12 @@ const submitForm = async () => {
     const formData = new FormData()
     formData.append('nome', form.value.nome)
     formData.append('sobre', form.value.sobre)
+    formData.append('en_sobre', form.value.en_sobre)
     formData.append('ativo', form.value.ativo.toString())
 
     if (form.value.logoUrl) {
       formData.append('logo', form.value.logoUrl)
     }
-
 
     await empresaService.createEmpresa(formData)
 

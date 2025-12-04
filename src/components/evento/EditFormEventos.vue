@@ -28,12 +28,8 @@
 
           <div class="">
             <v-tabs v-model="tab" class="">
-              <v-tab value="one">
-                PT
-              </v-tab>
-              <v-tab value="two">
-                EN
-              </v-tab>
+              <v-tab value="one"><v-img src="/br-flag.png" :width="20" cover class="mr-2"></v-img> PT</v-tab>
+              <v-tab value="two"><v-img src="/en-flag.png" :width="20" cover class="mr-2"></v-img> EN</v-tab>
             </v-tabs>
           </div>
           </v-sheet>
@@ -119,6 +115,7 @@
               <v-row>
                 <v-col class="mt-2" cols="12" md="6">
                   <v-text-field
+                  class="mb-3"
                 v-model="form.en_titulo"
                 label="Título do Evento"
                 variant="outlined"

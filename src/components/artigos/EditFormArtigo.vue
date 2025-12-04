@@ -1,365 +1,347 @@
 <template>
-<div>
-  <!-- Formulário Principal -->
-  <v-card v-if="!showPreview" class="form-card" elevation="4">
+  <v-card class="form-card" elevation="4">
     <v-card-title class="pa-6 pb-4">
       <div class="d-flex align-center">
         <v-icon icon="mdi-form-select" class="me-2" color="primary"></v-icon>
-        <span class="text-h6 font-weight-medium">{{ props.id ? 'Editar Artigo' : 'Criar Novo Artigo' }}</span>
+        <span class="text-h6 font-weight-medium">Editar Artigo</span>
       </div>
     </v-card-title>
 
     <v-divider></v-divider>
 
     <v-card-text class="pa-6">
-      <v-form ref="formRef" @submit.prevent="showPreviewForm">
-      <!-- Basic Information Section -->
-      <div class="mb-6">
-        <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-          <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
-          Informações Básicas
-        </h3>
-        <v-row>
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="form.titulo"
-              label="Título"
-              variant="outlined"
-              prepend-inner-icon="mdi-format-title"
-              :rules="[rules.required]"
-              required
-              density="comfortable"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="form.subTitulo"
-              label="Subtítulo"
-              variant="outlined"
-              prepend-inner-icon="mdi-format-header-2"
-              :rules="[rules.required]"
-              required
-              density="comfortable"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-combobox
-              v-model="categoriasArtigoSelected"
-              variant="outlined"
-              label="Categoria"
-              prepend-inner-icon="mdi-tag"
-              :items="categoriasArtigo"
-              item-title="nome"
-              item-value="id"
-              density="comfortable"
-            ></v-combobox>
-          </v-col>
-        </v-row>
-      </div>
+      <v-form ref="formRef" @submit.prevent="submitForm">
+        <!-- Basic Information Section -->
+        <div class="mb-6">
+          <v-sheet class="d-flex justify-space-between mb-6">
+            <div>
+              <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+                Informações Básicas
+              </h3>
+              <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+                Informações Básicas (EN)
+              </h3>
+            </div>
+            <div>
+              <v-tabs v-model="tab">
+                <v-tab value="one"><v-img src="/br-flag.png" :width="20" cover class="mr-2"></v-img> PT</v-tab>
+                <v-tab value="two"><v-img src="/en-flag.png" :width="20" cover class="mr-2"></v-img> EN</v-tab>
+              </v-tabs>
+            </div>
+          </v-sheet>
 
-      <!-- Content Section -->
-      <div class="mb-6">
-        <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-          <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
-          Conteúdo
-        </h3>
-        <v-row>
-          <v-col cols="12" md="6">
-            <v-textarea
-              v-model="form.introducao"
-              label="Introdução"
-              rows="4"
-              variant="outlined"
-              prepend-inner-icon="mdi-text-box-outline"
-              density="comfortable"
-              class="mb-3"
-            ></v-textarea>
-            <v-textarea
-              v-model="form.conteudo"
-              label="Conteúdo"
-              rows="4"
-              variant="outlined"
-              prepend-inner-icon="mdi-text-long"
-              density="comfortable"
-            ></v-textarea>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-textarea
-              v-model="form.citacao"
-              label="Citação"
-              rows="4"
-              variant="outlined"
-              prepend-inner-icon="mdi-format-quote-close"
-              density="comfortable"
-              class="mb-3"
-            ></v-textarea>
-            <v-textarea
-              v-model="form.conclusao"
-              label="Conclusão"
-              rows="4"
-              variant="outlined"
-              prepend-inner-icon="mdi-check-circle-outline"
-              density="comfortable"
-            ></v-textarea>
-          </v-col>
-        </v-row>
-      </div>
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                    v-model="form.titulo"
+                    label="Título"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-title"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                    v-model="form.subTitulo"
+                    label="Subtítulo"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-header-2"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-combobox
+                    v-model="categoriasArtigoSelected"
+                    variant="outlined"
+                    label="Categoria"
+                    prepend-inner-icon="mdi-tag"
+                    :items="categoriasArtigo"
+                    item-title="nome"
+                    item-value="id"
+                    density="comfortable"
+                  ></v-combobox>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
 
-      <!-- Images Section -->
-      <div class="mb-6">
-        <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-          <v-icon icon="mdi-image" class="me-2" size="small"></v-icon>
-          Imagens
-        </h3>
-        <v-row>
-          <v-col cols="12" md="6">
-            <v-card class="pa-4 upload-card" elevation="1">
-              <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
-                <v-icon icon="mdi-image-outline" class="me-2" size="small"></v-icon>
-                Imagem do Artigo
-              </v-card-subtitle>
-              
-              <div v-if="imagePreview.imagem && !editingImage.imagem" class="text-center">
-                <v-img :src="imagePreview.imagem" max-height="200" class="mb-3 rounded"></v-img>
-                <v-btn @click="editingImage.imagem = true" color="primary" variant="outlined" size="small">
-                  Alterar Imagem
-                </v-btn>
-              </div>
-              
-              <v-file-upload v-else
-                v-model="form.imagem"
-                label="Selecionar imagem"
-                clearable
-                show-size
-                accept="image/*"
-                variant="outlined"
-                density="comfortable"
-              ></v-file-upload>
-              <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-card class="pa-4 upload-card" elevation="1">
-              <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
-                <v-icon icon="mdi-panorama" class="me-2" size="small"></v-icon>
-                Imagem do Banner
-              </v-card-subtitle>
-              
-              <div v-if="imagePreview.banner && !editingImage.banner" class="text-center">
-                <v-img :src="imagePreview.banner" max-height="200" class="mb-3 rounded"></v-img>
-                <v-btn @click="editingImage.banner = true" color="primary" variant="outlined" size="small">
-                  Alterar Banner
-                </v-btn>
-              </div>
-              
-              <v-file-upload v-else
-                v-model="form.banner"
-                label="Selecionar imagem"
-                clearable
-                show-size
-                accept="image/*"
-                variant="outlined"
-                density="comfortable"
-              ></v-file-upload>
-              <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
-            </v-card>
-          </v-col>
-        </v-row>
-      </div>
-
-      <!-- Configuration Section -->
-      <div class="mb-6">
-        <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-          <v-icon icon="mdi-cog" class="me-2" size="small"></v-icon>
-          Configurações
-        </h3>
-        <v-row>
-          <v-col cols="12" md="4">
-            <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.ativo }" elevation="1">
-              <v-switch
-                v-model="form.ativo"
-                label="Ativo"
-                color="primary"
-                hide-details
-              ></v-switch>
-              <p class="text-caption text-medium-emphasis mt-2 mb-0">
-                Artigo visível no sistema
-              </p>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.isMobile }" elevation="1">
-              <v-switch
-                v-model="form.isMobile"
-                label="Mobile"
-                color="success"
-                hide-details
-              ></v-switch>
-              <p class="text-caption text-medium-emphasis mt-2 mb-0">
-                Visível em dispositivos móveis
-              </p>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.isDesktop }" elevation="1">
-              <v-switch
-                v-model="form.isDesktop"
-                label="Desktop"
-                color="info"
-                hide-details
-              ></v-switch>
-              <p class="text-caption text-medium-emphasis mt-2 mb-0">
-                Visível em dispositivos desktop
-              </p>
-            </v-card>
-          </v-col>
-        </v-row>
-      </div>
-
-      <!-- Actions -->
-      <v-divider class="mb-6"></v-divider>
-      <div class="d-flex justify-end ga-3">
-        <v-btn
-          variant="outlined"
-          size="large"
-          @click="router.push('/artigos/')"
-        >
-          Cancelar
-        </v-btn>
-        <v-btn
-          color="primary"
-          size="large"
-          :disabled="!isFormValid"
-          prepend-icon="mdi-eye"
-          @click="showPreviewForm"
-        >
-          {{ props.id ? 'Próximo: Visualizar' : 'Criar Artigo' }}
-        </v-btn>
-      </div>
-    </v-form>
-  </v-card-text>
-</v-card>
-
-  <!-- Prévia do Artigo -->
-  <v-card v-else class="form-card" elevation="4">
-    <v-card-title class="pa-6 pb-4">
-      <div class="d-flex align-center justify-space-between">
-        <div class="d-flex align-center">
-          <v-icon icon="mdi-eye" class="me-2" color="primary"></v-icon>
-          <span class="text-h6 font-weight-medium">Prévia do Artigo</span>
+            <v-tabs-window-item value="two">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                    v-model="form.en_titulo"
+                    label="Título"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-title"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                  <v-text-field
+                  class="mt-2"
+                    v-model="form.en_subTitulo"
+                    label="Subtítulo"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-header-2"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+                <v-col class="mb-6 d-flex items-center flex-column mt-md-2" cols="12" md="4">
+                  <v-btn prepend-icon="mdi-translate" color="primary" size="large" elevation="0" @click="traduzirCampos" :loading="loadingTranslation">
+                    Traduzir
+                  </v-btn>
+                  <v-chip class="d-flex items-center justify-center mt-3" color="orange">
+                    <v-icon class="mr-2" size="24">mdi-information</v-icon>
+                    <span>A tradução pode não ser 100% precisa.</span>
+                  </v-chip>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+          </v-tabs-window>
         </div>
-        <v-btn-toggle v-model="currentLanguage" mandatory>
-          <v-btn value="pt" size="small">PT</v-btn>
-          <v-btn value="en" size="small">EN</v-btn>
-        </v-btn-toggle>
-      </div>
-    </v-card-title>
 
-    <v-divider></v-divider>
+        <!-- Content Section -->
+        <div class="mb-6">
+          <v-sheet class="d-flex justify-space-between mb-6">
+            <div>
+              <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
+                Conteúdo
+              </h3>
+              <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
+                Conteúdo (EN)
+              </h3>
+            </div>
+          </v-sheet>
 
-    <v-card-text class="pa-6">
-      <v-form ref="previewFormRef">
-        <!-- Informações Básicas -->
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one">
+              <v-row class="mt-2">
+                <v-col cols="12" md="6">
+                  <v-textarea
+                    v-model="form.introducao"
+                    label="Introdução"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-box-outline"
+                    density="comfortable"
+                  ></v-textarea>
+                  <v-textarea
+                  class="mt-2"
+                    v-model="form.conteudo"
+                    label="Conteúdo"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-long"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-textarea
+                    v-model="form.citacao"
+                    label="Citação"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-quote-close"
+                    density="comfortable"
+                    class="mb-3"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="form.conclusao"
+                    label="Conclusão"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-check-circle-outline"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+
+            <v-tabs-window-item value="two">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-textarea
+                    v-model="form.en_introducao"
+                    label="Introdução"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-box-outline"
+                    density="comfortable"
+                    class="mb-3"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="form.en_conteudo"
+                    label="Conteúdo"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-long"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-textarea
+                    v-model="form.en_citacao"
+                    label="Citação"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-quote-close"
+                    density="comfortable"
+                    class="mb-3"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="form.en_conclusao"
+                    label="Conclusão"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-check-circle-outline"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+          </v-tabs-window>
+        </div>
+
+        <!-- Images Section -->
         <div class="mb-6">
           <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-            <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
-            Informações Básicas ({{ currentLanguage.toUpperCase() }})
+            <v-icon icon="mdi-image" class="me-2" size="small"></v-icon>
+            Imagens
           </h3>
           <v-row>
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="previewData[currentLanguage].titulo"
-                label="Título"
-                variant="outlined"
-                prepend-inner-icon="mdi-format-title"
-                density="comfortable"
-              ></v-text-field>
+              <v-card class="pa-4 upload-card" elevation="1">
+                <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
+                  <v-icon icon="mdi-image-outline" class="me-2" size="small"></v-icon>
+                  Imagem do Artigo
+                </v-card-subtitle>
+                <v-img v-if="imagePreview.imagem && !editingImage.imagem" :src="imagePreview.imagem" class="mb-3" height="200" cover></v-img>
+                <v-file-upload
+                  v-if="!imagePreview.imagem || editingImage.imagem"
+                  v-model="form.imagem"
+                  label="Selecionar imagem"
+                  clearable
+                  show-size
+                  accept="image/*"
+                  variant="outlined"
+                  density="comfortable"
+                ></v-file-upload>
+                <v-btn v-if="imagePreview.imagem && !editingImage.imagem" @click="editingImage.imagem = true" variant="outlined" size="small" class="mt-2">
+                  Alterar Imagem
+                </v-btn>
+                <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
+              </v-card>
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="previewData[currentLanguage].subTitulo"
-                label="Subtítulo"
-                variant="outlined"
-                prepend-inner-icon="mdi-format-header-2"
-                density="comfortable"
-              ></v-text-field>
+              <v-card class="pa-4 upload-card" elevation="1">
+                <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
+                  <v-icon icon="mdi-panorama" class="me-2" size="small"></v-icon>
+                  Imagem do Banner
+                </v-card-subtitle>
+                <v-img v-if="imagePreview.banner && !editingImage.banner" :src="imagePreview.banner" class="mb-3" height="200" cover></v-img>
+                <v-file-upload
+                  v-if="!imagePreview.banner || editingImage.banner"
+                  v-model="form.banner"
+                  label="Selecionar imagem"
+                  clearable
+                  show-size
+                  accept="image/*"
+                  variant="outlined"
+                  density="comfortable"
+                ></v-file-upload>
+                <v-btn v-if="imagePreview.banner && !editingImage.banner" @click="editingImage.banner = true" variant="outlined" size="small" class="mt-2">
+                  Alterar Imagem
+                </v-btn>
+                <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
+              </v-card>
             </v-col>
           </v-row>
         </div>
 
-        <!-- Conteúdo -->
+        <!-- Configuration Section -->
         <div class="mb-6">
           <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-            <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
-            Conteúdo ({{ currentLanguage.toUpperCase() }})
+            <v-icon icon="mdi-cog" class="me-2" size="small"></v-icon>
+            Configurações
           </h3>
           <v-row>
-            <v-col cols="12" md="6">
-              <v-textarea
-                v-model="previewData[currentLanguage].introducao"
-                label="Introdução"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-text-box-outline"
-                density="comfortable"
-                class="mb-3"
-              ></v-textarea>
-              <v-textarea
-                v-model="previewData[currentLanguage].conteudo"
-                label="Conteúdo"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-text-long"
-                density="comfortable"
-              ></v-textarea>
+            <v-col cols="12" md="4">
+              <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.ativo }" elevation="1">
+                <v-switch
+                  v-model="form.ativo"
+                  label="Ativo"
+                  color="primary"
+                  hide-details
+                ></v-switch>
+                <p class="text-caption text-medium-emphasis mt-2 mb-0">
+                  Artigo visível no sistema
+                </p>
+              </v-card>
             </v-col>
-            <v-col cols="12" md="6">
-              <v-textarea
-                v-model="previewData[currentLanguage].citacao"
-                label="Citação"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-format-quote-close"
-                density="comfortable"
-                class="mb-3"
-              ></v-textarea>
-              <v-textarea
-                v-model="previewData[currentLanguage].conclusao"
-                label="Conclusão"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-check-circle-outline"
-                density="comfortable"
-              ></v-textarea>
+            <v-col cols="12" md="4">
+              <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.isMobile }" elevation="1">
+                <v-switch
+                  v-model="form.isMobile"
+                  label="Mobile"
+                  color="success"
+                  hide-details
+                ></v-switch>
+                <p class="text-caption text-medium-emphasis mt-2 mb-0">
+                  Visível em dispositivos móveis
+                </p>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.isDesktop }" elevation="1">
+                <v-switch
+                  v-model="form.isDesktop"
+                  label="Desktop"
+                  color="info"
+                  hide-details
+                ></v-switch>
+                <p class="text-caption text-medium-emphasis mt-2 mb-0">
+                  Visível em dispositivos desktop
+                </p>
+              </v-card>
             </v-col>
           </v-row>
         </div>
 
         <!-- Actions -->
         <v-divider class="mb-6"></v-divider>
-        <div class="d-flex justify-space-between">
+        <div class="d-flex justify-end ga-3">
           <v-btn
             variant="outlined"
             size="large"
-            prepend-icon="mdi-arrow-left"
-            @click="showPreview = false"
+            @click="router.push('/artigos/')"
           >
-            Voltar ao Formulário
+            Cancelar
           </v-btn>
           <v-btn
             color="primary"
             size="large"
+            :disabled="!isFormValid"
             :loading="loading"
             prepend-icon="mdi-check"
             @click="submitForm"
           >
-            {{ props.id ? 'Atualizar Artigo' : 'Confirmar e Criar' }}
+            Atualizar Artigo
           </v-btn>
         </div>
       </v-form>
     </v-card-text>
   </v-card>
-</div>
 </template>
 
 <script setup>
@@ -374,15 +356,13 @@ const props = defineProps({
   id: String
 })
 
-
+const tab = ref('one')
 const router = useRouter()
 const loading = ref(false)
+const loadingTranslation = ref(false)
 const formRef = ref(null)
-const previewFormRef = ref(null)
 const categoriasArtigo = ref([])
 const categoriasArtigoSelected = ref("")
-const showPreview = ref(false)
-const currentLanguage = ref('en')
 
 const form = ref({
   titulo: '',
@@ -391,6 +371,12 @@ const form = ref({
   conteudo: '',
   citacao: '',
   conclusao: '',
+  en_titulo: '',
+  en_subTitulo: '',
+  en_introducao: '',
+  en_conteudo: '',
+  en_citacao: '',
+  en_conclusao: '',
   imagem: null,
   banner: null,
   ativo: true,
@@ -409,25 +395,6 @@ const editingImage = ref({
   banner: false
 })
 
-const previewData = ref({
-  pt: {
-    titulo: '',
-    subTitulo: '',
-    introducao: '',
-    conteudo: '',
-    citacao: '',
-    conclusao: ''
-  },
-  en: {
-    titulo: '',
-    subTitulo: '',
-    introducao: '',
-    conteudo: '',
-    citacao: '',
-    conclusao: ''
-  }
-})
-
 const rules = {
   required: (value) => !!value || 'Campo obrigatório'
 }
@@ -439,62 +406,69 @@ const isFormValid = computed(() => {
 
   return form.value.titulo &&
     form.value.subTitulo &&
+    form.value.en_titulo &&
+    form.value.en_subTitulo &&
     categoriasArtigoSelected.value.id &&
     hasImages
 })
 
-const showPreviewForm = async () => {
+const traduzirCampos = async () => {
+  if (!form.value.titulo && !form.value.subTitulo && !form.value.introducao && !form.value.conteudo && !form.value.citacao && !form.value.conclusao) {
+    toast.error('Preencha pelo menos um campo para traduzir')
+    return
+  }
+
+  loadingTranslation.value = true
+  try {
+    if (form.value.titulo) {
+      form.value.en_titulo = await traduzirTexto('pt', 'en', form.value.titulo)
+    }
+    if (form.value.subTitulo) {
+      form.value.en_subTitulo = await traduzirTexto('pt', 'en', form.value.subTitulo)
+    }
+    if (form.value.introducao) {
+      form.value.en_introducao = await traduzirTexto('pt', 'en', form.value.introducao)
+    }
+    if (form.value.conteudo) {
+      form.value.en_conteudo = await traduzirTexto('pt', 'en', form.value.conteudo)
+    }
+    if (form.value.citacao) {
+      form.value.en_citacao = await traduzirTexto('pt', 'en', form.value.citacao)
+    }
+    if (form.value.conclusao) {
+      form.value.en_conclusao = await traduzirTexto('pt', 'en', form.value.conclusao)
+    }
+    toast.success('Tradução concluída!')
+  } catch (error) {
+    toast.error('Erro ao traduzir campos')
+    console.error('Translation error:', error)
+  } finally {
+    loadingTranslation.value = false
+  }
+}
+
+const submitForm = async () => {
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
-  previewData.value.pt = {
-    titulo: form.value.titulo,
-    subTitulo: form.value.subTitulo,
-    introducao: form.value.introducao,
-    conteudo: form.value.conteudo,
-    citacao: form.value.citacao,
-    conclusao: form.value.conclusao
-  }
-
-  // Se não há dados em inglês carregados, inicializar campos vazios
-  if (!previewData.value.en.titulo) {
-    previewData.value.en = {
-      titulo: '',
-      subTitulo: '',
-      introducao: '',
-      conteudo: '',
-      citacao: '',
-      conclusao: ''
-    }
-  }
-
-  showPreview.value = true
-}
-
-
-
-const submitForm = async () => {
   loading.value = true
   try {
     const formData = new FormData()
     
-    // Dados PT-BR
-    formData.append('titulo', previewData.value.pt.titulo)
-    formData.append('subTitulo', previewData.value.pt.subTitulo)
-    formData.append('introducao', previewData.value.pt.introducao || '')
-    formData.append('conteudo', previewData.value.pt.conteudo || '')
-    formData.append('citacao', previewData.value.pt.citacao || '')
-    formData.append('conclusao', previewData.value.pt.conclusao || '')
+    formData.append('titulo', form.value.titulo)
+    formData.append('subTitulo', form.value.subTitulo)
+    formData.append('introducao', form.value.introducao || '')
+    formData.append('conteudo', form.value.conteudo || '')
+    formData.append('citacao', form.value.citacao || '')
+    formData.append('conclusao', form.value.conclusao || '')
 
-    // Dados EN
-    formData.append('en_titulo', previewData.value.en.titulo)
-    formData.append('en_subTitulo', previewData.value.en.subTitulo)
-    formData.append('en_introducao', previewData.value.en.introducao || '')
-    formData.append('en_conteudo', previewData.value.en.conteudo || '')
-    formData.append('en_citacao', previewData.value.en.citacao || '')
-    formData.append('en_conclusao', previewData.value.en.conclusao || '')
+    formData.append('en_titulo', form.value.en_titulo)
+    formData.append('en_subTitulo', form.value.en_subTitulo)
+    formData.append('en_introducao', form.value.en_introducao || '')
+    formData.append('en_conteudo', form.value.en_conteudo || '')
+    formData.append('en_citacao', form.value.en_citacao || '')
+    formData.append('en_conclusao', form.value.en_conclusao || '')
 
-    // Configurações
     formData.append('ativo', form.value.ativo.toString())
     formData.append('isMobile', form.value.isMobile.toString())
     formData.append('isDesktop', form.value.isDesktop.toString())
@@ -507,26 +481,49 @@ const submitForm = async () => {
       formData.append('banner', form.value.banner)
     }
 
-    if (props.id) {
-      await artigoService.updateArtigo(props.id, formData)
+    await artigoService.updateArtigo(props.id, formData)
+    
+    router.push('/artigos/').then(() => {
       toast.success('Artigo atualizado com sucesso!')
-    } else {
-      await artigoService.createArtigo(formData)
-      toast.success('Artigo atualizado com sucesso!')
-    }
-
-    setTimeout(() => {
-      router.push('/artigos/')
-    }, 2500)
+    })
 
   } catch (error) {
-    toast.error(props.id ? 'Erro ao atualizar artigo' : 'Erro ao criar artigo')
+    toast.error('Erro ao atualizar artigo')
     console.error('Error submitting artigo:', error)
   } finally {
     loading.value = false
   }
 }
 
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+  if (!content || content.trim() === '') return ''
+
+  try {
+    const response  = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    q: content,
+    source: sourceLanguage,
+    target: targetLanguage
+  })
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to translate text', response.statusText)
+  }
+
+  const data = await response.json()
+
+  return data.data.translations[0].translatedText
+
+  } catch (error) {
+    console.error('Translation error:', error)
+    return content
+  }
+}
 
 const loadArtigo = async () => {
   if (!props.id) return
@@ -542,6 +539,12 @@ const loadArtigo = async () => {
       conteudo: artigo.conteudo || '',
       citacao: artigo.citacao || '',
       conclusao: artigo.conclusao || '',
+      en_titulo: artigo.en_titulo || '',
+      en_subTitulo: artigo.en_subTitulo || '',
+      en_introducao: artigo.en_introducao || '',
+      en_conteudo: artigo.en_conteudo || '',
+      en_citacao: artigo.en_citacao || '',
+      en_conclusao: artigo.en_conclusao || '',
       imagem: null,
       banner: null,
       ativo: artigo.ativo,
@@ -550,28 +553,8 @@ const loadArtigo = async () => {
       categoriaArtigoId: artigo.categoriaArtigoId || ''
     }
 
-    // Carregar dados de tradução se existirem
-    previewData.value.pt = {
-      titulo: artigo.titulo || '',
-      subTitulo: artigo.subTitulo || '',
-      introducao: artigo.introducao || '',
-      conteudo: artigo.conteudo || '',
-      citacao: artigo.citacao || '',
-      conclusao: artigo.conclusao || ''
-    }
-
-    previewData.value.en = {
-      titulo: artigo.en_titulo || '',
-      subTitulo: artigo.en_subTitulo || '',
-      introducao: artigo.en_introducao || '',
-      conteudo: artigo.en_conteudo || '',
-      citacao: artigo.en_citacao || '',
-      conclusao: artigo.en_conclusao || ''
-    }
-
     categoriasArtigoSelected.value = artigo.categoriaArtigo || ''
 
-    // Definir previews das imagens
     imagePreview.value.imagem = artigo.imagensArtigo.find(img => img.isBanner === false)?.imagemUrl || null
     imagePreview.value.banner = artigo.imagensArtigo.find(img => img.isBanner === true)?.imagemUrl || null
   } catch (error) {
