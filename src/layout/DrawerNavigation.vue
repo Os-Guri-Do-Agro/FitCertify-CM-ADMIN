@@ -230,7 +230,6 @@ const marketplaceMenuItems = [
     value: 'marketplace',
     to: '/marketplace',
   },
-  { icon: 'mdi-domain', title: 'Empresa', value: 'empresa', to: '/empresa' },
 ]
 
 const blogMenuItems = [
@@ -248,12 +247,6 @@ const eventosMenuItems = [
     title: 'Eventos',
     value: 'evento',
     to: '/evento',
-  },
-  {
-    icon: 'mdi-calendar-multiple',
-    title: 'Organização',
-    value: 'organizacao',
-    to: '/organizacao',
   },
   {
     icon: 'mdi-certificate',

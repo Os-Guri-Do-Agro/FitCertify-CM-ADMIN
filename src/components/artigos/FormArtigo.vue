@@ -3,104 +3,214 @@
     <v-card-title class="pa-6 pb-4">
       <div class="d-flex align-center">
         <v-icon icon="mdi-form-select" class="me-2" color="primary"></v-icon>
-        <span class="text-h6 font-weight-medium">Informações do Artigo</span>
+        <span class="text-h6 font-weight-medium">Criar Novo Artigo</span>
       </div>
     </v-card-title>
-    
+
     <v-divider></v-divider>
-    
+
     <v-card-text class="pa-6">
       <v-form ref="formRef" @submit.prevent="submitForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
-          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-            <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
-            Informações Básicas
-          </h3>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="form.titulo"
-                label="Título"
-                variant="outlined"
-                prepend-inner-icon="mdi-format-title"
-                :rules="[rules.required]"
-                required
-                density="comfortable"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="form.subTitulo"
-                label="Subtítulo"
-                variant="outlined"
-                prepend-inner-icon="mdi-format-header-2"
-                :rules="[rules.required]"
-                required
-                density="comfortable"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-combobox
-                v-model="categoriasArtigoSelected"
-                variant="outlined"
-                label="Categoria"
-                prepend-inner-icon="mdi-tag"
-                :items="categoriasArtigo"
-                item-title="nome"
-                item-value="id"
-                density="comfortable"
-              ></v-combobox>
-            </v-col>
-          </v-row>
+          <v-sheet class="d-flex justify-space-between mb-6">
+            <div>
+              <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+                Informações Básicas
+              </h3>
+              <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
+                Informações Básicas (EN)
+              </h3>
+            </div>
+            <div>
+              <v-tabs v-model="tab">
+                <v-tab value="one"><v-img src="/br-flag.png" :width="20" cover class="mr-2"></v-img> PT</v-tab>
+                <v-tab value="two"><v-img src="/en-flag.png" :width="20" cover class="mr-2"></v-img> EN</v-tab>
+              </v-tabs>
+            </div>
+          </v-sheet>
+
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                    v-model="form.titulo"
+                    label="Título"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-title"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                    v-model="form.subTitulo"
+                    label="Subtítulo"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-header-2"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-combobox
+                    v-model="categoriasArtigoSelected"
+                    variant="outlined"
+                    label="Categoria"
+                    prepend-inner-icon="mdi-tag"
+                    :items="categoriasArtigo"
+                    item-title="nome"
+                    item-value="id"
+                    density="comfortable"
+                  ></v-combobox>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+
+            <v-tabs-window-item value="two">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-text-field
+                    v-model="form.en_titulo"
+                    label="Título"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-title"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                  <v-text-field
+                  class="mt-2"
+                    v-model="form.en_subTitulo"
+                    label="Subtítulo"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-header-2"
+                    :rules="[rules.required]"
+                    required
+                    density="comfortable"
+                  ></v-text-field>
+                </v-col>
+                <v-col class="mb-6 d-flex items-center flex-column mt-md-2" cols="12" md="4">
+                  <v-btn prepend-icon="mdi-translate" color="primary" size="large" elevation="0" @click="traduzirCampos" :loading="loadingTranslation">
+                    Traduzir
+                  </v-btn>
+                  <v-chip class="d-flex items-center justify-center mt-3" color="orange">
+                    <v-icon class="mr-2" size="24">mdi-information</v-icon>
+                    <span>A tradução pode não ser 100% precisa.</span>
+                  </v-chip>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+          </v-tabs-window>
         </div>
 
         <!-- Content Section -->
         <div class="mb-6">
-          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-            <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
-            Conteúdo
-          </h3>
-          <v-row>
-            <v-col cols="12" md="6">
-              <v-textarea
-                v-model="form.introducao"
-                label="Introdução"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-text-box-outline"
-                density="comfortable"
-                class="mb-3"
-              ></v-textarea>
-              <v-textarea
-                v-model="form.conteudo"
-                label="Conteúdo"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-text-long"
-                density="comfortable"
-              ></v-textarea>
-            </v-col>
-            <v-col cols="12" md="6">
-              <v-textarea
-                v-model="form.citacao"
-                label="Citação"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-format-quote-close"
-                density="comfortable"
-                class="mb-3"
-              ></v-textarea>
-              <v-textarea
-                v-model="form.conclusao"
-                label="Conclusão"
-                rows="4"
-                variant="outlined"
-                prepend-inner-icon="mdi-check-circle-outline"
-                density="comfortable"
-              ></v-textarea>
-            </v-col>
-          </v-row>
+          <v-sheet class="d-flex justify-space-between mb-6">
+            <div>
+              <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
+                Conteúdo
+              </h3>
+              <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+                <v-icon icon="mdi-text" class="me-2" size="small"></v-icon>
+                Conteúdo (EN)
+              </h3>
+            </div>
+          </v-sheet>
+
+          <v-tabs-window v-model="tab">
+            <v-tabs-window-item value="one">
+              <v-row class="mt-2">
+                <v-col cols="12" md="6">
+                  <v-textarea
+                    v-model="form.introducao"
+                    label="Introdução"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-box-outline"
+                    density="comfortable"
+                  ></v-textarea>
+                  <v-textarea
+                  class="mt-2"
+                    v-model="form.conteudo"
+                    label="Conteúdo"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-long"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-textarea
+                    v-model="form.citacao"
+                    label="Citação"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-quote-close"
+                    density="comfortable"
+                    class="mb-3"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="form.conclusao"
+                    label="Conclusão"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-check-circle-outline"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+
+            <v-tabs-window-item value="two">
+              <v-row>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-textarea
+                    v-model="form.en_introducao"
+                    label="Introdução"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-box-outline"
+                    density="comfortable"
+                    class="mb-3"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="form.en_conteudo"
+                    label="Conteúdo"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-text-long"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+                <v-col class="mt-2" cols="12" md="6">
+                  <v-textarea
+                    v-model="form.en_citacao"
+                    label="Citação"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-format-quote-close"
+                    density="comfortable"
+                    class="mb-3"
+                  ></v-textarea>
+                  <v-textarea
+                    v-model="form.en_conclusao"
+                    label="Conclusão"
+                    rows="4"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-check-circle-outline"
+                    density="comfortable"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-tabs-window-item>
+          </v-tabs-window>
         </div>
 
         <!-- Images Section -->
@@ -211,8 +321,8 @@
           <v-btn
             color="primary"
             size="large"
-            :loading="loading"
             :disabled="!isFormValid"
+            :loading="loading"
             prepend-icon="mdi-check"
             @click="submitForm"
           >
@@ -232,11 +342,14 @@ import artigoService from '@/services/artigo/artigo-service'
 import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
 import 'vue3-toastify/dist/index.css';
 
+const tab = ref('one')
 const router = useRouter()
 const loading = ref(false)
+const loadingTranslation = ref(false)
 const formRef = ref(null)
 const categoriasArtigo = ref([])
 const categoriasArtigoSelected = ref("")
+
 const form = ref({
   titulo: '',
   subTitulo: '',
@@ -244,6 +357,12 @@ const form = ref({
   conteudo: '',
   citacao: '',
   conclusao: '',
+  en_titulo: '',
+  en_subTitulo: '',
+  en_introducao: '',
+  en_conteudo: '',
+  en_citacao: '',
+  en_conclusao: '',
   imagem: null,
   banner: null,
   ativo: true,
@@ -259,10 +378,47 @@ const rules = {
 const isFormValid = computed(() => {
   return form.value.titulo &&
     form.value.subTitulo &&
+    form.value.en_titulo &&
+    form.value.en_subTitulo &&
     categoriasArtigoSelected.value.id &&
     form.value.imagem &&
     form.value.banner
 })
+
+const traduzirCampos = async () => {
+  if (!form.value.titulo && !form.value.subTitulo && !form.value.introducao && !form.value.conteudo && !form.value.citacao && !form.value.conclusao) {
+    toast.error('Preencha pelo menos um campo para traduzir')
+    return
+  }
+
+  loadingTranslation.value = true
+  try {
+    if (form.value.titulo) {
+      form.value.en_titulo = await traduzirTexto('pt', 'en', form.value.titulo)
+    }
+    if (form.value.subTitulo) {
+      form.value.en_subTitulo = await traduzirTexto('pt', 'en', form.value.subTitulo)
+    }
+    if (form.value.introducao) {
+      form.value.en_introducao = await traduzirTexto('pt', 'en', form.value.introducao)
+    }
+    if (form.value.conteudo) {
+      form.value.en_conteudo = await traduzirTexto('pt', 'en', form.value.conteudo)
+    }
+    if (form.value.citacao) {
+      form.value.en_citacao = await traduzirTexto('pt', 'en', form.value.citacao)
+    }
+    if (form.value.conclusao) {
+      form.value.en_conclusao = await traduzirTexto('pt', 'en', form.value.conclusao)
+    }
+    toast.success('Tradução concluída!')
+  } catch (error) {
+    toast.error('Erro ao traduzir campos')
+    console.error('Translation error:', error)
+  } finally {
+    loadingTranslation.value = false
+  }
+}
 
 const submitForm = async () => {
   const { valid } = await formRef.value.validate()
@@ -271,12 +427,21 @@ const submitForm = async () => {
   loading.value = true
   try {
     const formData = new FormData()
+
     formData.append('titulo', form.value.titulo)
     formData.append('subTitulo', form.value.subTitulo)
     formData.append('introducao', form.value.introducao || '')
     formData.append('conteudo', form.value.conteudo || '')
     formData.append('citacao', form.value.citacao || '')
     formData.append('conclusao', form.value.conclusao || '')
+
+    formData.append('en_titulo', form.value.en_titulo)
+    formData.append('en_subTitulo', form.value.en_subTitulo)
+    formData.append('en_introducao', form.value.en_introducao || '')
+    formData.append('en_conteudo', form.value.en_conteudo || '')
+    formData.append('en_citacao', form.value.en_citacao || '')
+    formData.append('en_conclusao', form.value.en_conclusao || '')
+
     formData.append('ativo', form.value.ativo.toString())
     formData.append('isMobile', form.value.isMobile.toString())
     formData.append('isDesktop', form.value.isDesktop.toString())
@@ -291,16 +456,45 @@ const submitForm = async () => {
 
     await artigoService.createArtigo(formData)
 
-    toast.success('Artigo criado com sucesso!')
-    setTimeout(() => {
-      router.push('/artigos/')
-    }, 2000)
+    router.push('/artigos/').then(() => {
+      toast.success('Artigo criado com sucesso!')
+    })
 
   } catch (error) {
     toast.error('Erro ao criar artigo')
     console.error('Error creating artigo:', error)
   } finally {
     loading.value = false
+  }
+}
+
+const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', content) => {
+  if (!content || content.trim() === '') return ''
+
+  try {
+    const response  = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${import.meta.env.VITE_GOOGLE_TRANSLATE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    q: content,
+    source: sourceLanguage,
+    target: targetLanguage
+  })
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to translate text', response.statusText)
+  }
+
+  const data = await response.json()
+
+  return data.data.translations[0].translatedText
+
+  } catch (error) {
+    console.error('Translation error:', error)
+    return content
   }
 }
 
