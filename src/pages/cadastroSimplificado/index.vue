@@ -66,7 +66,7 @@
       <v-divider></v-divider>
 
 
-      <v-data-table v-model:search="search" :filter-keys="['nomeCompleto']" :headers="headers" :items="cadastros"
+      <v-data-table v-model:search="search" :filter-keys="['nome', 'email', 'telefone']" :headers="headers" :items="cadastros"
         :loading="loading" class="custom-table" hover>
 
         <template v-slot:loading>
