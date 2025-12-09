@@ -259,7 +259,7 @@ const eventosMenuItems = [
 const adminItemsList = [
   {
     icon: 'mdi-account-multiple',
-    title: 'Usuarios',
+    title: 'Usuários',
     value: 'usuarios',
     to: '/users',
   },
@@ -274,6 +274,12 @@ const adminItemsList = [
     title: 'Médicos',
     value: 'medicos',
     to: '/users/medicos/',
+  },
+  {
+    icon: 'mdi-format-list-group',
+    title: 'Cadastros Simplificados',
+    value: 'medicos',
+    to: '/cadastroSimplificado',
   },
   {
     icon: 'mdi-dock-window',
