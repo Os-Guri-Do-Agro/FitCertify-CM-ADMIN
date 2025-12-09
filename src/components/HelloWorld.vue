@@ -94,11 +94,19 @@
 <style scoped>
 .hero-section {
   background: linear-gradient(135deg, #004064 0%, #009ece 100%);
-  min-height: 88vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
 }
 
 .hero-section::before {
@@ -115,7 +123,7 @@
   position: relative;
   z-index: 2;
   animation: fadeInUp 1s ease-out;
-  padding: 3rem 2rem;
+  padding: 3rem 2rem 3rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -143,8 +151,9 @@
   letter-spacing: 1px;
 }
 
-.system-info {
+.system-info, .features-section {
   margin-top: 2rem;
+  margin-left: 4em;
 }
 
 .system-info .v-row {
@@ -244,16 +253,33 @@
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+    align-items: flex-start;
+  }
+
+  .admin-header {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .system-info,
+  .features-section {
+    margin-left: 5em;
+  }
+
   .header-brand .d-flex {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .brand-logo {
     margin-right: 0 !important;
     margin-bottom: 1rem;
   }
-  
+
   .status-indicator {
     flex-direction: column;
   }
