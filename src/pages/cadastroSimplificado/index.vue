@@ -1,23 +1,24 @@
 <template>
   <v-container fluid class="pa-6">
 
-    <v-row class="mb-8">
-      <v-col cols="12">
-        <v-card class="pa-6 gradient-header" elevation="2">
-          <div class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between w-100">
-            <div>
-              <h1 class="text-h4 font-weight-bold text-white mb-2 d-flex align-center">
-                <v-icon icon="mdi-format-list-group" class="me-3 text-white" size="32"></v-icon>
-                Cadastros Simplificados
-              </h1>
-              <p class="text-body-1 text-white opacity-80 mb-0">
-                Monitoramento de cadastros simplificados admin e mobile.
-              </p>
-            </div>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
+    <div class="d-flex justify-space-between align-center flex-wrap">
+      <div class="">
+            <h1 class="text-h3 font-weight-bold text-primary mb-2">
+              <v-icon icon="mdi-format-list-group" class="me-3" size="large"></v-icon>
+              Cadastros Simplificados
+            </h1>
+            <p class="text-subtitle-1 text-medium-emphasis mb-0">
+              Gerencie todos os cadastros simplificados
+            </p>
+      </div>
+
+      <div  class="text-center mt-5 mt-md-0">
+        <v-btn @click="dialogEnviarEmails = true" color="primary" size="large">
+          <v-icon icon="mdi-email-multiple" class="me-2"></v-icon>
+          Enviar Emails
+        </v-btn>
+      </div>
+    </div>
 
 
     <v-tabs v-model="activeTab" class="mb-6">
@@ -41,10 +42,6 @@
             {{ cadastros.length }}
           </v-progress-circular>
         </div>
-      </v-col>
-
-      <v-col cols="1" class="text-center">
-
       </v-col>
     </v-row>
 
@@ -123,6 +120,62 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="dialogEnviarEmails" max-width="1200" persistent>
+      <v-card>
+        <v-card-title class="pa-6">
+          <div class="d-flex align-center">
+            <v-icon icon="mdi-email-multiple" class="me-3" color="primary"></v-icon>
+            <span class="text-h5">Enviar Emails em Lote</span>
+          </div>
+        </v-card-title>
+
+        <v-divider></v-divider>
+
+        <v-card-text class="pa-0">
+          <v-data-table
+            v-model="selectedCadastros"
+            :headers="headersEnvioEmails"
+            :items="cadastros"
+            item-value="id"
+            show-select
+            class="custom-table"
+          >
+            <template v-slot:item.createdAt="{ item }">
+              {{ dayjs(item.createdAt).utcOffset('0').format('DD/MM/YYYY') }}
+            </template>
+          </v-data-table>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions class="pa-6">
+          <v-spacer></v-spacer>
+          <v-btn @click="dialogEnviarEmails = false" variant="outlined">
+            Cancelar
+          </v-btn>
+          <v-btn
+            @click="confirmarEnvioLote()"
+            color="primary"
+            :disabled="selectedCadastros.length === 0"
+            :loading="enviarEmailsLoteLoading"
+          >
+            <v-icon icon="mdi-email-send" class="me-2"></v-icon>
+            Enviar para Selecionados ({{ selectedCadastros.length }})
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="dialogConfirmarEnvioLote" max-width="400" persistent>
+      <v-card prepend-icon="mdi-email-multiple" :text="`Deseja enviar emails para ${selectedCadastros.length} cadastro(s) selecionado(s)?`" title="Confirmar Envio em Lote">
+        <template v-slot:actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="dialogConfirmarEnvioLote = false" variant="outlined">Cancelar</v-btn>
+          <v-btn @click="confirmarEnvioLoteAction()" color="primary">Confirmar</v-btn>
+        </template>
+      </v-card>
+    </v-dialog>
   </v-container>
 
 </template>
@@ -139,7 +192,11 @@ const loading = ref(true)
 const initEffect = ref(false)
 const activeTab = ref('cadastros')
 const dialogEmail = ref(false)
+const dialogEnviarEmails = ref(false)
+const dialogConfirmarEnvioLote = ref(false)
+const selectedCadastros = ref<string[]>([])
 const cadastroSelecionado = ref<any>(null)
+const enviarEmailsLoteLoading = ref(false)
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -155,6 +212,15 @@ const headers = computed(() => {
       { title: 'Perfil', key: 'perfil.nome', sortable: true, align: 'center' as const },
       { title: 'Criado em', key: 'createdAt', sortable: true, align: 'center' as const },
       { title: 'Ações', key: 'acoes', sortable: false, align: 'center' as const },
+    ]
+  })
+
+const headersEnvioEmails = computed(() => {
+    return [
+      { title: 'Nome', key: 'nome', sortable: true, align: 'center' as const },
+      { title: 'E-mail', key: 'email', sortable: true, align: 'center' as const },
+      { title: 'Telefone', key: 'telefone', sortable: true, align: 'center' as const },
+      { title: 'Perfil', key: 'perfil.nome', sortable: true, align: 'center' as const },
     ]
   })
 
@@ -187,6 +253,34 @@ const abrirDialogEmail = (item: any) => {
 const enviarEmail = () => {
   // Função de envio será implementada
   dialogEmail.value = false
+}
+
+const confirmarEnvioLote = () => {
+  dialogConfirmarEnvioLote.value = true
+}
+
+const confirmarEnvioLoteAction = async () => {
+  dialogConfirmarEnvioLote.value = false
+  await enviarEmailsLote(selectedCadastros.value)
+}
+
+const enviarEmailsLote = async (ids: string[]) => {
+  enviarEmailsLoteLoading.value = true
+  try {
+    // Função de envio em lote será implementada
+    console.log('Enviando emails para:', ids)
+
+    setTimeout(() => {
+      // Simula sucesso após 2 segundos
+      console.log('Emails enviados com sucesso!')
+    }, 2000)
+  } catch (error) {
+    console.error('Erro ao enviar emails em lote:', error)
+  } finally {
+    enviarEmailsLoteLoading.value = false
+    dialogEnviarEmails.value = false
+    selectedCadastros.value = []
+  }
 }
 
 onMounted(async () => {
