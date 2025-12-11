@@ -28,6 +28,17 @@ class CadastroSimplificadoService {
     )
   }
 
+  enviarEmail(data: any): Promise<any> {
+    return this.handleRequest(
+      apiClient.post('/cadastro-simplificado/enviar-emails', data, {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to fetch all categories'
+    )
+  }
+
 }
 
 

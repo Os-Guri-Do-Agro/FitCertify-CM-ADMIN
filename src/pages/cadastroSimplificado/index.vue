@@ -116,7 +116,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="dialogEmail = false">Cancelar</v-btn>
-          <v-btn color="primary" variant="flat" @click="enviarEmail">Enviar</v-btn>
+          <v-btn color="primary" variant="flat" @click="enviarEmail" :loading="enviarEmailLoading">Enviar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -172,7 +172,7 @@
         <template v-slot:actions>
           <v-spacer></v-spacer>
           <v-btn @click="dialogConfirmarEnvioLote = false" variant="outlined">Cancelar</v-btn>
-          <v-btn @click="confirmarEnvioLoteAction()" color="primary">Confirmar</v-btn>
+          <v-btn @click="confirmarEnvioLoteAction()" color="primary" :loading="enviarEmailsLoteLoading">Confirmar</v-btn>
         </template>
       </v-card>
     </v-dialog>
@@ -182,7 +182,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import 'vue3-toastify/dist/index.css'
+import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import cadastroSimplificadoService from '@/services/cadastro-simplificado/cadastro-simplificado-service'
 
@@ -197,6 +197,7 @@ const dialogConfirmarEnvioLote = ref(false)
 const selectedCadastros = ref<string[]>([])
 const cadastroSelecionado = ref<any>(null)
 const enviarEmailsLoteLoading = ref(false)
+const enviarEmailLoading = ref(false)
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -250,9 +251,28 @@ const abrirDialogEmail = (item: any) => {
   dialogEmail.value = true
 }
 
-const enviarEmail = () => {
-  // Função de envio será implementada
-  dialogEmail.value = false
+const enviarEmail = async () => {
+  enviarEmailLoading.value = true
+  try {
+    const data = {
+      cadastros: [{
+        id: cadastroSelecionado.value.id,
+        nome: cadastroSelecionado.value.nome,
+        email: cadastroSelecionado.value.email,
+        telefone: cadastroSelecionado.value.telefone,
+        perfilId: cadastroSelecionado.value.perfilId,
+      }]
+    }
+
+    await cadastroSimplificadoService.enviarEmail(data)
+    toast.success('Email enviado com sucesso!')
+  } catch (error) {
+    console.error('Erro ao enviar email', error)
+    toast.error('Erro ao enviar email!')
+  } finally {
+    enviarEmailLoading.value = false
+    dialogEmail.value = false
+  }
 }
 
 const confirmarEnvioLote = () => {
@@ -267,15 +287,12 @@ const confirmarEnvioLoteAction = async () => {
 const enviarEmailsLote = async (ids: string[]) => {
   enviarEmailsLoteLoading.value = true
   try {
-    // Função de envio em lote será implementada
-    console.log('Enviando emails para:', ids)
-
-    setTimeout(() => {
-      // Simula sucesso após 2 segundos
-      console.log('Emails enviados com sucesso!')
-    }, 2000)
+    const cadastrosSelecionados = cadastros.value.filter(c => ids.includes(c.id))
+    await cadastroSimplificadoService.enviarEmail({ cadastros: cadastrosSelecionados })
+    toast.success('Emails enviados com sucesso!')
   } catch (error) {
     console.error('Erro ao enviar emails em lote:', error)
+    toast.error('Erro ao enviar emails em lote!')
   } finally {
     enviarEmailsLoteLoading.value = false
     dialogEnviarEmails.value = false
