@@ -161,7 +161,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import empresaService from '@/services/empresa/empresa-service'
@@ -263,7 +263,7 @@ const submitForm = async () => {
     emit('empresa-saved')
     toast.success('Empresa criado com sucesso!')
 
-    // Reset form
+    // Reset form and validations
     form.value = {
       nome: '',
       sobre: '',
@@ -271,6 +271,8 @@ const submitForm = async () => {
       logoUrl: null,
       ativo: true,
     }
+    await nextTick()
+    formRef.value?.resetValidation()
 
   } catch (error) {
     toast.error('Erro ao criar empresa')
