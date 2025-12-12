@@ -1,11 +1,5 @@
 <template>
   <v-card class="form-card" elevation="4">
-    <v-card-title class="pa-6 pb-4">
-      <div class="d-flex align-center">
-        <v-icon icon="mdi-domain-plus" class="me-2" color="primary"></v-icon>
-        <span class="text-h6 font-weight-medium">Criar Nova Empresa</span>
-      </div>
-    </v-card-title>
 
     <v-divider></v-divider>
 
@@ -171,8 +165,9 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import empresaService from '@/services/empresa/empresa-service'
-// import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
 import 'vue3-toastify/dist/index.css';
+
+const emit = defineEmits(['empresa-saved'])
 
 const router = useRouter()
 const loading = ref(false)
@@ -265,10 +260,17 @@ const submitForm = async () => {
 
     await empresaService.createEmpresa(formData)
 
+    emit('empresa-saved')
     toast.success('Empresa criado com sucesso!')
-    setTimeout(() => {
-      router.push('/marketplace')
-    }, 2500)
+
+    // Reset form
+    form.value = {
+      nome: '',
+      sobre: '',
+      en_sobre: '',
+      logoUrl: null,
+      ativo: true,
+    }
 
   } catch (error) {
     toast.error('Erro ao criar empresa')
