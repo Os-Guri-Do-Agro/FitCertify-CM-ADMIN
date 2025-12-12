@@ -20,6 +20,18 @@ class MarketplaceService {
 
   getAllProdutos(): Promise<any> {
     return this.handleRequest(
+      apiClient.get('/produto/backoffice',{
+        headers: {
+          'Authorization' : `Bearer ${tokenSession}`
+        }
+      }),
+      'Failed to fetch all categories'
+    )
+  }
+
+
+  getAllProdutosSuperAdmin(): Promise<any> {
+    return this.handleRequest(
       apiClient.get('/produto'),
       'Failed to fetch all categories'
     )

@@ -7,7 +7,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
-import {  isTokenValid, getSubRole } from '@/utils/auth'
+import {  isTokenValid, getSubRole, isSuperAdmin } from '@/utils/auth'
 import { toast } from 'vue3-toastify';
 
 
@@ -49,8 +49,10 @@ router.beforeEach((to, from, next) => {
     const userRole = getSubRole();
     const path = to.path;
 
-    // Rotas que só admin pode acessar
-    const adminOnlyRoutes = ['/users', '/users/atletas', '/users/medicos', '/portal'];
+    // Rotas que só super admin pode acessar
+    const superAdminOnlyRoutes = ['/users', '/users/atletas', '/users/medicos', '/portal', '/cadastroSimplificado'];
+    // Rotas que admin pode acessar
+    const adminRoutes = ['/acessos'];
     
     // Rotas específicas por role
     const roleRoutes = {
@@ -61,8 +63,16 @@ router.beforeEach((to, from, next) => {
       marketplace: ['/marketplace', '/empresa']
     };
 
-    // Verifica se é rota admin-only
-    if (adminOnlyRoutes.some(route => path.startsWith(route)) && userRole !== 'admin') {
+    // Verifica se é rota super admin-only
+    if (superAdminOnlyRoutes.some(route => path.startsWith(route))) {
+      if (userRole !== 'admin' || !isSuperAdmin()) {
+        toast.error('Acesso negado. Você não tem permissão para acessar esta página.');
+        return next('/');
+      }
+    }
+
+    // Verifica se é rota admin
+    if (adminRoutes.some(route => path.startsWith(route)) && userRole !== 'admin') {
       toast.error('Acesso negado. Você não tem permissão para acessar esta página.');
       return next('/');
     }

@@ -78,10 +78,10 @@
             <!-- Status do Sistema -->
             <div class="system-status mt-6">
               <div class="status-indicator">
-                <v-chip color="success" variant="elevated" size="small" class="mr-4">
+                <!-- <v-chip color="success" variant="elevated" size="small" class="mr-4">
                   <v-icon start icon="mdi-check-circle"></v-icon>
                   Sistema Online
-                </v-chip>
+                </v-chip> -->
               </div>
             </div>
     </div>
