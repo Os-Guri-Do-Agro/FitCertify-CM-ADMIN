@@ -16,6 +16,7 @@ declare module 'vue' {
     EditFormOrganizacao: typeof import('./components/evento/EditFormOrganizacao.vue')['default']
     FormAfiliados: typeof import('./components/afiliados/FormAfiliados.vue')['default']
     FormArtigo: typeof import('./components/artigos/FormArtigo.vue')['default']
+    FormCategoriaProduto: typeof import('./components/marketplace/FormCategoriaProduto.vue')['default']
     FormEmpresa: typeof import('./components/marketplace/FormEmpresa.vue')['default']
     FormEventos: typeof import('./components/evento/FormEventos.vue')['default']
     FormMarketplace: typeof import('./components/marketplace/FormMarketplace.vue')['default']
