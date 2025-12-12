@@ -11,7 +11,7 @@
               Usuários
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as Usuários
+              Gerencie todos as usuários do seu Grupo
             </p>
           </div>
 
@@ -129,6 +129,31 @@
             :prepend-icon="item.medicoId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
             {{ item.medicoId ? 'Sim' : 'Não' }}
           </v-chip>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            v-if="item.ativo && !isCurrentUser(item.id)"
+            icon="mdi-account-off"
+            size="small"
+            color="warning"
+            variant="text"
+            @click="openInactivateDialog(item)"
+          >
+          </v-btn>
+          <v-tooltip v-else-if="item.ativo && isCurrentUser(item.id)" text="Você não pode inativar a si mesmo">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                icon="mdi-account-off"
+                size="small"
+                color="grey"
+                variant="text"
+                disabled
+              >
+              </v-btn>
+            </template>
+          </v-tooltip>
         </template>
 
         <!-- No data -->
@@ -292,15 +317,31 @@
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="dialog" max-width="400" persistent>
-    <v-card prepend-icon="mdi-account-remove" text="Deseja excluir este usuário?" title="Confirmação de Exclusão">
-      <template v-slot:actions>
+  <v-dialog v-model="inactivateDialog" max-width="400" persistent>
+    <v-card>
+      <v-card-title class="d-flex align-center">
+        <v-icon color="warning" class="me-2">mdi-account-off</v-icon>
+        Inativar Usuário
+      </v-card-title>
+
+      <v-card-text>
+        <p>Tem certeza que deseja inativar o usuário <strong>{{ selectedUser?.nome }}</strong>?</p>
+        <p class="text-caption text-grey">Esta ação pode ser revertida posteriormente.</p>
+      </v-card-text>
+
+      <v-card-actions>
         <v-spacer></v-spacer>
-
-        <v-btn @click="dialog = false"> recusar </v-btn>
-
-        <!-- <v-btn @click="confirmDelete" color="primary"> confirmar </v-btn> -->
-      </template>
+        <v-btn @click="inactivateDialog = false" :disabled="inactivating">
+          Cancelar
+        </v-btn>
+        <v-btn
+          color="warning"
+          @click="confirmInactivate"
+          :loading="inactivating"
+        >
+          Inativar
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -309,12 +350,16 @@
 import usersService from '@/services/users/users-service'
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { getInfoUser } from '@/utils/auth'
 import { toast } from 'vue3-toastify'
 // const router = useRouter()
 const search = ref('')
 const AllUsers = ref<any[]>([])
 const loading = ref(true)
 const dialog = ref(false)
+const inactivateDialog = ref(false)
+const selectedUser = ref<any>(null)
+const inactivating = ref(false)
 const CountActiveUsers = ref()
 const CountAllUsers = ref()
 const showUserDialog = ref(false)
@@ -374,13 +419,13 @@ const roleOptions = [
     color: 'purple',
     description: 'Acesso total ao sistema, pode gerenciar todos os módulos e usuários'
   },
-  {
-    value: 'financeiro',
-    label: 'Financeiro',
-    icon: 'mdi-bank',
-    color: 'green',
-    description: 'Gestão financeira, cupons e assinaturas'
-  },
+  // {
+  //   value: 'financeiro',
+  //   label: 'Financeiro',
+  //   icon: 'mdi-bank',
+  //   color: 'green',
+  //   description: 'Gestão financeira, cupons e assinaturas'
+  // },
   {
     value: 'marketing',
     label: 'Marketing',
@@ -511,20 +556,18 @@ const createUser = async () => {
   }
 }
 const headers = [
-  { title: 'Avatar', key: 'avatarUrl' },
   { title: 'Nome', key: 'nome' },
   { title: 'CPF', key: 'cpf' },
   { title: 'Email', key: 'email' },
   { title: 'Ativo', key: 'ativo' },
-  { title: 'Admin', key: 'ehAdmin' },
-  { title: 'Atleta', key: 'atletaId' },
-  { title: 'Medico', key: 'medicoId' },
+  { title: 'Função', key: 'subRole' },
+  { title: 'Ações', key: 'actions', sortable: false },
 ]
 
 const loadUsers = async () => {
   loading.value = true
   try {
-    const response = await usersService.getAllUsers()
+    const response = await usersService.getAllUsersByGrupoAcessos()
     CountActiveUsers.value = response.data.filter((e: any) => e.ativo == true).length
     CountAllUsers.value = response.data.length
     AllUsers.value = response.data || []
@@ -546,6 +589,32 @@ const formatCPF = (cpf: string) => {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
   }
   return cpf
+}
+
+const isCurrentUser = (userId: string) => {
+  const currentUser = getInfoUser()
+  return currentUser?.userId === userId
+}
+
+const openInactivateDialog = (user: any) => {
+  selectedUser.value = user
+  inactivateDialog.value = true
+}
+
+const confirmInactivate = async () => {
+  if (!selectedUser.value) return
+
+  inactivating.value = true
+  try {
+    await usersService.inativarUsuario(selectedUser.value.id)
+    selectedUser.value.ativo = false
+    inactivateDialog.value = false
+    selectedUser.value = null
+  } catch (error) {
+    console.error('Erro ao inativar usuário:', error)
+  } finally {
+    inactivating.value = false
+  }
 }
 </script>
 

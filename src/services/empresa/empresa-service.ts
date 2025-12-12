@@ -15,7 +15,7 @@ class EmpresaService {
       throw error
     }
   }
- createEmpresa(formData: FormData): Promise<any> {
+  createEmpresa(formData: FormData): Promise<any> {
     return this.handleRequest(
       apiClient.post('/empresa', formData, {
         headers: {
@@ -28,6 +28,18 @@ class EmpresaService {
   }
 
   getAllEmpresas(): Promise<any> {
+    return this.handleRequest(
+      apiClient.get('/empresa/backoffice', {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        }
+      }),
+      'Failed to fetch all empresas'
+    )
+  }
+
+
+  getAllEmpresasSuperAdmin(): Promise<any> {
     return this.handleRequest(
       apiClient.get('/empresa'),
       'Failed to fetch all empresas'

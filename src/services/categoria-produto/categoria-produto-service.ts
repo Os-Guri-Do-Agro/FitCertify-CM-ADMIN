@@ -21,7 +21,18 @@ class CategoriaProdutoService {
 
   getAllCategoriasProduto(): Promise<any> {
     return this.handleRequest(
-      apiClient.get('/categoria-produto'),
+      apiClient.get('/categoria-produto/backoffice',{
+        headers: {
+          'Authorization' : `Bearer ${tokenSession}`
+        }
+      }),
+      'Failed to fetch all categories'
+    )
+  }
+  getAllCategoriasProdutoSuperAdmin(): Promise<any> {
+    return this.handleRequest(
+      apiClient.get('/categoria-produto',{
+      }),
       'Failed to fetch all categories'
     )
   }

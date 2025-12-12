@@ -84,3 +84,8 @@ export const checkAuthAndRedirect = () => {
 export const canAccessRoute = (allowedRoles: SubRole[]): boolean => {
   return isTokenValid() && hasAnyRole(allowedRoles)
 }
+
+export const isSuperAdmin = (): boolean => {
+  const payload = getPayload()
+  return payload?.grupoAcessoId === null || payload?.grupoAcessoId === undefined
+}
