@@ -1,5 +1,6 @@
 import { handleError } from '@/common/error.utils'
 import apiClient from '../api-service'
+import { isSuperAdmin } from '@/utils/auth'
 // import { CategoryEntity, CreateCategoryDto, UpdateCategoryDto } from '@/common/types/category'
 
 let tokenSession = sessionStorage.getItem('token')
@@ -35,6 +36,10 @@ class CategoriaProdutoService {
       }),
       'Failed to fetch all categories'
     )
+  }
+
+  getAllCategoriasProdutoAuto(): Promise<any> {
+    return isSuperAdmin() ? this.getAllCategoriasProdutoSuperAdmin() : this.getAllCategoriasProduto()
   }
 
   creatCateforiaProduto(data: any): Promise<any> {
