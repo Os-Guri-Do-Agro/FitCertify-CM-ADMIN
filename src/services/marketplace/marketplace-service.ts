@@ -30,7 +30,6 @@ class MarketplaceService {
     )
   }
 
-
   getAllProdutosSuperAdmin(): Promise<any> {
     return this.handleRequest(
       apiClient.get('/produto'),
