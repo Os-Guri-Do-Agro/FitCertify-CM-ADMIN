@@ -1,15 +1,20 @@
 <template>
   <v-card class="form-card" elevation="4">
     <v-card-title class="pa-6 pb-4">
-      <div class="d-flex align-center">
-        <v-icon icon="mdi-calendar-plus" class="me-2" color="primary"></v-icon>
-        <span class="text-h6 font-weight-medium">Criar Novo Evento</span>
+      <div>
+        <v-tabs v-model="mainTab">
+          <v-tab value="criarEvento" prepend-icon="mdi-calendar-plus" color="success" class="text-primary">Criar Evento</v-tab>
+          <v-tab value="criarOrganizacao" prepend-icon="mdi-domain-plus" color="success" class="text-primary">Criar Organização</v-tab>
+          <v-tab value="criarTipoEvento" prepend-icon="mdi-tag-plus" color="success" class="text-primary">Criar Tipo de Evento</v-tab>
+        </v-tabs>
       </div>
     </v-card-title>
 
     <v-divider></v-divider>
 
-    <v-card-text class="pa-6">
+    <v-tabs-window v-model="mainTab">
+      <v-tabs-window-item value="criarEvento">
+        <v-card-text class="pa-6">
       <v-form ref="formRef" @submit.prevent="submitForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
@@ -71,6 +76,7 @@
                 item-value="id"
                 density="comfortable"
                 class="mb-3"
+                :loading="loadingData"
               ></v-combobox>
             </v-col>
             <v-col class="mt-md-2" cols="12" md="6">
@@ -108,6 +114,7 @@
                 closable-chips
                 density="comfortable"
                 class="mb-3"
+                :loading="loadingData"
               ></v-combobox>
             </v-col>
           </v-row>
@@ -421,6 +428,17 @@
         </div>
       </v-form>
     </v-card-text>
+      </v-tabs-window-item>
+
+      <v-tabs-window-item value="criarOrganizacao">
+        <FormOrganizacao @organizacao-saved="onOrganizacaoSaved" />
+      </v-tabs-window-item>
+
+      <v-tabs-window-item value="criarTipoEvento">
+        <FormTipoEvento @tipo-evento-saved="onTipoEventoSaved" />
+      </v-tabs-window-item>
+    </v-tabs-window>
+
   </v-card>
 </template>
 
@@ -428,7 +446,9 @@
 import eventoService from '@/services/evento/evento-service'
 import organizacaoEventos from '@/services/organizacao-evento/organizacao-evento-service'
 import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
-import { computed, ref, onMounted } from 'vue'
+import FormOrganizacao from '@/components/evento/FormOrganizacao.vue'
+import FormTipoEvento from '@/components/evento/FormTipoEvento.vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
@@ -438,16 +458,19 @@ import 'vue3-toastify/dist/index.css'
 
 dayjs.extend(utc)
 
+const mainTab = ref('criarEvento')
 const tab = ref('one')
 const router = useRouter()
 const loading = ref(false)
 const loadingTranslation = ref(false)
+const loadingData = ref(false)
 const formRef = ref(null)
 const tipoEventos = ref([])
 const OrganizacaoEventos = ref([])
 const novaDistancia = ref('')
 const tipoEventoSelected = ref('')
 const OrganizacaoEventosSelected = ref('')
+let intervalId = null
 // const isCertificadoExclusivo = ref(false)
 
 const form = ref({
@@ -600,13 +623,45 @@ const submitForm = async () => {
 }
 
 
+const loadData = async (showLoading = false) => {
+  if (showLoading) loadingData.value = true
+  try {
+    const [responseTipoEvento, responseOrganizacao] = await Promise.all([
+      tipoEventoService.getAllTipoEventos(),
+      organizacaoEventos.getAllOrganizacoes()
+    ])
+    tipoEventos.value = responseTipoEvento.data || []
+    OrganizacaoEventos.value = responseOrganizacao.data || []
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error)
+  } finally {
+    if (showLoading) loadingData.value = false
+  }
+}
+
+const onOrganizacaoSaved = () => {
+  loadData(true)
+}
+
+const onTipoEventoSaved = () => {
+  loadData(true)
+}
+
+watch(mainTab, (newTab) => {
+  if (newTab === 'criarEvento') {
+    loadData()
+  }
+})
+
 onMounted(async () => {
+  await loadData(true)
+  intervalId = setInterval(() => loadData(false), 30000)
+})
 
-  const response = await tipoEventoService.getAllTipoEventos()
-  tipoEventos.value = response.data || []
-  const responseOrganizacao = await organizacaoEventos.getAllOrganizacoes()
-  OrganizacaoEventos.value = responseOrganizacao.data || []
-
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
 })
 </script>
 

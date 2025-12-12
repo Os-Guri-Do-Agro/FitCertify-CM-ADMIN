@@ -1,15 +1,19 @@
 <template>
   <v-card class="form-card" elevation="4">
     <v-card-title class="pa-6 pb-4">
-      <div class="d-flex align-center">
-        <v-icon icon="mdi-form-select" class="me-2" color="primary"></v-icon>
-        <span class="text-h6 font-weight-medium">Criar Novo Artigo</span>
+      <div>
+        <v-tabs v-model="mainTab">
+          <v-tab value="criarArtigo" prepend-icon="mdi-form-select" color="success" class="text-primary">Criar Artigo</v-tab>
+          <v-tab value="criarCategoria" prepend-icon="mdi-tag-plus" color="success" class="text-primary">Criar Categoria</v-tab>
+        </v-tabs>
       </div>
     </v-card-title>
 
     <v-divider></v-divider>
 
-    <v-card-text class="pa-6">
+    <v-tabs-window v-model="mainTab">
+      <v-tabs-window-item value="criarArtigo">
+        <v-card-text class="pa-6">
       <v-form ref="formRef" @submit.prevent="submitForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
@@ -67,6 +71,7 @@
                     item-title="nome"
                     item-value="id"
                     density="comfortable"
+                    :loading="loadingCategorias"
                   ></v-combobox>
                 </v-col>
               </v-row>
@@ -331,24 +336,35 @@
         </div>
       </v-form>
     </v-card-text>
+      </v-tabs-window-item>
+
+      <v-tabs-window-item value="criarCategoria">
+        <FormCategoriaArtigo @categoria-artigo-saved="onCategoriaArtigoSaved" />
+      </v-tabs-window-item>
+    </v-tabs-window>
+
   </v-card>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import artigoService from '@/services/artigo/artigo-service'
 import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
+import FormCategoriaArtigo from '@/components/artigos/FormCategoriaArtigo.vue'
 import 'vue3-toastify/dist/index.css';
 
+const mainTab = ref('criarArtigo')
 const tab = ref('one')
 const router = useRouter()
 const loading = ref(false)
 const loadingTranslation = ref(false)
+const loadingCategorias = ref(false)
 const formRef = ref(null)
 const categoriasArtigo = ref([])
 const categoriasArtigoSelected = ref("")
+let intervalId = null
 
 const form = ref({
   titulo: '',
@@ -498,9 +514,37 @@ const traduzirTexto = async (sourceLanguage = 'pt', targetLanguage = 'en', conte
   }
 }
 
+const loadCategorias = async (showLoading = false) => {
+  if (showLoading) loadingCategorias.value = true
+  try {
+    const response = await categoriaArtigoService.getAllCategoriasArtigo()
+    categoriasArtigo.value = response.data || []
+  } catch (error) {
+    console.error('Erro ao carregar categorias:', error)
+  } finally {
+    if (showLoading) loadingCategorias.value = false
+  }
+}
+
+const onCategoriaArtigoSaved = () => {
+  loadCategorias(true)
+}
+
+watch(mainTab, (newTab) => {
+  if (newTab === 'criarArtigo') {
+    loadCategorias()
+  }
+})
+
 onMounted(async () => {
-  const response = await categoriaArtigoService.getAllCategoriasArtigo()
-  categoriasArtigo.value = response.data || []
+  await loadCategorias(true)
+  intervalId = setInterval(() => loadCategorias(false), 30000)
+})
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
 })
 </script>
 

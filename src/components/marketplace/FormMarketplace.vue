@@ -531,12 +531,10 @@ const loadCategorias = async (showLoading = false) => {
 
 const onCategoriaSaved = () => {
   loadCategorias(true)
-  toast.info('Atualizando lista de categorias...')
 }
 
 const onEmpresaSaved = () => {
   loadCategorias(true)
-  toast.info('Atualizando lista de empresas...')
 }
 
 watch(tab, (newTab) => {
