@@ -660,7 +660,7 @@ const confirmDelete = async () => {
 onMounted(async () => {
   try {
     // Carregar eventos
-    const response = await eventoService.getAllEventos()
+    const response = await eventoService.getAllEventosAuto()
     evento.value = Array.isArray(response.data) ? response.data : []
 
     // Carregar tipos de evento
@@ -668,7 +668,7 @@ onMounted(async () => {
     tiposEvento.value = Array.isArray(tiposResponse.data) ? tiposResponse.data : []
 
     // Carregar organizações
-    const orgResponse = await organizacaoService.getAllOrganizacoes()
+    const orgResponse = await organizacaoService.getAllOrganizacoesAuto()
     organizacoes.value = Array.isArray(orgResponse.data) ? orgResponse.data : []
   } catch (error) {
     console.error('Erro ao carregar dados:', error)
