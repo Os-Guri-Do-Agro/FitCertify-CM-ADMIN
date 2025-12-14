@@ -66,13 +66,13 @@
         <v-card class="stats-card" elevation="2">
           <v-card-text class="pa-4">
             <div class="d-flex align-center">
-              <v-avatar color="info" class="me-3">
-                <v-icon icon="mdi-cellphone" color="white"></v-icon>
+              <v-avatar color="orange" class="me-3">
+                <v-icon icon="mdi-pause-circle" color="white"></v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold">{{ mobileCount }}</div>
+                <div class="text-h5 font-weight-bold">{{ pendingCount }}</div>
                 <div class="text-caption text-medium-emphasis">
-                  Mobile Ready
+                  Artigos Pendentes
                 </div>
               </div>
             </div>
@@ -211,9 +211,23 @@
 
       <v-divider></v-divider>
 
-      <!-- Data Table -->
-      <v-data-table v-model:search="search" :filter-keys="['titulo']" :headers="headers" :items="artigos"
-        :loading="loading" class="custom-table" hover>
+      <v-tabs v-model="activeTab" class="px-6">
+        <v-tab value="ativos">
+          <v-icon icon="mdi-check-circle" class="me-2"></v-icon>
+          Artigos Ativos
+        </v-tab>
+        <v-tab value="pendentes">
+          <v-icon icon="mdi-clock-outline" class="me-2"></v-icon>
+          Artigos Pendentes
+        </v-tab>
+      </v-tabs>
+
+      <v-divider></v-divider>
+
+      <v-tabs-window v-model="activeTab">
+        <v-tabs-window-item value="ativos">
+          <v-data-table v-model:search="search" :filter-keys="['titulo']" :headers="headers" :items="artigosAtivos"
+            :loading="loading" class="custom-table" hover>
         <!-- Loading -->
         <template v-slot:loading>
           <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
@@ -259,8 +273,8 @@
         <!-- Status -->
         <template v-slot:item.ativo="{ item }">
           <v-chip :color="item.ativo ? 'success' : 'warning'"
-            :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
-            {{ item.ativo ? 'Ativo' : 'Inativo' }}
+            :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-clock-outline'" size="small" variant="flat">
+            {{ item.ativo ? 'Ativo' : 'Pendente' }}
           </v-chip>
         </template>
 
@@ -272,19 +286,99 @@
           </div>
         </template>
 
-        <!-- No data -->
-        <template v-slot:no-data>
-          <div class="text-center pa-8">
-            <v-icon icon="mdi-newspaper-variant-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
-            <div class="text-h6 text-medium-emphasis mb-2">
-              Nenhum artigo encontrado
-            </div>
-            <div class="text-body-2 text-medium-emphasis">
-              Comece criando seu primeiro artigo
-            </div>
-          </div>
-        </template>
-      </v-data-table>
+            <!-- No data -->
+            <template v-slot:no-data>
+              <div class="text-center pa-8">
+                <v-icon icon="mdi-check-circle" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
+                <div class="text-h6 text-medium-emphasis mb-2">
+                  Nenhum artigo ativo encontrado
+                </div>
+                <div class="text-body-2 text-medium-emphasis">
+                  Nenhum artigo ativo cadastrado no sistema
+                </div>
+              </div>
+            </template>
+          </v-data-table>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="pendentes">
+          <v-data-table v-model:search="search" :filter-keys="['titulo']" :headers="headers" :items="artigosPendentes"
+            :loading="loading" class="custom-table" hover>
+            <!-- Loading -->
+            <template v-slot:loading>
+              <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+            </template>
+
+            <!-- Foto -->
+            <template v-slot:item.foto="{ item }">
+              <v-avatar size="48" class="ma-2">
+                <v-img :src="item.fotoUrl" alt="foto artigo" cover>
+                  <template v-slot:error>
+                    <v-icon icon="mdi-image-broken" size="24"></v-icon>
+                  </template>
+                </v-img>
+              </v-avatar>
+            </template>
+
+            <!-- Título -->
+            <template v-slot:item.titulo="{ item }">
+              <div class="article-title">
+                <div class="text-subtitle-1 font-weight-medium">{{ item.titulo }}</div>
+                <div class="text-caption text-medium-emphasis">{{ item.subTitulo }}</div>
+              </div>
+            </template>
+
+            <template v-slot:item.categoria="{ item }">
+              {{ item.categoriaArtigo?.nome || 'Sem categoria' }}
+            </template>
+
+            <!-- Mobile -->
+            <template v-slot:item.isMobile="{ item }">
+              <v-chip :color="item.isMobile ? 'success' : 'error'" :prepend-icon="item.isMobile ? 'mdi-check' : 'mdi-close'"
+                size="small" variant="flat">
+                {{ item.isMobile ? 'Sim' : 'Não' }}
+              </v-chip>
+            </template>
+
+            <!-- Desktop -->
+            <template v-slot:item.isDesktop="{ item }">
+              <v-chip :color="item.isDesktop ? 'success' : 'error'"
+                :prepend-icon="item.isDesktop ? 'mdi-check' : 'mdi-close'" size="small" variant="flat">
+                {{ item.isDesktop ? 'Sim' : 'Não' }}
+              </v-chip>
+            </template>
+
+            <!-- Status -->
+            <template v-slot:item.ativo="{ item }">
+              <v-chip :color="item.ativo ? 'success' : 'warning'"
+                :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-clock-outline'" size="small" variant="flat">
+                {{ item.ativo ? 'Ativo' : 'Pendente' }}
+              </v-chip>
+            </template>
+
+            <!-- Actions -->
+            <template v-slot:item.actions="{ item }">
+              <div class="d-flex ga-2">
+                <v-btn icon="mdi-pencil" size="small" variant="text" color="warning" @click="editArticle(item.id)"></v-btn>
+                <v-btn icon="mdi-delete" size="small" variant="text" color="error" @click="deleteArticle(item)"></v-btn>
+              </div>
+            </template>
+
+            <!-- No data -->
+            <template v-slot:no-data>
+              <div class="text-center pa-8">
+                <v-icon icon="mdi-clock-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
+                <div class="text-h6 text-medium-emphasis mb-2">
+                  Nenhum artigo pendente encontrado
+                </div>
+                <div class="text-body-2 text-medium-emphasis">
+                  Nenhum artigo pendente cadastrado no sistema
+                </div>
+              </div>
+            </template>
+          </v-data-table>
+        </v-tabs-window-item>
+      </v-tabs-window>
     </v-card>
   </v-container>
 
@@ -477,6 +571,7 @@ const selectedArticle = ref<any | null>(null)
 const selectedCategory = ref<any | null>(null)
 const dialog = ref(false)
 const categoryDialog = ref(false)
+const activeTab = ref('ativos')
 const editCategoryDialog = ref(false)
 const createCategoryDialog = ref(false)
 const deleteLoading = ref(false)
@@ -529,9 +624,21 @@ const categoryHeaders = [
   { title: 'Ações', key: 'actions', sortable: false, width: '100px' },
 ]
 
-// Computed stats
+// Computed stats and filtered lists
 const activeCount = computed(
   () => artigos.value?.filter((artigo) => artigo.ativo).length || 0
+)
+
+const pendingCount = computed(
+  () => artigos.value?.filter((artigo) => !artigo.ativo).length || 0
+)
+
+const artigosAtivos = computed(
+  () => artigos.value?.filter((artigo) => artigo.ativo) || []
+)
+
+const artigosPendentes = computed(
+  () => artigos.value?.filter((artigo) => !artigo.ativo) || []
 )
 
 const mobileCount = computed(
@@ -757,7 +864,7 @@ const buscarCategrias = async () => {
 onMounted(async () => {
   try {
     // Carregar artigos
-    const artigosResponse = await artigoService.getAllArtigos()
+    const artigosResponse = await artigoService.getAllArtigosAuto()
     artigos.value = Array.isArray(artigosResponse.data)
       ? artigosResponse.data.map((artigo:any) => {
           const imgNaoBanner = artigo.imagensArtigo?.find(

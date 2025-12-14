@@ -130,6 +130,18 @@
             {{ item.medicoId ? 'Sim' : 'Não' }}
           </v-chip>
         </template>
+        <template v-slot:item.fisioterapeutaId="{ item }">
+          <v-chip :color="item.fisioterapeutaId ? 'success' : 'warning'"
+            :prepend-icon="item.fisioterapeutaId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
+            {{ item.fisioterapeutaId ? 'Sim' : 'Não' }}
+          </v-chip>
+        </template>
+        <template v-slot:item.treinadorId="{ item }">
+          <v-chip :color="item.treinadorId ? 'success' : 'warning'"
+            :prepend-icon="item.treinadorId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
+            {{ item.treinadorId ? 'Sim' : 'Não' }}
+          </v-chip>
+        </template>
 
         <!-- No data -->
         <template v-slot:no-data>
@@ -516,9 +528,11 @@ const headers = [
   { title: 'CPF', key: 'cpf' },
   { title: 'Email', key: 'email' },
   { title: 'Ativo', key: 'ativo' },
-  { title: 'Admin', key: 'ehAdmin' },
-  { title: 'Atleta', key: 'atletaId' },
-  { title: 'Medico', key: 'medicoId' },
+  { title: 'Admin', key: 'ehAdmin', width: '5%' },
+  { title: 'Atleta', key: 'atletaId', width: '5%' },
+  { title: 'Medico', key: 'medicoId', width: '5%' },
+  { title: 'Fisio...', key: 'fisioterapeutaId', width: '5%' },
+  { title: 'Treinador', key: 'treinadorId', width: '5%' },
 ]
 
 const loadUsers = async () => {

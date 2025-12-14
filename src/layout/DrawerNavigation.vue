@@ -66,6 +66,19 @@
       </v-list-item>
 
       <v-list-item
+        v-if="showListaCertificadosMenu"
+        v-for="item in listaCertificadosItems"
+        :key="item.value"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :to="item.to"
+        rounded="lg"
+        class="mb-1 menu-item"
+        :class="{ 'active-menu': $route.path === item.to }"
+      >
+      </v-list-item>
+
+      <v-list-item
         v-if="showBlogMenu"
         v-for="item in blogMenuItems"
         :key="item.value"
@@ -203,6 +216,7 @@ const showFinanceMenu = computed(() => {
 const showEventosMenu = computed(() =>
   userRole.value === SubRole.ADMIN || userRole.value === SubRole.ORGANIZADOR
 )
+const showListaCertificadosMenu = computed(() => userRole.value === SubRole.ADMIN)
 const showBlogMenu = computed(() =>
   userRole.value === SubRole.ADMIN || userRole.value === SubRole.BLOG
 )
@@ -249,14 +263,23 @@ const eventosMenuItems = [
     title: 'Eventos',
     value: 'evento',
     to: '/evento',
-  },
-  {
-    icon: 'mdi-certificate',
-    title: 'Solicitações de Certificado',
-    value: 'solicitacaoCertificado',
-    to: '/solicitacaoCertificado',
-  },
+  }
 ]
+
+const listaCertificadosItems = computed(() => {
+  if (isSuper.value) {
+    return [
+    {
+     icon: 'mdi-certificate',
+     title: 'Solicitações de Certificado',
+     value: 'solicitacaoCertificado',
+     to: '/solicitacaoCertificado',
+   },
+    ]
+  } else {
+    return []
+  }
+})
 
 const adminItemsList = computed(() => {
   if (isSuper.value) {
@@ -284,12 +307,6 @@ const adminItemsList = computed(() => {
         title: 'Acessos',
         value: 'acessos',
         to: '/acessos',
-      },
-      {
-        icon: 'mdi-format-list-group',
-        title: 'Cadastros Simplificados',
-        value: 'medicos',
-        to: '/cadastroSimplificado',
       },
       {
         icon: 'mdi-dock-window',
@@ -342,8 +359,13 @@ const marketingItemsList = [
     title: 'Afiliados',
     value: 'afiliados',
     to: '/afiliados'
-  }
-
+  },
+  {
+        icon: 'mdi-format-list-group',
+        title: 'Cadastros Simplificados',
+        value: 'cadastroSimplificado',
+        to: '/cadastroSimplificado',
+      },
 ]
 
 const footerMenuItem = [

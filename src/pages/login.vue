@@ -119,11 +119,7 @@ const login = async () => {
           router.push('/login')
         }, timeUntilExpiration)
       }
-
-      toast.success('Login realizado com sucesso!', { autoClose: 2500 })
-      setTimeout(() => {
-        router.push('/')
-      }, 2501)
+      router.push('/')
     }
   } catch (error) {
     toast.error('Erro ao fazer login. Verifique suas credenciais.')

@@ -271,7 +271,7 @@
             Configurações
           </h3>
           <v-row>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="4" v-if="isSuperAdmin()">
               <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.ativo }" elevation="1">
                 <v-switch
                   v-model="form.ativo"
@@ -329,7 +329,7 @@
             :disabled="!isFormValid"
             :loading="loading"
             prepend-icon="mdi-check"
-            @click="submitForm"
+            @click="showConfirmationModal"
           >
             Criar Artigo
           </v-btn>
@@ -344,6 +344,67 @@
     </v-tabs-window>
 
   </v-card>
+
+  <!-- Modal de Confirmação -->
+  <v-dialog v-model="confirmationModal" max-width="520" persistent>
+    <v-card class="form-card" elevation="4">
+      <v-card-title class="pa-6 pb-4">
+        <div class="d-flex align-center">
+          <v-icon :icon="isSuperAdmin() ? 'mdi-publish' : 'mdi-send'" :color="isSuperAdmin() ? 'success' : 'primary'" class="me-3" size="28"></v-icon>
+          <div>
+            <h3 class="text-h6 font-weight-medium text-primary mb-1">Confirmar Criação</h3>
+            <p class="text-caption text-medium-emphasis mb-0">{{ form.titulo }}</p>
+          </div>
+        </div>
+      </v-card-title>
+
+      <v-divider></v-divider>
+
+      <v-card-text class="pa-6">
+        <v-card class="pa-4 mb-4" :color="isSuperAdmin() ? 'primary' : 'info'" variant="tonal" elevation="0">
+          <div class="d-flex align-center">
+            <v-icon :icon="isSuperAdmin() ? 'mdi-cog' : 'mdi-clock-outline'" class="me-3" size="24"></v-icon>
+            <div>
+              <p class="text-body-2 font-weight-medium mb-1" v-if="!isSuperAdmin()">
+                Artigo em Análise
+              </p>
+              <p class="text-body-2 font-weight-medium mb-1" v-else>
+                Criação de Artigo
+              </p>
+              <p class="text-caption mb-0" v-if="!isSuperAdmin()">
+                Será enviado para análise e ficará pendente até aprovação
+              </p>
+              <p class="text-caption mb-0" v-else>
+                Deseja confirmar a criação do artigo atual?
+              </p>
+            </div>
+          </div>
+        </v-card>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-actions class="pa-6 pt-4">
+        <v-spacer></v-spacer>
+        <v-btn
+          variant="outlined"
+          size="large"
+          @click="confirmationModal = false"
+        >
+          Cancelar
+        </v-btn>
+        <v-btn
+          color="primary"
+          size="large"
+          :loading="loading"
+          :prepend-icon="isSuperAdmin() ? 'mdi-publish' : 'mdi-send'"
+          @click="submitForm"
+        >
+          {{ isSuperAdmin() ? 'Criar Artigo' : 'Enviar para Análise' }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -354,6 +415,7 @@ import artigoService from '@/services/artigo/artigo-service'
 import categoriaArtigoService from '@/services/categoria-artigo/categoria-artigo-service'
 import FormCategoriaArtigo from '@/components/artigos/FormCategoriaArtigo.vue'
 import 'vue3-toastify/dist/index.css';
+import { isSuperAdmin } from '@/utils/auth'
 
 const mainTab = ref('criarArtigo')
 const tab = ref('one')
@@ -364,6 +426,7 @@ const loadingCategorias = ref(false)
 const formRef = ref(null)
 const categoriasArtigo = ref([])
 const categoriasArtigoSelected = ref("")
+const confirmationModal = ref(false)
 let intervalId = null
 
 const form = ref({
@@ -381,7 +444,7 @@ const form = ref({
   en_conclusao: '',
   imagem: null,
   banner: null,
-  ativo: true,
+  ativo: false,
   isMobile: false,
   isDesktop: true,
   categoriaArtigoId: '',
@@ -436,10 +499,15 @@ const traduzirCampos = async () => {
   }
 }
 
-const submitForm = async () => {
+const showConfirmationModal = async () => {
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
+  confirmationModal.value = true
+}
+
+const submitForm = async () => {
+  confirmationModal.value = false
   loading.value = true
   try {
     const formData = new FormData()
@@ -579,6 +647,11 @@ onUnmounted(() => {
 .upload-card:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.v-dialog .form-card {
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 @media (max-width: 600px) {
