@@ -19,6 +19,7 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
+    '/acessos/': RouteRecordInfo<'/acessos/', '/acessos', Record<never, never>, Record<never, never>>,
     '/afiliados/': RouteRecordInfo<'/afiliados/', '/afiliados', Record<never, never>, Record<never, never>>,
     '/afiliados/editForm': RouteRecordInfo<'/afiliados/editForm', '/afiliados/editForm', Record<never, never>, Record<never, never>>,
     '/afiliados/form': RouteRecordInfo<'/afiliados/form', '/afiliados/form', Record<never, never>, Record<never, never>>,
@@ -27,6 +28,7 @@ declare module 'vue-router/auto-routes' {
     '/artigos/form': RouteRecordInfo<'/artigos/form', '/artigos/form', Record<never, never>, Record<never, never>>,
     '/assinaturas/': RouteRecordInfo<'/assinaturas/', '/assinaturas', Record<never, never>, Record<never, never>>,
     '/auditoria/': RouteRecordInfo<'/auditoria/', '/auditoria', Record<never, never>, Record<never, never>>,
+    '/cadastroSimplificado/': RouteRecordInfo<'/cadastroSimplificado/', '/cadastroSimplificado', Record<never, never>, Record<never, never>>,
     '/configuracoes/': RouteRecordInfo<'/configuracoes/', '/configuracoes', Record<never, never>, Record<never, never>>,
     '/cupom/': RouteRecordInfo<'/cupom/', '/cupom', Record<never, never>, Record<never, never>>,
     '/esqueceuSenha/[token]': RouteRecordInfo<'/esqueceuSenha/[token]', '/esqueceuSenha/:token', { token: ParamValue<true> }, { token: ParamValue<false> }>,

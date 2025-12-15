@@ -9,6 +9,7 @@ import axios, {
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL || 'http://localhost:5555',
+  // baseURL:  'http://localhost:5555',
   headers: {
     'Content-Type': 'application/json',
     "Access-Control-Allow-Origin": "*",

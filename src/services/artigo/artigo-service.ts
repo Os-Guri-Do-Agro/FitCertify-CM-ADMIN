@@ -1,5 +1,6 @@
 import { handleError } from '@/common/error.utils'
 import apiClient from '../api-service'
+import { isSuperAdmin } from '@/utils/auth'
 // import type IArtigo from '@/Interfaces/artigo-interface'
 // import { CategoryEntity, CreateCategoryDto, UpdateCategoryDto } from '@/common/types/category'
 
@@ -22,11 +23,26 @@ class ArtigoService {
     }
   }
 
-  getAllArtigos(): Promise<any> {
+  getAllArtigosSuperAdmin(): Promise<any> {
     return this.handleRequest(
       apiClient.get('/artigo'),
       'Failed to fetch all categories'
     )
+  }
+
+  getAllArtigos(): Promise<any> {
+    return this.handleRequest(
+      apiClient.get('/artigo/backoffice', {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        },
+      }),
+      'Failed to fetch all categories'
+    )
+  }
+
+  getAllArtigosAuto(): Promise<any> {
+    return isSuperAdmin() ? this.getAllArtigosSuperAdmin() : this.getAllArtigos()
   }
 
    getArtigosById(id:string): Promise<any> {

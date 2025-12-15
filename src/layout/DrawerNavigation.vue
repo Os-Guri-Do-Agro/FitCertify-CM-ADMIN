@@ -66,6 +66,19 @@
       </v-list-item>
 
       <v-list-item
+        v-if="showListaCertificadosMenu"
+        v-for="item in listaCertificadosItems"
+        :key="item.value"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :to="item.to"
+        rounded="lg"
+        class="mb-1 menu-item"
+        :class="{ 'active-menu': $route.path === item.to }"
+      >
+      </v-list-item>
+
+      <v-list-item
         v-if="showBlogMenu"
         v-for="item in blogMenuItems"
         :key="item.value"
@@ -183,24 +196,27 @@
 import { useLayoutStore } from '@/stores/layout'
 import { useRoute } from 'vue-router'
 import { ref, watch, computed } from 'vue'
-import { getUserRole, SubRole } from '@/utils/auth'
+import { getUserRole, SubRole, isSuperAdmin } from '@/utils/auth'
 
 const layoutStore = useLayoutStore()
 const $route = useRoute()
 const openGroups = ref([])
 
 const userRole = computed(() => getUserRole())
+const isSuper = computed(() => isSuperAdmin())
 
 const showAdminMenu = computed(() => userRole.value === SubRole.ADMIN)
 const showMarketingMenu = computed(() =>
   userRole.value === SubRole.ADMIN || userRole.value === SubRole.MARKETING
 )
-const showFinanceMenu = computed(() =>
-  userRole.value === SubRole.ADMIN || userRole.value === SubRole.FINANCEIRO
-)
+const showFinanceMenu = computed(() => {
+  if (!isSuper.value && userRole.value === SubRole.ADMIN) return false
+  return userRole.value === SubRole.ADMIN || userRole.value === SubRole.FINANCEIRO
+})
 const showEventosMenu = computed(() =>
   userRole.value === SubRole.ADMIN || userRole.value === SubRole.ORGANIZADOR
 )
+const showListaCertificadosMenu = computed(() => userRole.value === SubRole.ADMIN)
 const showBlogMenu = computed(() =>
   userRole.value === SubRole.ADMIN || userRole.value === SubRole.BLOG
 )
@@ -247,41 +263,69 @@ const eventosMenuItems = [
     title: 'Eventos',
     value: 'evento',
     to: '/evento',
-  },
-  {
-    icon: 'mdi-certificate',
-    title: 'Solicitações de Certificado',
-    value: 'solicitacaoCertificado',
-    to: '/solicitacaoCertificado',
-  },
+  }
 ]
 
-const adminItemsList = [
-  {
-    icon: 'mdi-account-multiple',
-    title: 'Usuarios',
-    value: 'usuarios',
-    to: '/users',
-  },
-  {
-    icon: 'mdi-account-multiple',
-    title: 'Atletas',
-    value: 'atletas',
-    to: '/users/atletas',
-  },
-  {
-    icon: 'mdi-account-multiple',
-    title: 'Médicos',
-    value: 'medicos',
-    to: '/users/medicos/',
-  },
-  {
-    icon: 'mdi-dock-window',
-    title: 'Portal',
-    value: 'Portal',
-    to: '/portal',
-  },
-]
+const listaCertificadosItems = computed(() => {
+  if (isSuper.value) {
+    return [
+    {
+     icon: 'mdi-certificate',
+     title: 'Solicitações de Certificado',
+     value: 'solicitacaoCertificado',
+     to: '/solicitacaoCertificado',
+   },
+    ]
+  } else {
+    return []
+  }
+})
+
+const adminItemsList = computed(() => {
+  if (isSuper.value) {
+    return [
+      {
+        icon: 'mdi-account-multiple',
+        title: 'Usuários',
+        value: 'usuarios',
+        to: '/users',
+      },
+      {
+        icon: 'mdi-account-multiple',
+        title: 'Atletas',
+        value: 'atletas',
+        to: '/users/atletas',
+      },
+      {
+        icon: 'mdi-account-multiple',
+        title: 'Médicos',
+        value: 'medicos',
+        to: '/users/medicos/',
+      },
+      {
+        icon: 'mdi-shield-account',
+        title: 'Acessos',
+        value: 'acessos',
+        to: '/acessos',
+      },
+      {
+        icon: 'mdi-dock-window',
+        title: 'Portal',
+        value: 'Portal',
+        to: '/portal',
+      },
+    ]
+  } else {
+    return [
+      {
+        icon: 'mdi-shield-account',
+        title: 'Acessos',
+        value: 'acessos',
+        to: '/acessos',
+      },
+    ]
+  }
+})
 const financeItemsList = [
   {
     icon: 'mdi-bank-transfer',
@@ -315,8 +359,13 @@ const marketingItemsList = [
     title: 'Afiliados',
     value: 'afiliados',
     to: '/afiliados'
-  }
-
+  },
+  {
+        icon: 'mdi-format-list-group',
+        title: 'Cadastros Simplificados',
+        value: 'cadastroSimplificado',
+        to: '/cadastroSimplificado',
+      },
 ]
 
 const footerMenuItem = [

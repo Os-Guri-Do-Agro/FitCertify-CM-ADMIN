@@ -7,18 +7,18 @@
         <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center ga-4">
           <div class="header-content">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
-              <v-icon icon="mdi-store" class="me-3" size="large"></v-icon>
-              Usuários
+              <v-icon icon="mdi-shield-account" class="me-3" size="large"></v-icon>
+              Acessos
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
-              Gerencie todos as Usuários
+              Gerencie todos as Acessos e Grupos de Acesso
             </p>
           </div>
 
           <v-btn @click="showUserDialog = true" color="primary" variant="elevated" size="large" elevation="2"
             rounded="lg">
             <v-icon start>mdi-account-plus</v-icon>
-            Criar Usuário
+            Criar Usuário de acesso
           </v-btn>
         </div>
       </v-col>
@@ -38,7 +38,7 @@
                   {{ CountActiveUsers }}
                 </div>
                 <div class="text-caption text-medium-emphasis">
-                  Total de Usuários Cadastrados
+                  Total de Usuários
                 </div>
               </div>
             </div>
@@ -63,6 +63,70 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Groups Access Expansion Panel -->
+    <v-expansion-panels class="mb-6" elevation="3" rounded="lg">
+      <v-expansion-panel>
+        <v-expansion-panel-title>
+          <div class="d-flex align-center">
+            <v-icon icon="mdi-account-group" class="me-2" color="primary"></v-icon>
+            <span class="text-h6 font-weight-medium">Grupos de Acesso</span>
+          </div>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-data-table
+            :headers="groupHeaders"
+            :items="allGroups"
+            :loading="loadingGroups"
+            class="custom-table"
+            hover
+          >
+            <template v-slot:loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+            </template>
+
+            <template v-slot:item.ativo="{ item }">
+              <v-chip
+                :color="item.ativo ? 'success' : 'warning'"
+                :prepend-icon="item.ativo ? 'mdi-check-circle' : 'mdi-pause-circle'"
+                size="small"
+                variant="flat"
+              >
+                {{ item.ativo ? 'Ativo' : 'Inativo' }}
+              </v-chip>
+            </template>
+
+            <template v-slot:item.actions="{ item }">
+              <v-btn
+                icon="mdi-pencil"
+                size="small"
+                color="primary"
+                variant="text"
+                @click="openEditGroupDialog(item)"
+              ></v-btn>
+              <v-btn
+                icon="mdi-delete"
+                size="small"
+                color="error"
+                variant="text"
+              ></v-btn>
+            </template>
+
+            <template v-slot:no-data>
+              <div class="text-center pa-8">
+                <v-icon icon="mdi-account-group-outline" size="64" color="grey-lighten-1" class="mb-4"></v-icon>
+                <div class="text-h6 text-medium-emphasis mb-2">
+                  Nenhum grupo encontrado
+                </div>
+                <div class="text-body-2 text-medium-emphasis">
+                  Nenhum grupo de acesso cadastrado no sistema
+                </div>
+              </div>
+            </template>
+          </v-data-table>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
     <!-- Main Content Card -->
     <v-card class="main-card" elevation="3">
@@ -91,15 +155,7 @@
         </template>
 
         <!-- Avatar -->
-        <template v-slot:item.avatarUrl="{ item }">
-          <v-avatar size="48" class="ma-2">
-            <v-img :src="item.avatarUrl" alt="avatar usuario" cover>
-              <template v-slot:error>
-                <v-icon icon="mdi-account" size="24"></v-icon>
-              </template>
-            </v-img>
-          </v-avatar>
-        </template>
+
 
         <template v-slot:item.ativo="{ item }">
           <v-chip :color="item.ativo ? 'success' : 'warning'"
@@ -114,11 +170,7 @@
           </v-chip>
         </template>
 
-        <template v-slot:item.cpf="{ item }">
-          {{ formatCPF(item.cpf) }}
-        </template>
-
-        <template v-slot:item.atletaId="{ item }">
+        <!-- <template v-slot:item.atletaId="{ item }">
           <v-chip :color="item.atletaId ? 'success' : 'warning'"
             :prepend-icon="item.atletaId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
             {{ item.atletaId ? 'Sim' : 'Não' }}
@@ -129,18 +181,31 @@
             :prepend-icon="item.medicoId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
             {{ item.medicoId ? 'Sim' : 'Não' }}
           </v-chip>
-        </template>
-        <template v-slot:item.fisioterapeutaId="{ item }">
-          <v-chip :color="item.fisioterapeutaId ? 'success' : 'warning'"
-            :prepend-icon="item.fisioterapeutaId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
-            {{ item.fisioterapeutaId ? 'Sim' : 'Não' }}
-          </v-chip>
-        </template>
-        <template v-slot:item.treinadorId="{ item }">
-          <v-chip :color="item.treinadorId ? 'success' : 'warning'"
-            :prepend-icon="item.treinadorId ? 'mdi-check-circle' : 'mdi-pause-circle'" size="small" variant="flat">
-            {{ item.treinadorId ? 'Sim' : 'Não' }}
-          </v-chip>
+        </template> -->
+
+        <template v-slot:item.actions="{ item }">
+          <v-btn
+            v-if="item.ativo && !isCurrentUser(item.id)"
+            icon="mdi-account-off"
+            size="small"
+            color="warning"
+            variant="text"
+            @click="openInactivateDialog(item)"
+          >
+          </v-btn>
+          <v-tooltip v-else-if="item.ativo && isCurrentUser(item.id)" text="Você não pode inativar a si mesmo">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                icon="mdi-account-off"
+                size="small"
+                color="grey"
+                variant="text"
+                disabled
+              >
+              </v-btn>
+            </template>
+          </v-tooltip>
         </template>
 
         <!-- No data -->
@@ -304,29 +369,112 @@
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="dialog" max-width="400" persistent>
-    <v-card prepend-icon="mdi-account-remove" text="Deseja excluir este usuário?" title="Confirmação de Exclusão">
-      <template v-slot:actions>
+  <v-dialog v-model="inactivateDialog" max-width="400" persistent>
+    <v-card>
+      <v-card-title class="d-flex align-center">
+        <v-icon color="warning" class="me-2">mdi-account-off</v-icon>
+        Inativar Usuário
+      </v-card-title>
+
+      <v-card-text>
+        <p>Tem certeza que deseja inativar o usuário <strong>{{ selectedUser?.nome }}</strong>?</p>
+        <p class="text-caption text-grey">Esta ação pode ser revertida posteriormente.</p>
+      </v-card-text>
+
+      <v-card-actions>
         <v-spacer></v-spacer>
+        <v-btn @click="inactivateDialog = false" :disabled="inactivating">
+          Cancelar
+        </v-btn>
+        <v-btn
+          color="warning"
+          @click="confirmInactivate"
+          :loading="inactivating"
+        >
+          Inativar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
-        <v-btn @click="dialog = false"> recusar </v-btn>
+  <!-- Edit Group Dialog -->
+  <v-dialog v-model="showEditGroupDialog" max-width="500" persistent>
+    <v-card>
+      <v-card-title class="pa-6">
+        <div class="d-flex align-center">
+          <v-icon icon="mdi-pencil" class="me-2" color="primary"></v-icon>
+          <span class="text-h6">Editar Grupo de Acesso</span>
+        </div>
+      </v-card-title>
 
-        <!-- <v-btn @click="confirmDelete" color="primary"> confirmar </v-btn> -->
-      </template>
+      <v-divider></v-divider>
+
+      <v-card-text class="pa-6">
+        <v-form ref="groupForm">
+          <v-text-field
+            v-model="editGroup.nome"
+            label="Nome"
+            variant="outlined"
+            density="comfortable"
+            class="mb-4"
+            :rules="[rules.required]"
+            required
+          ></v-text-field>
+
+          <v-text-field
+            v-model="editGroup.descricao"
+            label="Descrição"
+            variant="outlined"
+            density="comfortable"
+            class="mb-4"
+            :rules="[rules.required]"
+            required
+          ></v-text-field>
+
+          <v-switch
+            v-model="editGroup.ativo"
+            label="Ativo"
+            color="primary"
+            inset
+          ></v-switch>
+        </v-form>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-actions class="pa-6">
+        <v-btn variant="outlined" @click="closeEditGroupDialog">
+          Cancelar
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          variant="elevated"
+          @click="editarGrupoAcesso"
+          :loading="editingGroup"
+        >
+          Salvar
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
 import usersService from '@/services/users/users-service'
+import grupoAcessoService from '@/services/grupoAcesso/grupoAcesso-service'
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { getInfoUser } from '@/utils/auth'
 import { toast } from 'vue3-toastify'
 // const router = useRouter()
 const search = ref('')
 const AllUsers = ref<any[]>([])
 const loading = ref(true)
 const dialog = ref(false)
+const inactivateDialog = ref(false)
+const selectedUser = ref<any>(null)
+const inactivating = ref(false)
 const CountActiveUsers = ref()
 const CountAllUsers = ref()
 const showUserDialog = ref(false)
@@ -334,6 +482,20 @@ const creating = ref(false)
 const userForm = ref<any>(null)
 const emailExists = ref(false)
 const emailErrorMessage = ref('')
+
+// Groups variables
+const allGroups = ref<any[]>([])
+const loadingGroups = ref(true)
+const showEditGroupDialog = ref(false)
+const selectedGroup = ref<any>(null)
+const editingGroup = ref(false)
+const groupForm = ref<any>(null)
+
+const editGroup = ref({
+  nome: '',
+  descricao: '',
+  ativo: true
+})
 
 const newUser = ref({
   nome: '',
@@ -386,20 +548,20 @@ const roleOptions = [
     color: 'purple',
     description: 'Acesso total ao sistema, pode gerenciar todos os módulos e usuários'
   },
-  {
-    value: 'financeiro',
-    label: 'Financeiro',
-    icon: 'mdi-bank',
-    color: 'green',
-    description: 'Gestão financeira, cupons e assinaturas'
-  },
-  {
-    value: 'marketing',
-    label: 'Marketing',
-    icon: 'mdi-chart-donut-variant',
-    color: 'orange',
-    description: 'Campanhas de marketing e auditoria de dados'
-  },
+  // {
+  //   value: 'financeiro',
+  //   label: 'Financeiro',
+  //   icon: 'mdi-bank',
+  //   color: 'green',
+  //   description: 'Gestão financeira, cupons e assinaturas'
+  // },
+  // {
+  //   value: 'marketing',
+  //   label: 'Marketing',
+  //   icon: 'mdi-chart-donut-variant',
+  //   color: 'orange',
+  //   description: 'Campanhas de marketing e auditoria de dados'
+  // },
   {
     value: 'organizador',
     label: 'Organizador',
@@ -481,6 +643,57 @@ const checkEmailExists = async () => {
   }
 }
 
+const openEditGroupDialog = (group: any) => {
+  selectedGroup.value = group
+  editGroup.value = {
+    nome: group.nome,
+    descricao: group.descricao,
+    ativo: group.ativo
+  }
+  showEditGroupDialog.value = true
+}
+
+const closeEditGroupDialog = () => {
+  showEditGroupDialog.value = false
+  selectedGroup.value = null
+  editGroup.value = {
+    nome: '',
+    descricao: '',
+    ativo: true
+  }
+  groupForm.value?.resetValidation()
+}
+
+const editarGrupoAcesso = async () => {
+  if (!selectedGroup.value) return
+
+  const { valid } = await groupForm.value.validate()
+  if (!valid) return
+
+  editingGroup.value = true
+  try {
+    await grupoAcessoService.editGrupoAcesso(selectedGroup.value.id, {
+      nome: editGroup.value.nome,
+      descricao: editGroup.value.descricao,
+      ativo: editGroup.value.ativo
+    })
+
+    // Update local array
+    const index = allGroups.value.findIndex(g => g.id === selectedGroup.value.id)
+    if (index !== -1) {
+      allGroups.value[index] = { ...allGroups.value[index], ...editGroup.value }
+    }
+
+    toast.success('Grupo editado com sucesso!')
+  } catch (error) {
+    console.error('Erro ao editar grupo:', error)
+    toast.error('Erro ao editar grupo')
+  } finally {
+    editingGroup.value = false
+    closeEditGroupDialog()
+  }
+}
+
 let emailTimeout:any
 
 // Watch email changes to disable button
@@ -523,22 +736,26 @@ const createUser = async () => {
   }
 }
 const headers = [
-  { title: 'Avatar', key: 'avatarUrl' },
+  { title: 'Grupo', key: 'grupoAcessoNome' },
   { title: 'Nome', key: 'nome' },
   { title: 'CPF', key: 'cpf' },
   { title: 'Email', key: 'email' },
   { title: 'Ativo', key: 'ativo' },
-  { title: 'Admin', key: 'ehAdmin', width: '5%' },
-  { title: 'Atleta', key: 'atletaId', width: '5%' },
-  { title: 'Medico', key: 'medicoId', width: '5%' },
-  { title: 'Fisio...', key: 'fisioterapeutaId', width: '5%' },
-  { title: 'Treinador', key: 'treinadorId', width: '5%' },
+  { title: 'Função', key: 'subRole' },
+  { title: 'Ações', key: 'actions', sortable: false },
+]
+
+const groupHeaders = [
+  { title: 'Nome', key: 'nome' },
+  { title: 'Descrição', key: 'descricao' },
+  { title: 'Ativo', key: 'ativo' },
+  { title: 'Ações', key: 'actions', sortable: false },
 ]
 
 const loadUsers = async () => {
   loading.value = true
   try {
-    const response = await usersService.getAllUsers()
+    const response = await usersService.getAllUsersByGrupoAcessos()
     CountActiveUsers.value = response.data.filter((e: any) => e.ativo == true).length
     CountAllUsers.value = response.data.length
     AllUsers.value = response.data || []
@@ -549,8 +766,22 @@ const loadUsers = async () => {
   }
 }
 
+const loadGrupoAcesso = async () => {
+  loadingGroups.value = true
+  try {
+    const response = await grupoAcessoService.getAllGrupoAcesso()
+    allGroups.value = response.data || []
+    return response.data
+  } catch (error) {
+    console.error('Erro ao carregar grupos:', error)
+  } finally {
+    loadingGroups.value = false
+  }
+}
+
 onMounted(() => {
   loadUsers()
+  loadGrupoAcesso()
 })
 
 const formatCPF = (cpf: string) => {
@@ -560,6 +791,32 @@ const formatCPF = (cpf: string) => {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
   }
   return cpf
+}
+
+const isCurrentUser = (userId: string) => {
+  const currentUser = getInfoUser()
+  return currentUser?.userId === userId
+}
+
+const openInactivateDialog = (user: any) => {
+  selectedUser.value = user
+  inactivateDialog.value = true
+}
+
+const confirmInactivate = async () => {
+  if (!selectedUser.value) return
+
+  inactivating.value = true
+  try {
+    await usersService.inativarUsuario(selectedUser.value.id)
+    selectedUser.value.ativo = false
+    inactivateDialog.value = false
+    selectedUser.value = null
+  } catch (error) {
+    console.error('Erro ao inativar usuário:', error)
+  } finally {
+    inactivating.value = false
+  }
 }
 </script>
 

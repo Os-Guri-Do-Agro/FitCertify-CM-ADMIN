@@ -1,5 +1,6 @@
 import { handleError } from '@/common/error.utils'
 import apiClient from '../api-service'
+import { isSuperAdmin } from '@/utils/auth'
 
 let tokenSession = sessionStorage.getItem('token')
 class EventoService {
@@ -15,6 +16,7 @@ class EventoService {
       throw error
     }
   }
+
   createEvento(formData: FormData): Promise<any> {
     return this.handleRequest(
       apiClient.post('/evento', formData, {
@@ -27,11 +29,27 @@ class EventoService {
     )
   }
 
-  getAllEventos(): Promise<any> {
+  getAllEventosSuperAdmin(): Promise<any> {
     return this.handleRequest(
       apiClient.get('/evento'),
       'Failed to fetch all eventos'
     )
+  }
+
+  getAllEventos(): Promise<any> {
+    return this.handleRequest(
+      apiClient.get('/evento/backoffice', {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${tokenSession}`,
+        },
+      }),
+      'Failed to fetch all eventos'
+    )
+  }
+
+  getAllEventosAuto(): Promise<any> {
+    return isSuperAdmin() ? this.getAllEventosSuperAdmin() : this.getAllEventos()
   }
 
   getEventoById(id: string): Promise<any> {

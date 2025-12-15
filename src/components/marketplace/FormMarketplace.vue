@@ -1,39 +1,44 @@
 <template>
   <v-card class="form-card" elevation="4">
     <v-card-title class="pa-6 pb-4">
-      <div class="d-flex align-center">
-        <v-icon icon="mdi-store-plus" class="me-2" color="primary"></v-icon>
-        <span class="text-h6 font-weight-medium">Criar Novo Produto</span>
+      <div>
+        <v-tabs v-model="tab">
+          <v-tab value="criarProduto" prepend-icon="mdi-store-plus" color="success" class="text-primary">Criar Produto</v-tab>
+          <v-tab value="criarEmpresa" prepend-icon="mdi-domain-plus" color="success" class="text-primary">Criar Empresa</v-tab>
+          <v-tab value="criarCategoria" prepend-icon="mdi-shape-outline" color="success" class="text-primary">Criar Categoria</v-tab>
+        </v-tabs>
       </div>
     </v-card-title>
 
     <v-divider></v-divider>
 
-    <v-card-text class="pa-6">
+    <v-tabs-window v-model="tab">
+      <v-tabs-window-item value="criarProduto">
+        <v-card-text class="pa-6">
       <v-form ref="formRef" @submit.prevent="submitForm">
         <!-- Basic Information Section -->
         <div class="mb-6">
           <v-sheet class="d-flex justify-space-between mb-6">
             <div>
-              <h3 v-if="tab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
+              <h3 v-if="langTab === 'one'" class="text-h6 font-weight-medium mb-4 text-primary">
                 <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
                 Informações Básicas
               </h3>
-              <h3 v-if="tab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
+              <h3 v-if="langTab === 'two'" class="text-h6 font-weight-medium mb-4 text-primary">
                 <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
                 Informações Básicas (EN)
               </h3>
             </div>
 
             <div>
-              <v-tabs v-model="tab">
+              <v-tabs v-model="langTab">
                 <v-tab value="one"><v-img src="/br-flag.png" :width="20" cover class="mr-2"></v-img> PT</v-tab>
                 <v-tab value="two"><v-img src="/en-flag.png" :width="20" cover class="mr-2"></v-img> EN</v-tab>
               </v-tabs>
             </div>
           </v-sheet>
 
-          <v-tabs-window v-model="tab">
+          <v-tabs-window v-model="langTab">
             <v-tabs-window-item value="one">
               <v-row>
                 <v-col class="mt-2" cols="12" md="6">
@@ -91,6 +96,7 @@
                     item-value="id"
                     density="comfortable"
                     class="mb-3"
+                    :loading="loadingCategorias"
                   ></v-combobox>
                   <v-combobox
                     v-model="categoriasEmpresaSelected"
@@ -102,6 +108,7 @@
                     item-value="id"
                     density="comfortable"
                     class="mb-3"
+                    :loading="loadingCategorias"
                   ></v-combobox>
                 </v-col>
               </v-row>
@@ -321,19 +328,33 @@
         </div>
       </v-form>
     </v-card-text>
+      </v-tabs-window-item>
+
+      <v-tabs-window-item value="criarEmpresa">
+        <FormEmpresa @empresa-saved="onEmpresaSaved" />
+      </v-tabs-window-item>
+
+      <v-tabs-window-item value="criarCategoria">
+        <FormCategoriaProduto @categoria-saved="onCategoriaSaved" />
+      </v-tabs-window-item>
+    </v-tabs-window>
+
   </v-card>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import produtoService from '@/services/marketplace/marketplace-service'
 import empresaService from '@/services/empresa/empresa-service'
 import categoriaProdutoService from '@/services/categoria-produto/categoria-produto-service'
+import FormEmpresa from '@/components/marketplace/FormEmpresa.vue'
+import FormCategoriaProduto from '@/components/marketplace/FormCategoriaProduto.vue'
 import 'vue3-toastify/dist/index.css'
 
-const tab = ref('one')
+const tab = ref('criarProduto')
+const langTab = ref('one')
 const router = useRouter()
 const loading = ref(false)
 const loadingTranslation = ref(false)
@@ -342,6 +363,8 @@ const categoriasProduto = ref([])
 const categoriasEmpresa = ref([])
 const categoriasProdutoSelected = ref('')
 const categoriasEmpresaSelected = ref('')
+const loadingCategorias = ref(false)
+let intervalId = null
 
 const form = ref({
   titulo: '',
@@ -490,11 +513,45 @@ const submitForm = async () => {
   }
 }
 
+const loadCategorias = async (showLoading = false) => {
+  if (showLoading) loadingCategorias.value = true
+  try {
+    const [responseEmpresas, responseCategoriaProduto] = await Promise.all([
+      empresaService.getAllEmpresas(),
+      categoriaProdutoService.getAllCategoriasProduto()
+    ])
+    categoriasEmpresa.value = responseEmpresas.data || []
+    categoriasProduto.value = responseCategoriaProduto.data || []
+  } catch (error) {
+    console.error('Erro ao carregar categorias:', error)
+  } finally {
+    if (showLoading) loadingCategorias.value = false
+  }
+}
+
+const onCategoriaSaved = () => {
+  loadCategorias(true)
+}
+
+const onEmpresaSaved = () => {
+  loadCategorias(true)
+}
+
+watch(tab, (newTab) => {
+  if (newTab === 'criarProduto') {
+    loadCategorias()
+  }
+})
+
 onMounted(async () => {
-  const responseEmpresas = await empresaService.getAllEmpresas()
-  categoriasEmpresa.value = responseEmpresas.data || []
-  const responseCategoriaProduto = await categoriaProdutoService.getAllCategoriasProduto()
-  categoriasProduto.value = responseCategoriaProduto.data || []
+  await loadCategorias(true)
+  intervalId = setInterval(() => loadCategorias(false), 30000)
+})
+
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+  }
 })
 </script>
 

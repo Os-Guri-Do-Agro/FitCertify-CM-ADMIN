@@ -1,5 +1,6 @@
 import { handleError } from '@/common/error.utils'
 import apiClient from '../api-service'
+import { isSuperAdmin } from '@/utils/auth'
 
 
 let tokenSession = sessionStorage.getItem('token')
@@ -20,9 +21,24 @@ class MarketplaceService {
 
   getAllProdutos(): Promise<any> {
     return this.handleRequest(
+      apiClient.get('/produto/backoffice',{
+        headers: {
+          'Authorization' : `Bearer ${tokenSession}`
+        }
+      }),
+      'Failed to fetch all categories'
+    )
+  }
+
+  getAllProdutosSuperAdmin(): Promise<any> {
+    return this.handleRequest(
       apiClient.get('/produto'),
       'Failed to fetch all categories'
     )
+  }
+
+  getAllProdutosAuto(): Promise<any> {
+    return isSuperAdmin() ? this.getAllProdutosSuperAdmin() : this.getAllProdutos()
   }
 
    getProdutosById(id:string): Promise<any> {

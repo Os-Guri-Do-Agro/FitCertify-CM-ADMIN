@@ -9,47 +9,30 @@
         <div class="mb-6">
           <h3 class="text-h6 font-weight-medium mb-4 text-primary">
             <v-icon icon="mdi-information" class="me-2" size="small"></v-icon>
-            Informações Básicas
+            Informações do Tipo de Evento
           </h3>
           <v-row>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="form.nome"
-                label="Nome da Organização"
+                label="Nome do Tipo de Evento"
                 variant="outlined"
-                prepend-inner-icon="mdi-domain"
+                prepend-inner-icon="mdi-tag"
                 :rules="[rules.required]"
                 required
                 density="comfortable"
               ></v-text-field>
             </v-col>
-          </v-row>
-        </div>
-
-        <!-- Logo Section -->
-        <div class="mb-6">
-          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
-            <v-icon icon="mdi-image" class="me-2" size="small"></v-icon>
-            Logo da Organização
-          </h3>
-          <v-row>
             <v-col cols="12" md="6">
-              <v-card class="pa-4 upload-card" elevation="1">
-                <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
-                  <v-icon icon="mdi-image-outline" class="me-2" size="small"></v-icon>
-                  Logo da Organização
-                </v-card-subtitle>
-                <v-file-upload
-                  v-model="form.logo"
-                  label="Selecionar logo"
-                  clearable
-                  show-size
-                  accept="image/*"
-                  variant="outlined"
-                  density="comfortable"
-                ></v-file-upload>
-                <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
-              </v-card>
+              <v-text-field
+                v-model="form.en_nome"
+                label="Nome em Inglês"
+                variant="outlined"
+                prepend-inner-icon="mdi-tag-outline"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-text-field>
             </v-col>
           </v-row>
         </div>
@@ -72,7 +55,7 @@
             prepend-icon="mdi-check"
             @click="submitForm"
           >
-            Criar Organização
+            Criar Tipo de Evento
           </v-btn>
         </div>
       </v-form>
@@ -81,31 +64,30 @@
 </template>
 
 <script setup>
-import organizacaoService from '@/services/organizacao-evento/organizacao-evento-service'
+import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
 import { computed, ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 
-const emit = defineEmits(['organizacao-saved'])
-
+const emit = defineEmits(['tipo-evento-saved'])
 const router = useRouter()
+
 const loading = ref(false)
 const formRef = ref(null)
 
 const form = ref({
   nome: '',
-  sobre: '',
-  logo: null,
-  ativo: true,
+  en_nome: '',
+  ativo: true
 })
 
 const rules = {
-  required: (value) => !!value || 'Campo obrigatório',
+  required: (value) => !!value || 'Campo obrigatório'
 }
 
 const isFormValid = computed(() => {
-  return form.value.nome
+  return form.value.nome && form.value.en_nome
 })
 
 const submitForm = async () => {
@@ -114,30 +96,22 @@ const submitForm = async () => {
 
   loading.value = true
   try {
-    const formData = new FormData()
-    formData.append('nome', form.value.nome)
-    if (form.value.logo) {
-      formData.append('logo', form.value.logo)
-    }
+    await tipoEventoService.createTipoEvento(form.value)
 
-
-    await organizacaoService.createOrganizacao(formData)
-
-    emit('organizacao-saved')
-    toast.success('Organizacao criado com sucesso!')
+    emit('tipo-evento-saved')
+    toast.success('Tipo de evento criado com sucesso!')
 
     // Reset form and validations
     form.value = {
       nome: '',
-      sobre: '',
-      logo: null,
-      ativo: true,
+      en_nome: '',
+      ativo: true
     }
     await nextTick()
     formRef.value?.resetValidation()
   } catch (error) {
-    toast.error('Erro ao criar organizacao')
-    console.error('Error creating organizacao:', error)
+    toast.error('Erro ao criar tipo de evento')
+    console.error('Error creating tipo evento:', error)
   } finally {
     loading.value = false
   }
@@ -148,21 +122,5 @@ const submitForm = async () => {
 .form-card {
   border-radius: 16px;
   overflow: hidden;
-}
-
-.upload-card {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.upload-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 600px) {
-  .upload-card {
-    margin-bottom: 1rem;
-  }
 }
 </style>

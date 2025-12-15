@@ -1,5 +1,6 @@
 import { handleError } from '@/common/error.utils'
 import apiClient from '../api-service'
+import { isSuperAdmin } from '@/utils/auth'
 // import { CategoryEntity, CreateCategoryDto, UpdateCategoryDto } from '@/common/types/category'
 let tokenSession = sessionStorage.getItem('token')
 class EmpresaService {
@@ -15,7 +16,7 @@ class EmpresaService {
       throw error
     }
   }
- createEmpresa(formData: FormData): Promise<any> {
+  createEmpresa(formData: FormData): Promise<any> {
     return this.handleRequest(
       apiClient.post('/empresa', formData, {
         headers: {
@@ -29,9 +30,25 @@ class EmpresaService {
 
   getAllEmpresas(): Promise<any> {
     return this.handleRequest(
+      apiClient.get('/empresa/backoffice', {
+        headers: {
+          'Authorization': `Bearer ${tokenSession}`
+        }
+      }),
+      'Failed to fetch all empresas'
+    )
+  }
+
+
+  getAllEmpresasSuperAdmin(): Promise<any> {
+    return this.handleRequest(
       apiClient.get('/empresa'),
       'Failed to fetch all empresas'
     )
+  }
+
+  getAllEmpresasAuto(): Promise<any> {
+    return isSuperAdmin() ? this.getAllEmpresasSuperAdmin() : this.getAllEmpresas()
   }
 
 

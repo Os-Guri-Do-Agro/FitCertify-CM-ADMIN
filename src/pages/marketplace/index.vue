@@ -678,7 +678,7 @@ const confirmDelete = async () => {
 onMounted(async () => {
   try {
     // Carregar produtos
-    const response = await produtoService.getAllProdutos()
+    const response = await produtoService.getAllProdutosAuto()
     produtos.value = Array.isArray(response.data)
       ? response.data.map((produto: any) => {
         // Procura a primeira imagem onde isBanner é false
@@ -694,11 +694,11 @@ onMounted(async () => {
       : []
 
     // Carregar empresas
-    const empresaResponse = await empresaService.getAllEmpresas()
+    const empresaResponse = await empresaService.getAllEmpresasAuto()
     empresas.value = Array.isArray(empresaResponse.data) ? empresaResponse.data : []
 
     // Carregar categorias
-    const categoriaResponse = await categoriaProdutoService.getAllCategoriasProduto()
+    const categoriaResponse = await categoriaProdutoService.getAllCategoriasProdutoAuto()
     categorias.value = Array.isArray(categoriaResponse.data) ? categoriaResponse.data : []
   } catch (error) {
     console.error('Erro ao carregar dados:', error)

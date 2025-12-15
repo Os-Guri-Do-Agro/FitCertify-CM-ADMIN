@@ -16,6 +16,19 @@ class userService {
     }
   }
 
+
+  getAllUsersByGrupoAcessos(): Promise<any> {
+    const token = sessionStorage.getItem('token')
+    return this.handleRequest(
+      apiClient.get('/user/grupoAcesso/listagem', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      }),
+      'Failed to fetch all users'
+    )
+  }
+
   getAllUsers(): Promise<any> {
     const token = sessionStorage.getItem('token')
     return this.handleRequest(
@@ -45,6 +58,18 @@ class userService {
       apiClient.get(`/user/validarExisteEmail?email=${email}`, {
       }),
       'ERROR - 404'
+    )
+  }
+
+  inativarUsuario(id: string): Promise<any> {
+    const token = sessionStorage.getItem('token')
+    return this.handleRequest(
+      apiClient.patch(`/user/admin/inativar/${id}`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      }),
+      'Failed to inactivate user'
     )
   }
 
