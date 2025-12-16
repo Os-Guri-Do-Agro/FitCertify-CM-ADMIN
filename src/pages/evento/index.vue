@@ -501,6 +501,9 @@ const headers = [
 const organizationHeaders = [
   { title: 'Logo', key: 'logoUrl', sortable: false, width: '80px' },
   { title: 'Nome', key: 'nome', sortable: true },
+  { title: 'CNPJ', key: 'cnpj', sortable: true },
+  { title: 'CEP/ZIP Code', key: 'cep', sortable: true },
+  { title: 'Telefone', key: 'telefone', sortable: true },
   { title: 'Ações', key: 'actions', sortable: false, width: '100px' },
 ]
 
