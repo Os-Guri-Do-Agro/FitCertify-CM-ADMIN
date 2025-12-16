@@ -93,7 +93,7 @@
                   <v-icon icon="mdi-image-outline" class="me-2" size="small"></v-icon>
                   Logo da Empresa
                 </v-card-subtitle>
-                
+
                 <div v-if="imagePreview && !editingImage" class="text-center">
                   <v-img :src="imagePreview" max-height="200" class="mb-3 rounded"></v-img>
                   <v-btn @click="editingImage = true" color="primary" variant="outlined" size="small">
@@ -112,7 +112,7 @@
                   variant="outlined"
                   density="comfortable"
                 ></v-file-upload>
-                
+
                 <p class="text-caption text-medium-emphasis mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 5MB)</p>
               </v-card>
             </v-col>
@@ -185,6 +185,7 @@ const formRef = ref(null)
 
 const imagePreview = ref(null)
 const editingImage = ref(false)
+const empresa = ref(null)
 
 const tab = ref('one')
 
