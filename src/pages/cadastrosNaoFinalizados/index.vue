@@ -5,7 +5,7 @@
       <div class="">
             <h1 class="text-h3 font-weight-bold text-primary mb-2">
               <v-icon icon="mdi-format-list-group" class="me-3" size="large"></v-icon>
-              Cadastros Simplificados
+              Cadastros não Finalizados
             </h1>
             <p class="text-subtitle-1 text-medium-emphasis mb-0">
               Gerencie todos os cadastros simplificados

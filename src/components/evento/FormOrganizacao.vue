@@ -23,6 +23,45 @@
                 density="comfortable"
               ></v-text-field>
             </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.cnpj"
+                label="CNPJ"
+                variant="outlined"
+                prepend-inner-icon="mdi-card-account-details"
+                :rules="[rules.required, rules.cnpj]"
+                required
+                density="comfortable"
+                @input="maskCNPJ"
+                maxlength="18"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.cep"
+                label="CEP/ZIP Code"
+                variant="outlined"
+                prepend-inner-icon="mdi-map-marker"
+                :rules="[rules.required, rules.cep]"
+                required
+                density="comfortable"
+                @input="maskCEP"
+                maxlength="10"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.telefone"
+                label="Telefone"
+                variant="outlined"
+                prepend-inner-icon="mdi-phone"
+                :rules="[rules.required, rules.telefone]"
+                required
+                density="comfortable"
+                @input="maskTelefone"
+                maxlength="15"
+              ></v-text-field>
+            </v-col>
           </v-row>
         </div>
 
@@ -82,7 +121,7 @@
 
 <script setup>
 import organizacaoService from '@/services/organizacao-evento/organizacao-evento-service'
-import { computed, ref, nextTick } from 'vue'
+import { computed, ref, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -92,9 +131,13 @@ const emit = defineEmits(['organizacao-saved'])
 const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
+const organizacao = ref(null)
 
 const form = ref({
   nome: '',
+  cnpj: '',
+  cep: '',
+  telefone: '',
   sobre: '',
   logo: null,
   ativo: true,
@@ -102,13 +145,79 @@ const form = ref({
 
 const rules = {
   required: (value) => !!value || 'Campo obrigatório',
+  cnpj: (value) => {
+    const cnpj = value?.replace(/\D/g, '')
+    return cnpj?.length === 14 || 'CNPJ deve ter 14 dígitos'
+  },
+  telefone: (value) => {
+    const phone = value?.replace(/\D/g, '')
+    return (phone?.length >= 10 && phone?.length <= 11) || 'Telefone deve ter 10 ou 11 dígitos'
+  },
+  cep: (value) => {
+    const digits = value?.replace(/\D/g, '')
+    return (digits?.length >= 5 && digits?.length <= 9) || 'CEP deve ter 8 dígitos ou ZIP Code 5-9 dígitos'
+  }
+}
+
+const maskCNPJ = (event) => {
+  let value = event.target.value.replace(/\D/g, '')
+  value = value.replace(/(\d{2})(\d)/, '$1.$2')
+  value = value.replace(/(\d{3})(\d)/, '$1.$2')
+  value = value.replace(/(\d{3})(\d)/, '$1/$2')
+  value = value.replace(/(\d{4})(\d)/, '$1-$2')
+  form.value.cnpj = value
+}
+
+const maskTelefone = (event) => {
+  let value = event.target.value.replace(/\D/g, '')
+  if (value.length <= 10) {
+    value = value.replace(/(\d{2})(\d)/, '($1) $2')
+    value = value.replace(/(\d{4})(\d)/, '$1-$2')
+  } else {
+    value = value.replace(/(\d{2})(\d)/, '($1) $2')
+    value = value.replace(/(\d{5})(\d)/, '$1-$2')
+  }
+  form.value.telefone = value
+}
+
+const maskCEP = (event) => {
+  let value = event.target.value.replace(/\D/g, '')
+  if (value.length <= 5) {
+    // US ZIP format: 12345
+    form.value.cep = value
+  } else if (value.length <= 8) {
+    // Brazilian CEP format: 12345-678
+    value = value.replace(/(\d{5})(\d)/, '$1-$2')
+    form.value.cep = value
+  } else {
+    // US ZIP+4 format: 12345-6789
+    value = value.replace(/(\d{5})(\d)/, '$1-$2')
+    form.value.cep = value
+  }
 }
 
 const isFormValid = computed(() => {
-  return form.value.nome
+  return form.value.nome && form.value.cnpj && form.value.cep && form.value.telefone
+})
+
+const validarExisteOrganizacao = async () => {
+  try {
+    const response = await organizacaoService.getAllOrganizacoes()
+    organizacao.value = response.data
+  } catch (error) {
+    console.error('Error fetching organizacao:', error)
+  }
+}
+
+onMounted(() => {
+  validarExisteOrganizacao()
 })
 
 const submitForm = async () => {
+  if (organizacao.value.length > 0) {
+    toast.error('Já existe uma organização cadastrada!')
+    return
+  }
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
@@ -116,6 +225,9 @@ const submitForm = async () => {
   try {
     const formData = new FormData()
     formData.append('nome', form.value.nome)
+    formData.append('cnpj', form.value.cnpj)
+    formData.append('cep', form.value.cep)
+    formData.append('telefone', form.value.telefone)
     if (form.value.logo) {
       formData.append('logo', form.value.logo)
     }
@@ -123,12 +235,16 @@ const submitForm = async () => {
 
     await organizacaoService.createOrganizacao(formData)
 
+    await validarExisteOrganizacao()
     emit('organizacao-saved')
     toast.success('Organizacao criado com sucesso!')
 
     // Reset form and validations
     form.value = {
       nome: '',
+      cnpj: '',
+      cep: '',
+      telefone: '',
       sobre: '',
       logo: null,
       ativo: true,

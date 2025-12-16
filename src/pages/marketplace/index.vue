@@ -106,9 +106,10 @@
             <div class="d-flex align-center w-100 justify-space-between">
               <div class=" d-flex align-center">
                              <v-icon icon="mdi-domain" class="me-2" color="primary"></v-icon>
-              <span class="text-h6 font-weight-medium">Empresas do Marketplace</span>
+              <span class="text-h6 font-weight-medium" v-if="isSuperAdmin()">Empresas do Marketplace</span>
+              <span class="text-h6 font-weight-medium" v-else>Empresa</span>
               <v-spacer></v-spacer>
-              <v-chip class="ml-2" size="small" color="primary" variant="flat">
+              <v-chip class="ml-2" size="small" color="primary" variant="flat" v-if="isSuperAdmin()">
                 {{ empresas.length }} empresas
               </v-chip>
               </div>
@@ -497,6 +498,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast} from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import { isSuperAdmin } from '@/utils/auth'
 const router = useRouter()
 const search = ref('')
 const produtos = ref<any[]>([])

@@ -82,9 +82,10 @@
             <div class="d-flex align-center justify-space-between w-100">
               <div class="d-flex align-center">
               <v-icon icon="mdi-domain" class="me-2" color="primary"></v-icon>
-              <span class="text-h6 font-weight-medium">Organizações de Eventos</span>
+              <span class="text-h6 font-weight-medium" v-if="!isSuperAdmin()">Organizador de Eventos</span>
+              <span class="text-h6 font-weight-medium" v-else>Organizadores de Eventos</span>
               <v-spacer></v-spacer>
-              <v-chip class="ml-2" size="small" color="primary" variant="flat">
+              <v-chip class="ml-2" size="small" color="primary" variant="flat" v-if="isSuperAdmin()">
                 {{ organizacoes.length }} organizações
               </v-chip>
               </div>
@@ -462,6 +463,7 @@ import { toast } from 'vue3-toastify'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import 'vue3-toastify/dist/index.css'
+import { isSuperAdmin } from '@/utils/auth'
 
 dayjs.extend(utc)
 const router = useRouter()
@@ -499,6 +501,9 @@ const headers = [
 const organizationHeaders = [
   { title: 'Logo', key: 'logoUrl', sortable: false, width: '80px' },
   { title: 'Nome', key: 'nome', sortable: true },
+  { title: 'CNPJ', key: 'cnpj', sortable: true },
+  { title: 'CEP/ZIP Code', key: 'cep', sortable: true },
+  { title: 'Telefone', key: 'telefone', sortable: true },
   { title: 'Ações', key: 'actions', sortable: false, width: '100px' },
 ]
 

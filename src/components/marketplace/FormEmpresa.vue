@@ -161,7 +161,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import empresaService from '@/services/empresa/empresa-service'
@@ -172,6 +172,7 @@ const emit = defineEmits(['empresa-saved'])
 const router = useRouter()
 const loading = ref(false)
 const formRef = ref(null)
+const empresa = ref(null)
 
 const tab = ref('one')
 const loadingTranslation = ref(false)
@@ -242,7 +243,24 @@ const traduzirCampos = async () => {
   }
 }
 
+const validarExisteEmpresa = async () => {
+  try {
+    const response = await empresaService.getAllEmpresas()
+    empresa.value = response.data
+  } catch (error) {
+    toast.error('Erro ao carregar empresas')
+  }
+}
+
+onMounted(() => {
+  validarExisteEmpresa()
+})
+
 const submitForm = async () => {
+  if (empresa?.value?.length > 0) {
+    toast.error('Já existe uma empresa cadastrada!')
+    return
+  }
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
@@ -261,7 +279,9 @@ const submitForm = async () => {
     await empresaService.createEmpresa(formData)
 
     emit('empresa-saved')
-    toast.success('Empresa criado com sucesso!')
+    toast.success('Empresa criada com sucesso!')
+
+    await validarExisteEmpresa()
 
     // Reset form and validations
     form.value = {

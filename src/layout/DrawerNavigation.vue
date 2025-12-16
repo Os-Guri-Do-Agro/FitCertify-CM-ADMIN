@@ -362,9 +362,9 @@ const marketingItemsList = [
   },
   {
         icon: 'mdi-format-list-group',
-        title: 'Cadastros Simplificados',
+        title: 'Cadastros não Finalizados',
         value: 'cadastroSimplificado',
-        to: '/cadastroSimplificado',
+        to: '/cadastrosNaoFinalizados',
       },
 ]
 
