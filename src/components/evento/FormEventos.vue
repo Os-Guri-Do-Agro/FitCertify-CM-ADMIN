@@ -381,13 +381,13 @@
         <div class="mb-6">
           <h3 class="text-h6 font-weight-medium mb-4 text-primary">
             <v-icon icon="mdi-link-plus" class="me-2" size="small"></v-icon>
-            Links do Evento
+            E-mail e Link do Evento
           </h3>
           <v-row>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="form.linkEnviarCertificado"
-                label="Link para enviar certificado"
+                label="E-mail para envio do certificado"
                 variant="outlined"
                 prepend-inner-icon="mdi-link"
                 density="comfortable"
