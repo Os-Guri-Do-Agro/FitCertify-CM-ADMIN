@@ -413,50 +413,52 @@
             Termo de Responsabilidade
           </h3>
           
-          <v-card class="pa-4 checkbox-card" :class="{ 'selected': form.possuiTermo }" elevation="1">
-            <div class="d-flex align-center justify-space-between">
-              <v-switch
-                v-model="form.possuiTermo"
-                label="Exigir Termo de Responsabilidade"
-                color="success"
-                hide-details
-                class="flex-grow-1"
-              ></v-switch>
-            </div>
+          <v-card class="pa-4 upload-card" elevation="1">
+            <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
+              <v-icon icon="mdi-shield-check" class="me-2" size="small"></v-icon>
+              Configurações do Termo
+            </v-card-subtitle>
+            
+            <v-switch
+              v-model="form.possuiTermo"
+              label="Exigir Termo de Responsabilidade"
+              color="primary"
+              hide-details
+              class="mb-3"
+            ></v-switch>
 
             <v-expand-transition>
-              <div v-if="form.possuiTermo" class="mt-4">
-                <v-alert type="info" variant="tonal" density="compact" class="mb-3">
+              <div v-if="form.possuiTermo">
+                <v-alert type="info" variant="tonal" density="compact" class="mb-4">
                   <div class="text-caption">
                     Ao habilitar, o atleta deverá aceitar o termo para concluir a inscrição. O termo padrão será exibido, e você pode adicionar cláusulas extras abaixo.
                   </div>
                 </v-alert>
                 
-                <div class="d-flex align-start gap-2">
-                  <v-textarea
-                    v-model="form.termoConteudo"
-                    label="Conteúdo Adicional (Opcional)"
-                    placeholder="Caso você queira adicionar algum conteúdo, digite neste campo."
-                    rows="6"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                    class="flex-grow-1"
-                  ></v-textarea>
-                  
-                  <v-tooltip text="Visualizar Termo Completo" location="top">
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        v-bind="props"
-                        icon="mdi-eye"
-                        variant="text"
-                        color="primary"
-                        class="ms-2"
-                        @click="showTermoPreview = true"
-                      ></v-btn>
-                    </template>
-                  </v-tooltip>
-                </div>
+                <v-row>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="form.termoConteudo"
+                      label="Conteúdo Adicional (Opcional)"
+                      placeholder="Caso você queira adicionar algum conteúdo, digite neste campo."
+                      rows="4"
+                      variant="outlined"
+                      density="comfortable"
+                      hide-details
+                    ></v-textarea>
+                  </v-col>
+                  <v-col cols="12" class="pt-2">
+                    <v-btn
+                      variant="outlined"
+                      color="primary"
+                      prepend-icon="mdi-eye"
+                      size="small"
+                      @click="showTermoPreview = true"
+                    >
+                      Visualizar Termo Completo
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </div>
             </v-expand-transition>
           </v-card>
