@@ -115,6 +115,7 @@
                 density="comfortable"
                 class="mb-3"
                 :loading="loadingData"
+                :disabled="OrganizacaoEventos.length === 1"
               ></v-combobox>
             </v-col>
           </v-row>
@@ -405,6 +406,81 @@
           </v-row>
         </div>
 
+        <!-- Termo de Responsabilidade Section -->
+        <div class="mb-6">
+          <h3 class="text-h6 font-weight-medium mb-4 text-primary">
+            <v-icon icon="mdi-file-document-edit" class="me-2" size="small"></v-icon>
+            Termo de Responsabilidade
+          </h3>
+
+          <v-card class="pa-4 upload-card" elevation="1">
+            <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
+              <v-icon icon="mdi-shield-check" class="me-2" size="small"></v-icon>
+              Configurações do Termo
+            </v-card-subtitle>
+
+            <v-switch
+              v-model="form.possuiTermo"
+              label="Exigir Termo de Responsabilidade"
+              color="primary"
+              hide-details
+              class="mb-3"
+            ></v-switch>
+
+            <v-expand-transition>
+              <div v-if="form.possuiTermo">
+                <v-alert type="info" variant="tonal" density="compact" class="mb-4">
+                  <div class="text-caption">
+                    Ao habilitar, o atleta deverá aceitar o termo para concluir a inscrição. O termo padrão será exibido, e você pode adicionar cláusulas extras abaixo.
+                  </div>
+                </v-alert>
+
+                <v-row>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="form.termoConteudo"
+                      label="Conteúdo Adicional (Opcional)"
+                      placeholder="Caso você queira adicionar algum conteúdo, digite neste campo."
+                      rows="4"
+                      variant="outlined"
+                      density="comfortable"
+                      hide-details
+                    ></v-textarea>
+                  </v-col>
+                  <v-col cols="12" class="pt-2">
+                    <v-btn
+                      variant="outlined"
+                      color="primary"
+                      prepend-icon="mdi-eye"
+                      size="small"
+                      @click="showTermoPreview = true"
+                    >
+                      Visualizar Termo Completo
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </div>
+            </v-expand-transition>
+          </v-card>
+        </div>
+
+        <v-dialog v-model="showTermoPreview" max-width="800" scrollable>
+          <v-card>
+            <v-card-title class="d-flex justify-space-between align-center pa-4 bg-primary text-white">
+              <span class="text-h6">Preview do Termo de Responsabilidade</span>
+              <v-btn icon="mdi-close" variant="text" color="white" @click="showTermoPreview = false"></v-btn>
+            </v-card-title>
+            <v-card-text class="pa-4">
+              <div class="text-body-2 whitespace-pre-wrap">{{ previewTermoContent }}</div>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions class="pa-4">
+              <v-spacer></v-spacer>
+              <v-btn color="primary" variant="tonal" @click="showTermoPreview = false">Fechar</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <!-- Actions -->
         <v-divider class="mb-6"></v-divider>
         <div class="d-flex justify-end ga-3">
@@ -445,9 +521,11 @@
 <script setup >
 import eventoService from '@/services/evento/evento-service'
 import organizacaoEventos from '@/services/organizacao-evento/organizacao-evento-service'
+import termoResponsabilidadeService from '@/services/termo-responsabilidade/termo-responsabilidade-service'
 import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
 import FormOrganizacao from '@/components/evento/FormOrganizacao.vue'
 import FormTipoEvento from '@/components/evento/FormTipoEvento.vue'
+import { TERMO_PADRAO } from '@/constants/termo-constants'
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
@@ -464,12 +542,14 @@ const router = useRouter()
 const loading = ref(false)
 const loadingTranslation = ref(false)
 const loadingData = ref(false)
+const showTermoPreview = ref(false)
 const formRef = ref(null)
 const tipoEventos = ref([])
 const OrganizacaoEventos = ref([])
 const novaDistancia = ref('')
 const tipoEventoSelected = ref('')
 const OrganizacaoEventosSelected = ref('')
+// const inscricoes = ref([])
 let intervalId = null
 // const isCertificadoExclusivo = ref(false)
 
@@ -492,7 +572,18 @@ const form = ref({
   templateCertificado: null,
   linkEnviarCertificado: '',
   linkSiteProva: '',
+  possuiTermo: false,
+  termoConteudo: '',
 })
+
+// const buscarInscricoes = async () => {
+//   try {
+//     const response = await termoResponsabilidadeService.getTermosAceitosByEvento(eventoId)
+//     inscricoes.value = response.data
+//   } catch (error) {
+//     console.error('Erro ao buscar inscrições:', error)
+//   }
+// }
 
 const rules = {
   required: (value) => !!value || 'Campo obrigatório',
@@ -500,6 +591,11 @@ const rules = {
 
 const isFormValid = computed(() => {
   return form.value.titulo && form.value.descricao && form.value.en_titulo && form.value.en_descricao && form.value.local && form.value.imagem && form.value.logo && form.value.data && form.value.local
+})
+
+const previewTermoContent = computed(() => {
+  if (!form.value.termoConteudo) return TERMO_PADRAO
+  return `${TERMO_PADRAO}\n\n${form.value.termoConteudo}`
 })
 
 const adicionarDistancia = () => {
@@ -609,7 +705,12 @@ const submitForm = async () => {
       }
       formData.append('solicitacaoCertificado.situacao', 'Pendente')
     }
-    await eventoService.createEvento(formData)
+    const response = await eventoService.createEvento(formData)
+
+    if (form.value.possuiTermo && response.data?.id) {
+       // Envia apenas o conteúdo customizado. O backend/preview se encarregam de juntar.
+      await termoResponsabilidadeService.createTermo(response.data.id, form.value.termoConteudo)
+    }
 
     router.push('/evento/').then(() => {
       toast.success('Evento criado com sucesso!')
@@ -632,6 +733,10 @@ const loadData = async (showLoading = false) => {
     ])
     tipoEventos.value = responseTipoEvento.data || []
     OrganizacaoEventos.value = responseOrganizacao.data || []
+
+    if (OrganizacaoEventos.value.length === 1) {
+      form.value.organizacoesEvento = [OrganizacaoEventos.value[0]]
+    }
   } catch (error) {
     console.error('Erro ao carregar dados:', error)
   } finally {
