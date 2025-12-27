@@ -311,6 +311,13 @@
         <template v-slot:item.actions="{ item }">
           <div class="d-flex ga-2">
             <v-btn
+              icon="mdi-account-group"
+              size="small"
+              variant="text"
+              color="info"
+              @click="viewInscritos(item.id)"
+            ></v-btn>
+            <v-btn
               icon="mdi-pencil"
               size="small"
               variant="text"
@@ -451,12 +458,94 @@
       </template>
     </v-card>
   </v-dialog>
+
+  <!-- Dialog Inscritos -->
+  <v-dialog v-model="inscritosDialog" max-width="1200" persistent>
+    <v-card>
+      <v-card-title class="pa-6">
+        <div class="d-flex align-center justify-space-between w-100">
+          <div class="d-flex align-center">
+            <v-icon icon="mdi-account-group" class="me-2" color="primary"></v-icon>
+            <span class="text-h6 font-weight-medium">Inscritos no Evento</span>
+          </div>
+          <v-btn icon="mdi-close" variant="text" @click="inscritosDialog = false"></v-btn>
+        </div>
+      </v-card-title>
+
+      <v-divider></v-divider>
+
+      <v-card-text class="pa-0">
+        <v-data-table
+          :headers="inscritosHeaders"
+          :items="inscricoes"
+          :loading="loadingInscricoes"
+          class="custom-table"
+          hover
+        >
+          <!-- Avatar -->
+          <template v-slot:item.atleta.usuario.avatarUrl="{ item }">
+            <v-avatar size="40" class="ma-2">
+              <v-img :src="item.atleta.usuario.avatarUrl" alt="avatar" cover>
+                <template v-slot:error>
+                  <v-icon icon="mdi-account" size="20"></v-icon>
+                </template>
+              </v-img>
+            </v-avatar>
+          </template>
+
+          <!-- Status -->
+          <template v-slot:item.status="{ item }">
+            <v-chip
+              :color="item.status === 'Aceito' ? 'success' : item.status === 'Recusado' ? 'error' : 'warning'"
+              size="small"
+              variant="flat"
+            >
+              {{ item.status }}
+            </v-chip>
+          </template>
+
+          <!-- Data da Inscrição -->
+          <template v-slot:item.createdAt="{ item }">
+            <span>{{ dayjs(item.createdAt).format('DD/MM/YYYY HH:mm') }}</span>
+          </template>
+
+          <!-- Actions -->
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              icon="mdi-download"
+              size="small"
+              variant="text"
+              color="primary"
+              @click="downloadCertificado(item)"
+              :loading="downloadingCertificado === item.id"
+            ></v-btn>
+          </template>
+
+          <!-- No data -->
+          <template v-slot:no-data>
+            <div class="text-center pa-8">
+              <v-icon
+                icon="mdi-account-group-outline"
+                size="64"
+                color="grey-lighten-1"
+                class="mb-4"
+              ></v-icon>
+              <div class="text-h6 text-medium-emphasis mb-2">
+                Nenhum inscrito encontrado
+              </div>
+            </div>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
 import eventoService from '@/services/evento/evento-service'
 import organizacaoService from '@/services/organizacao-evento/organizacao-evento-service'
 import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
+import termoResponsabilidadeService from '@/services/termo-responsabilidade/termo-responsabilidade-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
@@ -483,7 +572,13 @@ const loadingTipoEvento = ref(false)
 const selectedEvento = ref<any | null>(null)
 const selectedOrganizacao = ref<any | null>(null)
 const selectedTipoEvento = ref<any | null>(null)
+const selectedEventoId = ref<number | null>(null)
+const inscricoes = ref<any[]>([])
+const inscritosDialog = ref(false)
+const loadingInscricoes = ref(false)
+const downloadingCertificado = ref<number | null>(null)
 const dialog = ref(false)
+const atletaAceitou = ref('')
 const organizacaoDialog = ref(false)
 const deleteTipoEventoDialog = ref(false)
 const createTipoEventoDialog = ref(false)
@@ -512,6 +607,16 @@ const tiposEventoHeaders = [
   { title: 'Name (en)', key: 'en_nome', sortable: true },
   { title: 'Criador', key: 'createdBy', sortable: true },
   { title: 'Ações', key: 'actions', sortable: false, width: '100px' },
+]
+
+const inscritosHeaders = [
+  { title: 'Avatar', key: 'atleta.usuario.avatarUrl', sortable: false, width: '80px' },
+  { title: 'Nome', key: 'atleta.usuario.nome', align: 'start' as const },
+  { title: 'CPF', key: 'atleta.usuario.cpf', align: 'center' as const },
+  { title: 'Email', key: 'atleta.usuario.email', align: 'start' as const },
+  { title: 'Status', key: 'status', align: 'center' as const },
+  { title: 'Data da Inscrição', key: 'createdAt', align: 'center' as const },
+  { title: 'Certificado', key: 'actions', sortable: false, width: '120px' },
 ]
 
 // Computed stats
@@ -584,6 +689,12 @@ const deleteTipoEvento = (item: any) => {
   deleteTipoEventoDialog.value = true
 }
 
+const viewInscritos = async (eventoId: any) => {
+  selectedEventoId.value = eventoId
+  inscritosDialog.value = true
+  buscarInscricoes(eventoId)
+}
+
 const editEvento = (id: any) => {
   ;(window as any).editingEventoId = id
   router.push('/evento/editForm')
@@ -623,6 +734,51 @@ const confirmDeleteOrganizacao = async () => {
     loadingDelete.value = false
     organizacaoDialog.value = false
     selectedOrganizacao.value = null
+  }
+}
+
+const buscarInscricoes = async (eventoId: any) => {
+  loadingInscricoes.value = true
+  try {
+    const response = await termoResponsabilidadeService.getTermosAceitosByEvento(eventoId)
+    inscricoes.value = await Promise.all(
+      response.data.map(async (inscrito: any) => {
+        try {
+          const statusResponse = await termoResponsabilidadeService.getVerificarAceitouTermo(eventoId, inscrito.atletaId)
+          return {
+            ...inscrito,
+            status: statusResponse.data.aceitou ? 'Aceito' : 'Recusado'
+          }
+        } catch (error) {
+          return {
+            ...inscrito,
+            status: 'Erro'
+          }
+        }
+      })
+    )
+  } catch (error) {
+    console.error('Erro ao buscar inscrições:', error)
+  } finally {
+    loadingInscricoes.value = false
+  }
+}
+
+const downloadCertificado = async (inscrito: any) => {
+  downloadingCertificado.value = inscrito.id
+  try {
+    const link = document.createElement('a')
+    link.href = inscrito.pdfUrl
+    link.download = `certificado-${inscrito.atleta.usuario.nome}.pdf`
+    link.target = '_blank'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } catch (error) {
+    console.error('Erro ao baixar certificado:', error)
+    toast.error('Erro ao baixar certificado')
+  } finally {
+    downloadingCertificado.value = null
   }
 }
 

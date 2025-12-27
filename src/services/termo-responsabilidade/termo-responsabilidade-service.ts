@@ -30,6 +30,28 @@ class TermoResponsabilidadeService {
       'Failed to create termo responsabilidade'
     )
   }
+
+  getTermosAceitosByEvento(eventoId: string): Promise<any> {
+    return this.handleRequest(
+      apiClient.get(`/termo-responsabilidade/aceites/evento/${eventoId}`, {
+        headers: {
+          Authorization: `Bearer ${tokenSession}`,
+        },
+      }),
+      'Failed to get termos aceitos by evento'
+    )
+  }
+
+  getVerificarAceitouTermo(eventoId: string, atletaId: string): Promise<any> {
+    return this.handleRequest(
+      apiClient.get(`/termo-responsabilidade/verificar/${eventoId}/${atletaId}`, {
+        headers: {
+          Authorization: `Bearer ${tokenSession}`,
+        },
+      }),
+      'Failed to get verificar aceitou termo'
+    )
+  }
 }
 
 export default new TermoResponsabilidadeService()

@@ -412,13 +412,13 @@
             <v-icon icon="mdi-file-document-edit" class="me-2" size="small"></v-icon>
             Termo de Responsabilidade
           </h3>
-          
+
           <v-card class="pa-4 upload-card" elevation="1">
             <v-card-subtitle class="pa-0 mb-3 text-primary font-weight-medium">
               <v-icon icon="mdi-shield-check" class="me-2" size="small"></v-icon>
               Configurações do Termo
             </v-card-subtitle>
-            
+
             <v-switch
               v-model="form.possuiTermo"
               label="Exigir Termo de Responsabilidade"
@@ -434,7 +434,7 @@
                     Ao habilitar, o atleta deverá aceitar o termo para concluir a inscrição. O termo padrão será exibido, e você pode adicionar cláusulas extras abaixo.
                   </div>
                 </v-alert>
-                
+
                 <v-row>
                   <v-col cols="12">
                     <v-textarea
@@ -549,6 +549,7 @@ const OrganizacaoEventos = ref([])
 const novaDistancia = ref('')
 const tipoEventoSelected = ref('')
 const OrganizacaoEventosSelected = ref('')
+// const inscricoes = ref([])
 let intervalId = null
 // const isCertificadoExclusivo = ref(false)
 
@@ -574,6 +575,15 @@ const form = ref({
   possuiTermo: false,
   termoConteudo: '',
 })
+
+// const buscarInscricoes = async () => {
+//   try {
+//     const response = await termoResponsabilidadeService.getTermosAceitosByEvento(eventoId)
+//     inscricoes.value = response.data
+//   } catch (error) {
+//     console.error('Erro ao buscar inscrições:', error)
+//   }
+// }
 
 const rules = {
   required: (value) => !!value || 'Campo obrigatório',
@@ -723,7 +733,7 @@ const loadData = async (showLoading = false) => {
     ])
     tipoEventos.value = responseTipoEvento.data || []
     OrganizacaoEventos.value = responseOrganizacao.data || []
-    
+
     if (OrganizacaoEventos.value.length === 1) {
       form.value.organizacoesEvento = [OrganizacaoEventos.value[0]]
     }
