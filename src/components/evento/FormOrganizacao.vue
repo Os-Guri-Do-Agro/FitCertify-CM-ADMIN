@@ -42,7 +42,6 @@
                 label="CEP/ZIP Code"
                 variant="outlined"
                 prepend-inner-icon="mdi-map-marker"
-                :rules="[rules.required, rules.cep]"
                 required
                 density="comfortable"
                 @input="maskCEP"
@@ -55,7 +54,6 @@
                 label="Telefone"
                 variant="outlined"
                 prepend-inner-icon="mdi-phone"
-                :rules="[rules.required, rules.telefone]"
                 required
                 density="comfortable"
                 @input="maskTelefone"
@@ -121,6 +119,7 @@
 
 <script setup>
 import organizacaoService from '@/services/organizacao-evento/organizacao-evento-service'
+import { isSuperAdmin } from '@/utils/auth'
 import { computed, ref, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
@@ -149,14 +148,6 @@ const rules = {
     const cnpj = value?.replace(/\D/g, '')
     return cnpj?.length === 14 || 'CNPJ deve ter 14 dígitos'
   },
-  telefone: (value) => {
-    const phone = value?.replace(/\D/g, '')
-    return (phone?.length >= 10 && phone?.length <= 11) || 'Telefone deve ter 10 ou 11 dígitos'
-  },
-  cep: (value) => {
-    const digits = value?.replace(/\D/g, '')
-    return (digits?.length >= 5 && digits?.length <= 9) || 'CEP deve ter 8 dígitos ou ZIP Code 5-9 dígitos'
-  }
 }
 
 const maskCNPJ = (event) => {
@@ -197,7 +188,7 @@ const maskCEP = (event) => {
 }
 
 const isFormValid = computed(() => {
-  return form.value.nome && form.value.cnpj && form.value.cep && form.value.telefone
+  return form.value.nome && form.value.cnpj
 })
 
 const validarExisteOrganizacao = async () => {
@@ -214,10 +205,12 @@ onMounted(() => {
 })
 
 const submitForm = async () => {
-  if (organizacao.value.length > 0) {
+
+  if (!isSuperAdmin() && organizacao.value && organizacao.value.length > 0) {
     toast.error('Já existe uma organização cadastrada!')
     return
   }
+
   const { valid } = await formRef.value.validate()
   if (!valid) return
 
@@ -237,7 +230,7 @@ const submitForm = async () => {
 
     await validarExisteOrganizacao()
     emit('organizacao-saved')
-    toast.success('Organizacao criado com sucesso!')
+    toast.success('Organizacao criada com sucesso!')
 
     // Reset form and validations
     form.value = {

@@ -40,6 +40,18 @@ class grupoAcessoService {
     )
   }
 
+  deleteGrupoAcesso(id: string): Promise<any> {
+    const token = sessionStorage.getItem('token')
+    return this.handleRequest(
+      apiClient.delete(`/grupo-acesso/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      }),
+      'Failed to delete grupo acesso'
+    )
+  }
+
 }
 
 export default new grupoAcessoService()

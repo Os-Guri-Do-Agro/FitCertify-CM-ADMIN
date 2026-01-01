@@ -29,6 +29,39 @@
                 density="comfortable"
               ></v-text-field>
             </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.cnpj"
+                label="CNPJ"
+                variant="outlined"
+                prepend-inner-icon="mdi-card-account-details"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.telefone"
+                label="Telefone"
+                variant="outlined"
+                prepend-inner-icon="mdi-phone"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="form.cep"
+                label="CEP / Endereço"
+                variant="outlined"
+                prepend-inner-icon="mdi-map-marker"
+                :rules="[rules.required]"
+                required
+                density="comfortable"
+              ></v-text-field>
+            </v-col>
           </v-row>
         </div>
 
@@ -117,6 +150,9 @@ const editingImage = ref(false)
 
 const form = ref({
   nome: '',
+  cnpj: '',
+  telefone: '',
+  cep: '',
   logo: null,
   ativo: true,
 })
@@ -137,6 +173,9 @@ const submitForm = async () => {
   try {
     const formData = new FormData()
     formData.append('nome', form.value.nome)
+    formData.append('cnpj', form.value.cnpj)
+    formData.append('telefone', form.value.telefone)
+    formData.append('cep', form.value.cep)
 
     if (form.value.logo) {
       formData.append('logo', form.value.logo)
@@ -165,6 +204,9 @@ const loadOrganizacao = async () => {
 
     form.value = {
       nome: organizacao.nome || '',
+      cnpj: organizacao.cnpj || '',
+      telefone: organizacao.telefone || '',
+      cep: organizacao.cep || '',
       logo: null,
       ativo: organizacao.ativo,
     }
