@@ -109,6 +109,7 @@
                 size="small"
                 color="error"
                 variant="text"
+                @click="openDeleteGroupDialog(item)"
               ></v-btn>
             </template>
 
@@ -397,6 +398,35 @@
     </v-card>
   </v-dialog>
 
+  <!-- Delete Group Confirmation Dialog -->
+  <v-dialog v-model="showDeleteGroupDialog" max-width="400" persistent>
+    <v-card>
+      <v-card-title class="d-flex align-center">
+        <v-icon color="error" class="me-2">mdi-delete</v-icon>
+        Excluir Grupo de Acesso
+      </v-card-title>
+
+      <v-card-text>
+        <p>Tem certeza que deseja excluir o grupo <strong>{{ selectedGroup?.nome }}</strong>?</p>
+        <p class="text-caption text-grey">Esta ação não pode ser desfeita.</p>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="showDeleteGroupDialog = false" :disabled="deletingGroup">
+          Cancelar
+        </v-btn>
+        <v-btn
+          color="error"
+          @click="confirmDeleteGroup"
+          :loading="deletingGroup"
+        >
+          Excluir
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
   <!-- Edit Group Dialog -->
   <v-dialog v-model="showEditGroupDialog" max-width="500" persistent>
     <v-card>
@@ -467,6 +497,7 @@ import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getInfoUser } from '@/utils/auth'
 import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 // const router = useRouter()
 const search = ref('')
 const AllUsers = ref<any[]>([])
@@ -487,8 +518,10 @@ const emailErrorMessage = ref('')
 const allGroups = ref<any[]>([])
 const loadingGroups = ref(true)
 const showEditGroupDialog = ref(false)
+const showDeleteGroupDialog = ref(false)
 const selectedGroup = ref<any>(null)
 const editingGroup = ref(false)
+const deletingGroup = ref(false)
 const groupForm = ref<any>(null)
 
 const editGroup = ref({
@@ -662,6 +695,37 @@ const closeEditGroupDialog = () => {
     ativo: true
   }
   groupForm.value?.resetValidation()
+}
+
+const openDeleteGroupDialog = (group: any) => {
+  selectedGroup.value = group
+  showDeleteGroupDialog.value = true
+}
+
+const confirmDeleteGroup = async () => {
+  if (!selectedGroup.value) return
+
+  deletingGroup.value = true
+  try {
+    console.log('Deletando grupo:', selectedGroup.value.id)
+    await grupoAcessoService.deleteGrupoAcesso(selectedGroup.value.id)
+    
+    // Remove from local array
+    const index = allGroups.value.findIndex(g => g.id === selectedGroup.value.id)
+    if (index !== -1) {
+      allGroups.value.splice(index, 1)
+    }
+
+    console.log('Grupo deletado com sucesso')
+    toast.success('Grupo excluído com sucesso!')
+  } catch (error) {
+    console.error('Erro ao excluir grupo:', error)
+    toast.error('Erro ao excluir grupo')
+  } finally {
+    deletingGroup.value = false
+    showDeleteGroupDialog.value = false
+    selectedGroup.value = null
+  }
 }
 
 const editarGrupoAcesso = async () => {
