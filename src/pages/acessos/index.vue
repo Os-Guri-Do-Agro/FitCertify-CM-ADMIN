@@ -709,14 +709,12 @@ const confirmDeleteGroup = async () => {
   try {
     console.log('Deletando grupo:', selectedGroup.value.id)
     await grupoAcessoService.deleteGrupoAcesso(selectedGroup.value.id)
-    
+
     // Remove from local array
     const index = allGroups.value.findIndex(g => g.id === selectedGroup.value.id)
     if (index !== -1) {
       allGroups.value.splice(index, 1)
     }
-
-    console.log('Grupo deletado com sucesso')
     toast.success('Grupo excluído com sucesso!')
   } catch (error) {
     console.error('Erro ao excluir grupo:', error)
@@ -780,6 +778,10 @@ watch(() => newUser.value.email, async (newEmail) => {
 
 const createUser = async () => {
   if (!isFormValid.value) return
+  if (CountAllUsers.value >= 5 ) {
+    toast.error('Seu grupo de acesso já atingiu o limite de usuários')
+    return
+  }
 
   const { valid } = await userForm.value.validate()
   if (!valid) return
