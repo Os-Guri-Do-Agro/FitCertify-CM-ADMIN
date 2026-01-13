@@ -75,6 +75,10 @@
           {{ dayjs(item.validade).utcOffset('0').format('DD/MM/YYYY') }}
         </template>
 
+        <template v-slot:item.diasTrial="{ item }">
+          {{ item.diasTrial ? `${item.diasTrial} dias` : '-' }}
+        </template>
+
         <template v-slot:item.limiteMaximoDeUso="{ item }">
           {{ item.limiteMaximoDeUso == null ? 'Ilimitado' : item.limiteMaximoDeUso }}
         </template>
@@ -117,14 +121,23 @@
       </v-card-title>
 
       <v-form ref="formRef">
+        <v-select v-model="cupomForm.tipo" label="Tipo de Cupom" :items="tiposCupom" variant="outlined" class="mb-3"
+          :rules="[rules.required]"></v-select>
+
         <v-text-field v-model="cupomForm.codigo" label="Código do Cupom" placeholder="Ex: DESCONTO10" variant="outlined"
           class="mb-3" maxlength="10" :rules="[rules.required]"></v-text-field>
 
-        <v-text-field v-model="cupomForm.porcentagem" label="Porcentagem de Desconto" type="number" suffix="%"
-          variant="outlined" class="mb-3" :rules="[rules.required, rules.percentage]"></v-text-field>
+        <v-text-field v-if="cupomForm.tipo === 'desconto'" v-model="cupomForm.porcentagem" label="Porcentagem de Desconto" 
+          type="number" suffix="%" variant="outlined" class="mb-3" :rules="[rules.required, rules.percentage]"></v-text-field>
+
+        <v-text-field v-if="cupomForm.tipo === 'teste_gratis'" v-model="cupomForm.diasTeste" label="Dias de Teste Grátis" 
+          type="number" variant="outlined" class="mb-3" :rules="[rules.required, rules.positiveNumber]"></v-text-field>
 
         <v-text-field v-model="cupomForm.validade" label="Data de Validade" type="date" variant="outlined" class="mb-3"
           :rules="[rules.required]"></v-text-field>
+
+        <v-text-field v-model="cupomForm.limiteUso" label="Limite de Uso" type="number" variant="outlined" class="mb-3"
+          hint="Deixe em branco para ilimitado" persistent-hint></v-text-field>
       </v-form>
 
       <v-card-actions class="px-0 pt-4">
@@ -152,7 +165,7 @@
 
 <script setup lang="ts">
 import cupomService from '@/services/cupom/cupom-service'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -166,15 +179,34 @@ const dialog = ref(false)
 const showModalCreateQRCODE = ref(false)
 const formRef = ref<any>(null)
 const cupomForm = ref({
+  tipo: '',
   codigo: '',
   porcentagem: null,
-  validade: ''
+  diasTeste: null,
+  validade: '',
+  limiteUso: null
 })
+
+const tiposCupom = [
+  { title: 'Cupom de Desconto', value: 'desconto' },
+  { title: 'Cupom de Teste Grátis', value: 'teste_gratis' }
+]
 
 const rules = {
   required: (value: any) => !!value || 'Campo obrigatório',
-  percentage: (value: any) => (value > 0 && value <= 100) || 'Deve ser entre 1 e 100%'
+  percentage: (value: any) => (value > 0 && value <= 100) || 'Deve ser entre 1 e 100%',
+  positiveNumber: (value: any) => (value > 0) || 'Deve ser maior que 0'
 }
+
+// Limpar campos condicionais quando o tipo mudar
+watch(() => cupomForm.value.tipo, () => {
+  cupomForm.value.porcentagem = null
+  cupomForm.value.diasTeste = null
+  if (formRef.value) {
+    formRef.value.resetValidation()
+  }
+})
+
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import 'vue3-toastify/dist/index.css'
@@ -182,6 +214,7 @@ dayjs.extend(utc)
 const headers = [
   { title: 'Código', key: 'codigo' },
   { title: 'Porcentagem', key: 'porcentagem', sortable: true, align: 'center' as const },
+  { title: 'Dias de Teste', key: 'diasTrial', sortable: true, align: 'center' as const },
   { title: 'Validade', key: 'validade', sortable: true, align: 'center' as const },
   { title: 'Quan. Usadas', key: 'quantidadeUtilizada', sortable: true, align: 'center' as const },
   { title: 'Limite de Uso ', key: 'limiteMaximoDeUso', sortable: true, align: 'center' as const },
@@ -225,11 +258,23 @@ const createCupom = async () => {
 
   loading.value = true
   try {
-    const data = {
+    const data: any = {
       codigo: cupomForm.value.codigo,
-      porcentagem: Number(cupomForm.value.porcentagem),
       validade: dayjs(cupomForm.value.validade).endOf('day').toISOString()
     }
+
+    if (cupomForm.value.tipo === 'desconto') {
+      data.porcentagem = Number(cupomForm.value.porcentagem)
+    } else if (cupomForm.value.tipo === 'teste_gratis') {
+      // Para teste grátis, porcentagem é obrigatória no DTO, então enviamos 0
+      data.porcentagem = 0
+      data.diasTrial = Number(cupomForm.value.diasTeste)
+    }
+
+    if (cupomForm.value.limiteUso) {
+      data.limiteMaximoDeUso = Number(cupomForm.value.limiteUso)
+    }
+
     await cupomService.createCupom(data)
     toast.success('Cupom criado com sucesso!')
     await getAllCupons()
@@ -246,9 +291,15 @@ const createCupom = async () => {
 const closeModal = () => {
   showModalCreateQRCODE.value = false
   cupomForm.value = {
+    tipo: '',
     codigo: '',
     porcentagem: null,
-    validade: ''
+    diasTeste: null,
+    validade: '',
+    limiteUso: null
+  }
+  if (formRef.value) {
+    formRef.value.resetValidation()
   }
 }
 
