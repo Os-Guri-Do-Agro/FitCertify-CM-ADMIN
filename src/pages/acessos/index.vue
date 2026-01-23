@@ -104,13 +104,13 @@
                 variant="text"
                 @click="openEditGroupDialog(item)"
               ></v-btn>
-              <v-btn
+              <!-- <v-btn
                 icon="mdi-delete"
                 size="small"
                 color="error"
                 variant="text"
                 @click="openDeleteGroupDialog(item)"
-              ></v-btn>
+              ></v-btn> -->
             </template>
 
             <template v-slot:no-data>
@@ -399,7 +399,8 @@
   </v-dialog>
 
   <!-- Delete Group Confirmation Dialog -->
-  <v-dialog v-model="showDeleteGroupDialog" max-width="400" persistent>
+
+  <!-- <v-dialog v-model="showDeleteGroupDialog" max-width="400" persistent>
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon color="error" class="me-2">mdi-delete</v-icon>
@@ -425,7 +426,7 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-dialog> -->
 
   <!-- Edit Group Dialog -->
   <v-dialog v-model="showEditGroupDialog" max-width="500" persistent>
@@ -466,6 +467,7 @@
             label="Ativo"
             color="primary"
             inset
+            disabled
           ></v-switch>
         </v-form>
       </v-card-text>
@@ -495,7 +497,7 @@ import usersService from '@/services/users/users-service'
 import grupoAcessoService from '@/services/grupoAcesso/grupoAcesso-service'
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { getInfoUser } from '@/utils/auth'
+import { getInfoUser, isSuperAdmin, getGrupoAcessoId } from '@/utils/auth'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 // const router = useRouter()
@@ -835,9 +837,16 @@ const loadUsers = async () => {
 const loadGrupoAcesso = async () => {
   loadingGroups.value = true
   try {
-    const response = await grupoAcessoService.getAllGrupoAcesso()
-    allGroups.value = response.data || []
-    return response.data
+    if (isSuperAdmin()) {
+      const response = await grupoAcessoService.getAllGrupoAcesso()
+      allGroups.value = response.data || []
+      return response.data
+    } else {
+      const response = await grupoAcessoService.getAllGrupoAcessoById(getGrupoAcessoId())
+      const groups = Array.isArray(response.data) ? response.data : [response.data]
+      allGroups.value = groups || []
+      return groups
+    }
   } catch (error) {
     console.error('Erro ao carregar grupos:', error)
   } finally {
