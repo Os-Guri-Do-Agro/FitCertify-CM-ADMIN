@@ -124,13 +124,13 @@
         <v-select v-model="cupomForm.tipo" label="Tipo de Cupom" :items="tiposCupom" variant="outlined" class="mb-3"
           :rules="[rules.required]"></v-select>
 
-        <v-text-field v-model="cupomForm.codigo" label="Código do Cupom" placeholder="Ex: DESCONTO10" variant="outlined"
+        <v-text-field v-model.upper="cupomForm.codigo" label="Código do Cupom" placeholder="Ex: DESCONTO10" variant="outlined"
           class="mb-3" maxlength="10" :rules="[rules.required]"></v-text-field>
 
-        <v-text-field v-if="cupomForm.tipo === 'desconto'" v-model="cupomForm.porcentagem" label="Porcentagem de Desconto" 
+        <v-text-field v-if="cupomForm.tipo === 'desconto'" v-model="cupomForm.porcentagem" label="Porcentagem de Desconto"
           type="number" suffix="%" variant="outlined" class="mb-3" :rules="[rules.required, rules.percentage]"></v-text-field>
 
-        <v-text-field v-if="cupomForm.tipo === 'teste_gratis'" v-model="cupomForm.diasTeste" label="Dias de Teste Grátis" 
+        <v-text-field v-if="cupomForm.tipo === 'teste_gratis'" v-model="cupomForm.diasTeste" label="Dias de Teste Grátis"
           type="number" variant="outlined" class="mb-3" :rules="[rules.required, rules.positiveNumber]"></v-text-field>
 
         <v-text-field v-model="cupomForm.validade" label="Data de Validade" type="date" variant="outlined" class="mb-3"
@@ -204,6 +204,12 @@ watch(() => cupomForm.value.tipo, () => {
   cupomForm.value.diasTeste = null
   if (formRef.value) {
     formRef.value.resetValidation()
+  }
+})
+
+watch(() => cupomForm.value.codigo, (newValue) => {
+  if (newValue) {
+    cupomForm.value.codigo = newValue.toUpperCase()
   }
 })
 

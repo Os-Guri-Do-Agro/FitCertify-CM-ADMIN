@@ -482,17 +482,6 @@
           class="custom-table"
           hover
         >
-          <!-- Avatar -->
-          <template v-slot:item.atleta.usuario.avatarUrl="{ item }">
-            <v-avatar size="40" class="ma-2">
-              <v-img :src="item.atleta.usuario.avatarUrl" alt="avatar" cover>
-                <template v-slot:error>
-                  <v-icon icon="mdi-account" size="20"></v-icon>
-                </template>
-              </v-img>
-            </v-avatar>
-          </template>
-
           <!-- Status -->
           <template v-slot:item.status="{ item }">
             <v-chip
@@ -509,15 +498,29 @@
             <span>{{ dayjs(item.createdAt).format('DD/MM/YYYY HH:mm') }}</span>
           </template>
 
-          <!-- Actions -->
-          <template v-slot:item.actions="{ item }">
+          <!-- Termos -->
+          <template v-slot:item.termos="{ item }">
             <v-btn
-              icon="mdi-download"
+            :disabled="!item?.termoResponsabilidadeId"
+              icon="mdi-file-document"
+              size="small"
+              variant="text"
+              color="info"
+              @click="downloadCertificado(item)"
+              :loading="downloadingCertificado === item.id"
+            ></v-btn>
+          </template>
+
+          <!-- Certificado -->
+          <template v-slot:item.certificado="{ item }">
+            <v-btn
+            :disabled="!item?.modeloCertificadoId"
+              icon="mdi-certificate"
               size="small"
               variant="text"
               color="primary"
-              @click="downloadCertificado(item)"
-              :loading="downloadingCertificado === item.id"
+              @click="baixarCertificado(item)"
+              :loading="downloadingTermos === item.id"
             ></v-btn>
           </template>
 
@@ -546,6 +549,7 @@ import eventoService from '@/services/evento/evento-service'
 import organizacaoService from '@/services/organizacao-evento/organizacao-evento-service'
 import tipoEventoService from '@/services/tipo-evento/tipo-evento-service'
 import termoResponsabilidadeService from '@/services/termo-responsabilidade/termo-responsabilidade-service'
+import certificadoService from '@/services/certificado/certificado-service'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
@@ -577,6 +581,7 @@ const inscricoes = ref<any[]>([])
 const inscritosDialog = ref(false)
 const loadingInscricoes = ref(false)
 const downloadingCertificado = ref<number | null>(null)
+const downloadingTermos = ref<number | null>(null)
 const dialog = ref(false)
 const atletaAceitou = ref('')
 const organizacaoDialog = ref(false)
@@ -584,6 +589,7 @@ const deleteTipoEventoDialog = ref(false)
 const createTipoEventoDialog = ref(false)
 const editTipoEventoDialog = ref(false)
 const tiposEvento = ref<any[]>([])
+const certificadoId = ref<any>('')
 const headers = [
   { title: 'Imagem', key: 'imagemUrl', sortable: false, width: '100px' },
   { title: 'Titulo', key: 'titulo', align: 'center' as const },
@@ -610,13 +616,13 @@ const tiposEventoHeaders = [
 ]
 
 const inscritosHeaders = [
-  { title: 'Avatar', key: 'atleta.usuario.avatarUrl', sortable: false, width: '80px' },
   { title: 'Nome', key: 'atleta.usuario.nome', align: 'start' as const },
   { title: 'CPF', key: 'atleta.usuario.cpf', align: 'center' as const },
   { title: 'Email', key: 'atleta.usuario.email', align: 'start' as const },
   { title: 'Status', key: 'status', align: 'center' as const },
   { title: 'Data da Inscrição', key: 'createdAt', align: 'center' as const },
-  { title: 'Certificado', key: 'actions', sortable: false, width: '120px' },
+  { title: 'Termos', key: 'termos', sortable: false, width: '120px', align: 'center' as const },
+  { title: 'Certificado', key: 'certificado', sortable: false, width: '120px', align: 'center' as const },
 ]
 
 // Computed stats
@@ -655,6 +661,32 @@ const createTipoEvento = async () => {
     toast.success('Tipo evento criado com sucesso!')
     createTipoEventoDialog.value = false
     formTipoEvento.value = { nome: '', en_nome: '', ativo: true, id: null }
+  }
+}
+
+const baixarCertificado = async (inscrito: any) => {
+  try {
+    if (!inscrito?.modeloCertificadoId || !inscrito?.atletaId) {
+      return
+    }
+    downloadingTermos.value = inscrito.id
+    const response = await certificadoService.baixarCertificado(inscrito.modeloCertificadoId, inscrito.atletaId)
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    let filename = `certificado-${inscrito.atleta.usuario.nome}.pdf`
+    link.setAttribute('download', filename)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
+    toast.success('Certificado baixado com sucesso!')
+  } catch (error) {
+    console.error('Erro ao baixar certificado:', error)
+    toast.error('Erro ao baixar certificado')
+  } finally {
+    downloadingTermos.value = null
   }
 }
 
@@ -741,6 +773,7 @@ const buscarInscricoes = async (eventoId: any) => {
   loadingInscricoes.value = true
   try {
     const response = await termoResponsabilidadeService.getTermosAceitosByEvento(eventoId)
+    certificadoId.value = response.data[0]?.modeloCertificadoId
     inscricoes.value = await Promise.all(
       response.data.map(async (inscrito: any) => {
         try {

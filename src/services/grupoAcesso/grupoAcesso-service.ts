@@ -28,6 +28,18 @@ class grupoAcessoService {
     )
   }
 
+  getAllGrupoAcessoById(id: string): Promise<any> {
+    const token = sessionStorage.getItem('token')
+    return this.handleRequest(
+      apiClient.get(`/grupo-acesso/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      }),
+      'Failed to fetch all users'
+    )
+  }
+
   editGrupoAcesso(id: string, data: any): Promise<any> {
     const token = sessionStorage.getItem('token')
     return this.handleRequest(

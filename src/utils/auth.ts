@@ -41,6 +41,10 @@ export const getSubRole = () => {
   const payload = getPayload()
   return payload.subRole
 }
+export const getGrupoAcessoId = () => {
+  const payload = getPayload()
+  return payload.grupoAcessoId
+}
 
 export const hasRole = (role: SubRole): boolean => {
   const userRole = getUserRole()
